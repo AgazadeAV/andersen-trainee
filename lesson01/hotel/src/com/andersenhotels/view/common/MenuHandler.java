@@ -1,6 +1,6 @@
-package com.andersenhotels.view.console_ui;
+package com.andersenhotels.view.common;
 
-import com.andersenhotels.view.console_ui.buttons.*;
+import com.andersenhotels.view.common.buttons.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,23 +14,23 @@ public class MenuHandler {
     private List<Button> buttons;
 
     /**
-     * Constructs a MenuHandler and initializes the available menu options.
+     * Initializes the MenuHandler with the available buttons for user actions.
      *
-     * @param consoleUI the ConsoleUI instance that the buttons will interact with
+     * @param view The view instance to which the buttons will be linked.
      */
-    public MenuHandler(ConsoleUI consoleUI) {
+    public MenuHandler(View view) {
         buttons = new ArrayList<>();
-        buttons.add(new RegisterApartment(consoleUI));
-        buttons.add(new ReserveApartment(consoleUI));
-        buttons.add(new ReleaseApartment(consoleUI));
-        buttons.add(new ListApartments(consoleUI));
-        buttons.add(new Exit(consoleUI));
+        buttons.add(new RegisterApartment(view));
+        buttons.add(new ReserveApartment(view));
+        buttons.add(new ReleaseApartment(view));
+        buttons.add(new ListApartments(view));
+        buttons.add(new Exit(view));
     }
 
     /**
-     * Constructs and returns the menu string to be displayed to the user.
+     * Retrieves a formatted string representing the menu options.
      *
-     * @return a string representation of the menu options
+     * @return A string containing the menu options.
      */
     public String getMenu() {
         StringBuilder sb = new StringBuilder();

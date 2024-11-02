@@ -1,17 +1,20 @@
 package com.andersenhotels.view.console_ui;
 
 import com.andersenhotels.presenter.Presenter;
-import com.andersenhotels.view.View;
+import com.andersenhotels.view.common.MenuHandler;
+import com.andersenhotels.view.common.View;
 
 import java.util.Scanner;
 
 /**
- * ConsoleUI is the user interface for the Hotel Management application.
- * It interacts with the user via the console, handling input and
- * displaying relevant information related to hotel management tasks.
+ * ConsoleUI is a user interface that handles interactions with the user
+ * through the console for the hotel management application.
+ * It displays the menu options, takes user input, and executes the
+ * corresponding commands.
  */
 public class ConsoleUI implements View {
     private static final int MIN_VALID_VALUE = 1;
+
     private Scanner scanner;
     private MenuHandler menuHandler;
     private Presenter presenter;
@@ -26,7 +29,7 @@ public class ConsoleUI implements View {
         this.scanner = new Scanner(System.in);
         this.menuHandler = new MenuHandler(this);
         this.presenter = new Presenter();
-        this.inputValidator = new InputValidator(scanner); // Passes scanner for input validation
+        this.inputValidator = new InputValidator(scanner);
         this.work = true;
     }
 
@@ -68,6 +71,7 @@ public class ConsoleUI implements View {
     /**
      * Prompts the user to register a new apartment with a specified price.
      */
+    @Override
     public void registerApartment() {
         double price = inputValidator.getValidDouble("Enter price for the apartment (double or integer value): ");
         presenter.registerApartment(price);
@@ -77,6 +81,7 @@ public class ConsoleUI implements View {
      * Prompts the user to reserve an apartment by providing the apartment ID
      * and client name.
      */
+    @Override
     public void reserveApartment() {
         int apartmentsCount = presenter.getApartmentsCount();
         int reserveId = inputValidator.getValidInteger("Enter apartment ID to reserve (integer value): ",
@@ -89,6 +94,7 @@ public class ConsoleUI implements View {
     /**
      * Prompts the user to release an apartment from reservation by providing the apartment ID.
      */
+    @Override
     public void releaseApartment() {
         int apartmentsCount = presenter.getApartmentsCount();
         int releaseId = inputValidator.getValidInteger("Enter apartment ID to release (integer value): ",
@@ -100,6 +106,7 @@ public class ConsoleUI implements View {
      * Prompts the user for pagination information and lists apartments based on
      * the provided page number and size.
      */
+    @Override
     public void listApartments() {
         int page = inputValidator.getValidInteger("Enter page number (integer value): ",
                 MIN_VALID_VALUE, Integer.MAX_VALUE);

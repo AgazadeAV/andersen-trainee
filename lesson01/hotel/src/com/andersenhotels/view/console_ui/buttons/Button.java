@@ -1,6 +1,6 @@
-package view.console_ui.buttons;
+package com.andersenhotels.view.console_ui.buttons;
 
-import view.console_ui.ConsoleUI;
+import com.andersenhotels.view.console_ui.ConsoleUI;
 
 public abstract class Button {
     private final String description;
@@ -11,7 +11,7 @@ public abstract class Button {
         this.consoleUI = consoleUI;
     }
 
-    ConsoleUI getConsoleUI() {
+    protected ConsoleUI getConsoleUI() {
         return consoleUI;
     }
 

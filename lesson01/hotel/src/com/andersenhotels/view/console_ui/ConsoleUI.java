@@ -1,20 +1,22 @@
-package view.console_ui;
+package com.andersenhotels.view.console_ui;
 
-import presenter.Presenter;
-import view.View;
+import com.andersenhotels.presenter.Presenter;
+import com.andersenhotels.view.View;
 
 import java.util.Scanner;
 
 public class ConsoleUI implements View {
+    private Scanner scanner;
     private MenuHandler menuHandler;
     private Presenter presenter;
-    private Scanner scanner;
+    private InputValidator inputValidator;
     private boolean work;
 
     public ConsoleUI() {
+        this.scanner = new Scanner(System.in);
         this.menuHandler = new MenuHandler(this);
         this.presenter = new Presenter();
-        this.scanner = new Scanner(System.in);
+        this.inputValidator = new InputValidator(scanner); // Передача сканера
         this.work = true;
     }
 
@@ -32,7 +34,7 @@ public class ConsoleUI implements View {
         while (work) {
             System.out.println(menuHandler.getMenu());
             String menuChoiceStr = scanner.nextLine().trim();
-            if (isValidInteger(menuChoiceStr, 1, menuHandler.getMenuSize())) {
+            if (inputValidator.isValidInteger(menuChoiceStr, 1, menuHandler.getMenuSize())) {
                 int choice = Integer.parseInt(menuChoiceStr);
                 menuHandler.execute(choice);
             } else {
@@ -43,13 +45,13 @@ public class ConsoleUI implements View {
     }
 
     public void registerApartment() {
-        double price = getValidDouble("Enter price for the apartment (double or integer value): ");
+        double price = inputValidator.getValidDouble("Enter price for the apartment (double or integer value): ");
         presenter.registerApartment(price);
     }
 
     public void reserveApartment() {
         int apartmentsCount = presenter.getApartmentsCount();
-        int reserveId = getValidInteger("Enter apartment ID to reserve (integer value): ", 1, apartmentsCount);
+        int reserveId = inputValidator.getValidInteger("Enter apartment ID to reserve (integer value): ", 1, apartmentsCount);
         System.out.print("Enter client name: ");
         String clientName = scanner.nextLine();
         presenter.reserveApartment(reserveId, clientName);
@@ -57,56 +59,14 @@ public class ConsoleUI implements View {
 
     public void releaseApartment() {
         int apartmentsCount = presenter.getApartmentsCount();
-        int releaseId = getValidInteger("Enter apartment ID to release (integer value): ", 1, apartmentsCount);
+        int releaseId = inputValidator.getValidInteger("Enter apartment ID to release (integer value): ", 1, apartmentsCount);
         presenter.releaseApartment(releaseId);
     }
 
     public void listApartments() {
-        int page = getValidInteger("Enter page number (integer value): ", 1, Integer.MAX_VALUE);
-        int pageSize = getValidInteger("Enter page size (integer value): ", 1, Integer.MAX_VALUE);
+        int page = inputValidator.getValidInteger("Enter page number (integer value): ", 1, Integer.MAX_VALUE);
+        int pageSize = inputValidator.getValidInteger("Enter page size (integer value): ", 1, Integer.MAX_VALUE);
         presenter.listApartments(page, pageSize);
-    }
-
-    private int getValidInteger(String prompt, int min, int max) {
-        while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine();
-            if (isValidInteger(input, min, max)) {
-                return Integer.parseInt(input);
-            } else {
-                System.out.println("Invalid input, please enter a valid integer between " + min + " and " + max + ".");
-            }
-        }
-    }
-
-    private double getValidDouble(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine();
-            if (isValidDouble(input)) {
-                return Double.parseDouble(input);
-            } else {
-                System.out.println("Invalid price, please enter a valid price.");
-            }
-        }
-    }
-
-    private boolean isValidInteger(String input, int min, int max) {
-        try {
-            int integerValue = Integer.parseInt(input);
-            return integerValue >= min && integerValue <= max;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private static boolean isValidDouble(String input) {
-        try {
-            double doubleValue = Double.parseDouble(input);
-            return doubleValue >= 0;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     @Override

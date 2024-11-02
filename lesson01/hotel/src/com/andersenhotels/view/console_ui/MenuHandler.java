@@ -1,6 +1,6 @@
-package view.console_ui;
+package com.andersenhotels.view.console_ui;
 
-import view.console_ui.buttons.*;
+import com.andersenhotels.view.console_ui.buttons.*;
 
 import java.util.ArrayList;
 import java.util.List;

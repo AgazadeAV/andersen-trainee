@@ -1,3 +1,5 @@
+package com.andersenhotels;
+
 import com.andersenhotels.view.common.View;
 import com.andersenhotels.view.console_ui.ConsoleUI;
 

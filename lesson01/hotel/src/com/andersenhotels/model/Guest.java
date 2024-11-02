@@ -1,4 +1,4 @@
-package model;
+package com.andersenhotels.model;
 
 public class Guest {
     private String name;

@@ -1,12 +1,16 @@
-package model;
+package com.andersenhotels.model.service;
+
+import com.andersenhotels.model.Apartment;
+import com.andersenhotels.model.Guest;
+import com.andersenhotels.model.Reservation;
 
 import java.util.*;
 
-public class Hotel {
+public class HotelService {
     private Map<Integer, Apartment> apartments;
     private int nextId;
 
-    public Hotel() {
+    public HotelService() {
         apartments = new HashMap<>();
         nextId = 1;
     }
@@ -28,8 +32,7 @@ public class Hotel {
             Reservation reservation = new Reservation(apartment, guest);
             try {
                 reservation.createReservation();
-                System.out.println("Apartment reserved for " + guestName);
-            } catch (IllegalStateException e) {
+            } catch (RuntimeException e) {
                 System.out.println(e.getMessage());
             }
         } else {
@@ -44,8 +47,7 @@ public class Hotel {
             Reservation reservation = new Reservation(apartment, guest);
             try {
                 reservation.cancelReservation();
-                System.out.println("Apartment released.");
-            } catch (IllegalStateException e) {
+            } catch (RuntimeException e) {
                 System.out.println(e.getMessage());
             }
         } else {
@@ -68,4 +70,3 @@ public class Hotel {
         }
     }
 }
-

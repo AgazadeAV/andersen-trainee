@@ -13,7 +13,7 @@ public class ConsoleUI implements View {
 
     public ConsoleUI() {
         this.menuHandler = new MenuHandler(this);
-        this.presenter = new Presenter(this);
+        this.presenter = new Presenter();
         this.scanner = new Scanner(System.in);
         this.work = true;
     }
@@ -43,84 +43,52 @@ public class ConsoleUI implements View {
     }
 
     public void registerApartment() {
-        boolean flag = true;
-        while (flag) {
-            System.out.print("Enter price for the apartment (example 25.10): ");
-            String priceStr = scanner.nextLine().trim();
-            if (isValidDouble(priceStr)) {
-                double price = Double.parseDouble(priceStr);
-                presenter.registerApartment(price);
-                flag = false;
-            } else {
-                System.out.println("Invalid price, please enter valid price.");
-            }
-        }
+        double price = getValidDouble("Enter price for the apartment (double or integer value): ");
+        presenter.registerApartment(price);
     }
 
     public void reserveApartment() {
-        boolean flag = true;
         int apartmentsCount = presenter.getApartmentsCount();
-        while (flag) {
-            System.out.print("Enter apartment ID to reserve: ");
-            String reserveIdStr = scanner.nextLine().trim();
-            if (isValidInteger(reserveIdStr, 1, apartmentsCount)) {
-                int reserveId = Integer.parseInt(reserveIdStr);
-                System.out.print("Enter client name: ");
-                String clientName = scanner.nextLine();
-                presenter.reserveApartment(reserveId, clientName);
-                flag = false;
-            } else {
-                System.out.println("Invalid apartment id choice.\n" +
-                        "Please enter a valid apartment id: from 1 to " + apartmentsCount);
-            }
-        }
+        int reserveId = getValidInteger("Enter apartment ID to reserve (integer value): ", 1, apartmentsCount);
+        System.out.print("Enter client name: ");
+        String clientName = scanner.nextLine();
+        presenter.reserveApartment(reserveId, clientName);
     }
 
     public void releaseApartment() {
-        boolean flag = true;
         int apartmentsCount = presenter.getApartmentsCount();
-        while (flag) {
-            System.out.print("Enter apartment ID to release: ");
-            String releaseIdStr = scanner.nextLine().trim();
-            if (isValidInteger(releaseIdStr, 1, apartmentsCount)) {
-                int releaseId = Integer.parseInt(releaseIdStr);
-                System.out.print("Enter client name: ");
-                presenter.releaseApartment(releaseId);
-                flag = false;
+        int releaseId = getValidInteger("Enter apartment ID to release (integer value): ", 1, apartmentsCount);
+        presenter.releaseApartment(releaseId);
+    }
+
+    public void listApartments() {
+        int page = getValidInteger("Enter page number (integer value): ", 1, Integer.MAX_VALUE);
+        int pageSize = getValidInteger("Enter page size (integer value): ", 1, Integer.MAX_VALUE);
+        presenter.listApartments(page, pageSize);
+    }
+
+    private int getValidInteger(String prompt, int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            if (isValidInteger(input, min, max)) {
+                return Integer.parseInt(input);
             } else {
-                System.out.println("Invalid apartment id choice.\n" +
-                        "Please enter a valid apartment id: from 1 to " + apartmentsCount);
+                System.out.println("Invalid input, please enter a valid integer between " + min + " and " + max + ".");
             }
         }
     }
 
-    public void listApartments() {
-        boolean flag = true;
-        int page = 0;
-        int pageSize = 0;
-        while (flag) {
-            System.out.print("Enter page number: ");
-            String pageStr = scanner.nextLine();
-            try {
-                page = Integer.parseInt(pageStr);
-                flag = false;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid page choice. Please enter integer.");
+    private double getValidDouble(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            if (isValidDouble(input)) {
+                return Double.parseDouble(input);
+            } else {
+                System.out.println("Invalid price, please enter a valid price.");
             }
         }
-        flag = true;
-        while (flag) {
-            System.out.print("Enter page size: ");
-            String pageSizeStr = scanner.nextLine();
-            try {
-                pageSize = Integer.parseInt(pageSizeStr);
-                flag = false;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid page size choice. Please enter integer.");
-            }
-        }
-        presenter.listApartments(page, pageSize);
-
     }
 
     private boolean isValidInteger(String input, int min, int max) {
@@ -135,7 +103,7 @@ public class ConsoleUI implements View {
     private static boolean isValidDouble(String input) {
         try {
             double doubleValue = Double.parseDouble(input);
-            return doubleValue >= 0 && input.contains(".");
+            return doubleValue >= 0;
         } catch (NumberFormatException e) {
             return false;
         }

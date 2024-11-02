@@ -1,14 +1,11 @@
 package presenter;
 
 import model.Hotel;
-import view.View;
 
 public class Presenter {
-    private View view;
     private Hotel hotel;
 
-    public Presenter(View view) {
-        this.view = view;
+    public Presenter() {
         this.hotel = new Hotel();
     }
 

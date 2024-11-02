@@ -17,18 +17,22 @@ public class Apartment {
         return id;
     }
 
-    public boolean isReserved() {
-        return isReserved;
-    }
-
     public void reserve(String clientName) {
-        this.isReserved = true;
-        this.clientName = clientName;
+        if (!isReserved) {
+            this.isReserved = true;
+            this.clientName = clientName;
+        } else {
+            throw new IllegalStateException("Apartment is already reserved.");
+        }
     }
 
     public void release() {
-        this.isReserved = false;
-        this.clientName = null;
+        if (isReserved) {
+            this.isReserved = false;
+            this.clientName = null;
+        } else {
+            throw new IllegalStateException("Apartment is not reserved.");
+        }
     }
 
     @Override

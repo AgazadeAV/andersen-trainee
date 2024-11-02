@@ -3,17 +3,17 @@ package model;
 import java.util.*;
 
 public class Hotel {
-    private List<Apartment> apartments;
+    private Map<Integer, Apartment> apartments;
     private int nextId;
 
     public Hotel() {
-        apartments = new ArrayList<>();
+        apartments = new HashMap<>();
         nextId = 1;
     }
 
     public void registerApartment(double price) {
         Apartment apartment = new Apartment(nextId++, price);
-        apartments.add(apartment);
+        apartments.put(apartment.getId(), apartment);
         System.out.println("Apartment registered: " + apartment);
     }
 
@@ -22,44 +22,45 @@ public class Hotel {
     }
 
     public void reserveApartment(int id, String clientName) {
-        for (Apartment apartment : apartments) {
-            if (apartment.getId() == id) {
-                if (!apartment.isReserved()) {
-                    apartment.reserve(clientName);
-                    System.out.println("Apartment reserved for " + clientName);
-                } else {
-                    System.out.println("Apartment is already reserved.");
-                }
-                return;
+        Apartment apartment = apartments.get(id);
+        if (apartment != null) {
+            try {
+                apartment.reserve(clientName);
+                System.out.println("Apartment reserved for " + clientName);
+            } catch (IllegalStateException e) {
+                System.out.println(e.getMessage());
             }
+        } else {
+            System.out.println("Apartment not found.");
         }
     }
 
     public void releaseApartment(int id) {
-        for (Apartment apartment : apartments) {
-            if (apartment.getId() == id) {
-                if (apartment.isReserved()) {
-                    apartment.release();
-                    System.out.println("Apartment released.");
-                } else {
-                    System.out.println("Apartment is not reserved.");
-                }
-                return;
+        Apartment apartment = apartments.get(id);
+        if (apartment != null) {
+            try {
+                apartment.release();
+                System.out.println("Apartment released.");
+            } catch (IllegalStateException e) {
+                System.out.println(e.getMessage());
             }
+        } else {
+            System.out.println("Apartment not found.");
         }
     }
 
     public void listApartments(int page, int pageSize) {
+        List<Apartment> apartmentList = new ArrayList<>(apartments.values());
         int start = (page - 1) * pageSize;
-        int end = Math.min(start + pageSize, apartments.size());
+        int end = Math.min(start + pageSize, apartmentList.size());
 
-        if (start >= apartments.size() || start < 0) {
+        if (start >= apartmentList.size() || start < 0) {
             System.out.println("No apartments found on this page.");
             return;
         }
 
         for (int i = start; i < end; i++) {
-            System.out.println(apartments.get(i));
+            System.out.println(apartmentList.get(i));
         }
     }
 }

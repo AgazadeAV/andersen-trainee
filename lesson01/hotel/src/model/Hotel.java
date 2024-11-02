@@ -21,12 +21,14 @@ public class Hotel {
         return apartments.size();
     }
 
-    public void reserveApartment(int id, String clientName) {
+    public void reserveApartment(int id, String guestName) {
         Apartment apartment = apartments.get(id);
         if (apartment != null) {
+            Guest guest = new Guest(guestName);
+            Reservation reservation = new Reservation(apartment, guest);
             try {
-                apartment.reserve(clientName);
-                System.out.println("Apartment reserved for " + clientName);
+                reservation.createReservation();
+                System.out.println("Apartment reserved for " + guestName);
             } catch (IllegalStateException e) {
                 System.out.println(e.getMessage());
             }
@@ -38,8 +40,10 @@ public class Hotel {
     public void releaseApartment(int id) {
         Apartment apartment = apartments.get(id);
         if (apartment != null) {
+            Guest guest = new Guest("");
+            Reservation reservation = new Reservation(apartment, guest);
             try {
-                apartment.release();
+                reservation.cancelReservation();
                 System.out.println("Apartment released.");
             } catch (IllegalStateException e) {
                 System.out.println(e.getMessage());
@@ -64,3 +68,4 @@ public class Hotel {
         }
     }
 }
+

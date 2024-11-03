@@ -3,39 +3,36 @@ package com.andersenhotels.view.console_ui;
 import com.andersenhotels.presenter.Presenter;
 import com.andersenhotels.view.common.MenuHandler;
 import com.andersenhotels.view.common.View;
+import com.andersenhotels.view.common.exception.WrongMenuChoiceException;
 
 import java.util.Scanner;
 
 /**
- * ConsoleUI is a user interface that handles interactions with the user
- * through the console for the hotel management application.
- * It displays the menu options, takes user input, and executes the
- * corresponding commands.
+ * ConsoleUI provides a text-based user interface for interacting with the hotel management system.
+ * It handles menu display, user input validation, and communicates with the Presenter to process actions.
+ * This class implements the View interface, allowing it to receive commands and display results in the console.
  */
 public class ConsoleUI implements View {
-    private static final int MIN_VALID_VALUE = 1;
-
     private Scanner scanner;
     private MenuHandler menuHandler;
     private Presenter presenter;
     private InputValidator inputValidator;
-    private boolean work;
+    private boolean isRunning;
 
     /**
-     * Constructs a new ConsoleUI instance, initializing the scanner,
-     * menu handler, presenter, input validator, and work status.
+     * Constructs a new ConsoleUI instance with initialized scanner, menu handler, presenter, and input validator.
+     * Sets the application to a running state.
      */
     public ConsoleUI() {
         this.scanner = new Scanner(System.in);
         this.menuHandler = new MenuHandler(this);
-        this.presenter = new Presenter();
-        this.inputValidator = new InputValidator(scanner);
-        this.work = true;
+        this.presenter = new Presenter(this);
+        this.inputValidator = new InputValidator(scanner, this);
+        this.isRunning = true;
     }
 
     /**
-     * Starts the console user interface, displaying a welcome message
-     * and presenting the menu to the user for interaction.
+     * Starts the console application, displaying greetings and presenting the menu to the user.
      */
     @Override
     public void startWork() {
@@ -44,83 +41,103 @@ public class ConsoleUI implements View {
     }
 
     /**
-     * Displays a greeting message to the user.
+     * Displays a welcome message at the beginning of the application.
      */
     private void greetings() {
-        System.out.println("Welcome to the Hotel Management Console Application!");
+        displayMessage("Welcome to the Hotel Management Console Application!");
     }
 
     /**
-     * Continuously displays the menu and processes user selections until
-     * the user decides to exit the application.
+     * Main loop to display the menu, accept user choice, and execute selected option.
+     * Continues until the user exits the application.
+     * @throws NumberFormatException if input is not a valid integer
      */
     private void selectItemFromMenu() {
-        while (work) {
-            System.out.println(menuHandler.getMenu());
-            String menuChoiceStr = scanner.nextLine().trim();
-            if (inputValidator.isValidInteger(menuChoiceStr, MIN_VALID_VALUE, menuHandler.getMenuSize())) {
-                int choice = Integer.parseInt(menuChoiceStr);
-                menuHandler.execute(choice);
-            } else {
-                System.out.println("Invalid menu option entered.\n" +
-                        "Please enter a valid number from the menu: from 1 to " + menuHandler.getMenuSize());
+        while (isRunning) {
+            try {
+                displayMessage(menuHandler.getMenu());
+                int menuChoice = inputValidator.getIntInput("Please select an option from menu:");
+                try {
+                    menuHandler.execute(menuChoice);
+                } catch (WrongMenuChoiceException e) {
+                    displayError(e.getMessage());
+                }
+            } catch (NumberFormatException e) {
+                displayError("Invalid input. Please enter a valid integer from the menu: from 1 to " +
+                        menuHandler.getMenuSize() + ".");
             }
         }
     }
 
     /**
-     * Prompts the user to register a new apartment with a specified price.
+     * Prompts the user to enter a price, validates it, and sends it to the Presenter to register a new apartment.
      */
     @Override
     public void registerApartment() {
-        double price = inputValidator.getValidDouble("Enter price for the apartment (double or integer value): ");
+        double price = inputValidator.getDoubleInput("Enter price for the apartment (double or integer value):");
         presenter.registerApartment(price);
     }
 
     /**
-     * Prompts the user to reserve an apartment by providing the apartment ID
-     * and client name.
+     * Prompts the user to enter an apartment ID and guest name to make a reservation.
+     * Validates inputs and passes them to the Presenter.
      */
     @Override
     public void reserveApartment() {
-        int apartmentsCount = presenter.getApartmentsCount();
-        int reserveId = inputValidator.getValidInteger("Enter apartment ID to reserve (integer value): ",
-                MIN_VALID_VALUE, apartmentsCount);
-        System.out.print("Enter client name: ");
-        String clientName = scanner.nextLine();
+        int reserveId = inputValidator.getIntInput("Enter apartment ID to reserve (integer value):");
+        System.out.println("Enter guest name: ");
+        String clientName = scanner.nextLine().trim();
         presenter.reserveApartment(reserveId, clientName);
     }
 
     /**
-     * Prompts the user to release an apartment from reservation by providing the apartment ID.
+     * Prompts the user to enter an apartment ID to release an existing reservation.
+     * Validates the input and passes it to the Presenter.
      */
     @Override
     public void releaseApartment() {
-        int apartmentsCount = presenter.getApartmentsCount();
-        int releaseId = inputValidator.getValidInteger("Enter apartment ID to release (integer value): ",
-                MIN_VALID_VALUE, apartmentsCount);
+        int releaseId = inputValidator.getIntInput("Enter apartment ID to release (integer value):");
         presenter.releaseApartment(releaseId);
     }
 
     /**
-     * Prompts the user for pagination information and lists apartments based on
-     * the provided page number and size.
+     * Prompts the user to enter page and page size values to view apartments with pagination.
+     * Validates inputs and sends them to the Presenter.
      */
     @Override
     public void listApartments() {
-        int page = inputValidator.getValidInteger("Enter page number (integer value): ",
-                MIN_VALID_VALUE, Integer.MAX_VALUE);
-        int pageSize = inputValidator.getValidInteger("Enter page size (integer value): ",
-                MIN_VALID_VALUE, Integer.MAX_VALUE);
+        int page = inputValidator.getIntInput("Enter page number (integer value):");
+        int pageSize = inputValidator.getIntInput("Enter page size (integer value):");
         presenter.listApartments(page, pageSize);
     }
 
     /**
-     * Ends the operation of the console user interface, displaying a farewell message.
+     * Exits the console application by setting the running flag to false.
+     * Displays a goodbye message to the user.
      */
     @Override
     public void finishWork() {
-        this.work = false;
-        System.out.println("Good bye!");
+        this.isRunning = false;
+        displayMessage("Good bye!");
+    }
+
+    /**
+     * Displays a message to the console output.
+     *
+     * @param message The message to display.
+     */
+    @Override
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
+
+    /**
+     * Displays an error message to the console error output.
+     *
+     * @param errorMessage The error message to display.
+     */
+    @Override
+    public void displayError(String errorMessage) {
+        System.err.println(errorMessage);
     }
 }

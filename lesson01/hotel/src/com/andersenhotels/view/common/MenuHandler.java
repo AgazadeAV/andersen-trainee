@@ -1,22 +1,25 @@
 package com.andersenhotels.view.common;
 
 import com.andersenhotels.view.common.buttons.*;
+import com.andersenhotels.view.common.exception.WrongMenuChoiceException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The MenuHandler class manages the menu options in the console user interface for the hotel management application.
- * It contains a list of buttons representing different actions the user can take and handles user input to execute
- * the corresponding actions.
+ * The `MenuHandler` class manages the display and execution of a menu in the console UI.
+ * It initializes a list of `Button` objects, each representing an action in the application,
+ * and allows the user to execute a selected action.
  */
 public class MenuHandler {
     private List<Button> buttons;
 
     /**
-     * Initializes the MenuHandler with the available buttons for user actions.
+     * Constructs a `MenuHandler` with predefined menu actions.
+     * Initializes buttons for actions such as registering apartments, reserving apartments, releasing apartments,
+     * listing apartments, and exiting the application.
      *
-     * @param view The view instance to which the buttons will be linked.
+     * @param view The `View` instance that each button will interact with.
      */
     public MenuHandler(View view) {
         buttons = new ArrayList<>();
@@ -28,13 +31,14 @@ public class MenuHandler {
     }
 
     /**
-     * Retrieves a formatted string representing the menu options.
+     * Generates and returns a formatted menu as a string.
+     * The menu lists all available options, each associated with a number.
      *
-     * @return A string containing the menu options.
+     * @return A formatted menu string displaying each menu option.
      */
     public String getMenu() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Please select an option from the menu.\nMenu:\n");
+        sb.append("Menu:\n");
         for (int i = 0; i < buttons.size(); i++) {
             sb.append(i + 1)
                     .append(". ")
@@ -45,19 +49,26 @@ public class MenuHandler {
     }
 
     /**
-     * Executes the action corresponding to the user's menu choice.
+     * Executes the action associated with the selected menu option.
+     * Validates the user's choice to ensure it falls within the valid range of menu options.
      *
-     * @param choice the user's menu choice (1-based index)
+     * @param choice The menu option number selected by the user.
+     * @throws WrongMenuChoiceException if the choice is invalid, i.e., outside the range of available options.
      */
     public void execute(int choice) {
-        Button button = buttons.get(choice - 1);
-        button.execute();
+        if (choice >= 1 && choice <= getMenuSize()) {
+            Button button = buttons.get(choice - 1);
+            button.execute();
+        } else {
+            throw new WrongMenuChoiceException("Invalid menu option entered. " +
+                    "Please enter a valid number from the menu: from 1 to " + getMenuSize() + ".");
+        }
     }
 
     /**
-     * Returns the number of menu options available.
+     * Gets the total number of menu options.
      *
-     * @return the size of the menu (number of buttons)
+     * @return The number of buttons in the menu.
      */
     public int getMenuSize() {
         return buttons.size();

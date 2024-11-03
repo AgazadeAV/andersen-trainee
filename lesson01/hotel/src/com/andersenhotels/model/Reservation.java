@@ -4,17 +4,14 @@ import com.andersenhotels.model.exception.ApartmentAlreadyReservedException;
 import com.andersenhotels.model.exception.ApartmentNotReservedException;
 
 /**
- * Represents a reservation for an apartment by a guest.
+ * Manages reservation for an apartment with a guest.
  */
 public class Reservation {
     private Apartment apartment;
     private Guest guest;
 
     /**
-     * Constructs a new Reservation with the specified apartment and guest.
-     *
-     * @param apartment the apartment being reserved.
-     * @param guest the guest making the reservation.
+     * Initializes reservation with an apartment and guest.
      */
     public Reservation(Apartment apartment, Guest guest) {
         this.apartment = apartment;
@@ -22,28 +19,26 @@ public class Reservation {
     }
 
     /**
-     * Creates a reservation for the apartment.
+     * Reserves the apartment if available.
      *
      * @throws ApartmentAlreadyReservedException if the apartment is already reserved.
      */
     public void createReservation() {
         if (apartment.getStatus() == ApartmentStatus.AVAILABLE) {
             apartment.setStatus(ApartmentStatus.RESERVED);
-            System.out.println("Apartment " + apartment.getId() + " reserved for " + guest.getName());
         } else {
             throw new ApartmentAlreadyReservedException("Apartment is already reserved.");
         }
     }
 
     /**
-     * Cancels the reservation for the apartment.
+     * Cancels the reservation if the apartment is reserved.
      *
      * @throws ApartmentNotReservedException if the apartment is not reserved.
      */
     public void cancelReservation() {
         if (apartment.getStatus() == ApartmentStatus.RESERVED) {
             apartment.setStatus(ApartmentStatus.AVAILABLE);
-            System.out.println("Apartment " + apartment.getId() + " released.");
         } else {
             throw new ApartmentNotReservedException("Apartment is not reserved.");
         }

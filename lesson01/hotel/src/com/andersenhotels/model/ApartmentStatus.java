@@ -1,9 +1,9 @@
 package com.andersenhotels.model;
 
 /**
- * Enum representing the possible statuses of an apartment.
+ * Defines the status of an apartment.
  */
 public enum ApartmentStatus {
-    AVAILABLE,  // The apartment is available for reservation
-    RESERVED    // The apartment is currently reserved
+    AVAILABLE, // Apartment is open for reservation
+    RESERVED   // Apartment is currently reserved
 }

@@ -3,46 +3,36 @@ package com.andersenhotels.view.common.buttons;
 import com.andersenhotels.view.common.View;
 
 /**
- * The abstract Button class serves as a base for specific button implementations
- * in the hotel management application. It encapsulates the common behavior
- * and properties of buttons that trigger user actions.
+ * The `Button` class represents an abstract UI button with a description and a reference to the View.
+ * This class is intended to be extended by concrete button classes that define specific behavior.
  */
 public abstract class Button {
-    private final String description;
-    private View view;
+    protected final String description; // Description of the button, typically displayed in the UI
+    protected View view; // Reference to the View, allowing the button to communicate with the UI
 
     /**
-     * Initializes a new Button with the given description and associated view.
+     * Constructs a Button with the given description and view reference.
      *
-     * @param description A string that describes the button's action.
-     * @param view The view instance that will be associated with this button.
+     * @param description A brief description of the button, explaining its purpose.
+     * @param view        A reference to the View where the button action will be performed.
      */
-    public Button(String description, View view) {
+    protected Button(String description, View view) {
         this.description = description;
         this.view = view;
     }
 
     /**
-     * Returns the associated view instance.
+     * Returns the description of the button, which may be displayed in the UI.
      *
-     * @return The view associated with this button.
-     */
-    protected View getView() {
-        return view;
-    }
-
-    /**
-     * Returns a description of the button.
-     *
-     * @return A string representing the button's description.
+     * @return The description of this button.
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * Executes the action associated with this button. Concrete subclasses
-     * must provide an implementation for this method.
+     * Abstract method to execute the button's action.
+     * Each subclass must define its own implementation of this method, specifying the behavior when the button is pressed.
      */
     public abstract void execute();
 }

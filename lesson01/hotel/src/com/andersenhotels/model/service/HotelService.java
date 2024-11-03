@@ -3,105 +3,149 @@ package com.andersenhotels.model.service;
 import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.Guest;
 import com.andersenhotels.model.Reservation;
+import com.andersenhotels.model.exception.*;
 
 import java.util.*;
 
 /**
- * The HotelService class manages the registration, reservation,
- * and listing of apartments in the hotel.
+ * HotelService is a service class that manages hotel apartments, reservations,
+ * and guests in a hotel management system. It provides functionality for
+ * registering apartments, reserving apartments for guests, releasing apartments,
+ * and listing apartments with pagination support.
  */
 public class HotelService {
     private Map<Integer, Apartment> apartments;
+    private Map<Integer, Reservation> reservations;
     private int nextId;
 
     /**
-     * Constructs a new HotelService instance with an empty apartment registry
-     * and initializes the next available apartment ID.
+     * Constructs a new HotelService with empty maps for apartments and reservations
+     * and initializes the next ID to 1.
      */
     public HotelService() {
-        apartments = new HashMap<>();
-        nextId = 1;
+        this.apartments = new HashMap<>();
+        this.reservations = new HashMap<>();
+        this.nextId = 1;
     }
 
     /**
-     * Registers a new apartment with the specified price.
+     * Registers a new apartment with a specified price.
      *
-     * @param price the price of the apartment.
+     * @param price The price of the apartment. Must be positive.
+     * @throws InvalidPriceException if the price is negative.
      */
     public void registerApartment(double price) {
+        if (price < 0) {
+            throw new InvalidPriceException("The price should be a positive number. Please try again.");
+        }
         Apartment apartment = new Apartment(nextId++, price);
         apartments.put(apartment.getId(), apartment);
-        System.out.println("Apartment registered: " + apartment);
     }
 
     /**
-     * Returns the total count of registered apartments.
+     * Gets the total number of apartments registered in the hotel.
      *
-     * @return the number of apartments.
+     * @return The count of apartments.
      */
     public int getApartmentsCount() {
         return apartments.size();
     }
 
     /**
-     * Reserves an apartment for a guest with the specified name.
+     * Reserves an apartment for a guest by apartment ID and guest name.
      *
-     * @param id the ID of the apartment to be reserved.
-     * @param guestName the name of the guest reserving the apartment.
+     * @param id        The ID of the apartment to reserve.
+     * @param guestName The name of the guest. Cannot be null or start with a digit.
+     * @throws ApartmentNotFoundException if the apartment is not found.
+     * @throws InvalidApartmentIdException if the apartment ID is invalid.
+     * @throws InvalidNameException if the guest name is invalid.
      */
     public void reserveApartment(int id, String guestName) {
+        validateApartmentId(id);
+        validateGuestName(guestName);
+
         Apartment apartment = apartments.get(id);
-        if (apartment != null) {
-            Guest guest = new Guest(guestName);
-            Reservation reservation = new Reservation(apartment, guest);
-            try {
-                reservation.createReservation();
-            } catch (RuntimeException e) {
-                System.out.println(e.getMessage());
-            }
-        } else {
-            System.out.println("Apartment not found.");
+        if (apartment == null) {
+            throw new ApartmentNotFoundException("Apartment not found for the given ID.");
+        }
+
+        Guest guest = new Guest(guestName);
+        Reservation reservation = new Reservation(apartment, guest);
+        reservation.createReservation();
+        reservations.put(id, reservation);
+    }
+
+    /**
+     * Validates the apartment ID to ensure it is within the valid range.
+     *
+     * @param id The ID of the apartment to validate.
+     * @throws InvalidApartmentIdException if the ID is out of range.
+     */
+    private void validateApartmentId(int id) {
+        if (id < 1 || id > getApartmentsCount()) {
+            throw new InvalidApartmentIdException("Invalid apartment ID. Please enter a number between 1 and " +
+                    getApartmentsCount() + ".");
         }
     }
 
     /**
-     * Releases the reservation of an apartment by its ID.
+     * Validates the guest name to ensure it is not null, empty, or starts with a digit.
      *
-     * @param id the ID of the apartment to be released.
+     * @param guestName The name of the guest to validate.
+     * @throws InvalidNameException if the guest name is null, empty, or starts with a number.
+     */
+    private void validateGuestName(String guestName) {
+        if (guestName == null || guestName.isEmpty() || Character.isDigit(guestName.charAt(0))) {
+            throw new InvalidNameException("Guest name cannot be null or start with a number.");
+        }
+    }
+
+    /**
+     * Releases a reserved apartment by its ID. Removes the reservation if it exists.
+     *
+     * @param id The ID of the apartment to release.
+     * @throws InvalidApartmentIdException if the apartment ID is invalid.
+     * @throws ApartmentNotReservedException if the apartment is not currently reserved.
      */
     public void releaseApartment(int id) {
-        Apartment apartment = apartments.get(id);
-        if (apartment != null) {
-            Guest guest = new Guest("");
-            Reservation reservation = new Reservation(apartment, guest);
-            try {
-                reservation.cancelReservation();
-            } catch (RuntimeException e) {
-                System.out.println(e.getMessage());
-            }
+        validateApartmentId(id);
+        Reservation reservation = reservations.get(id);
+
+        if (reservation != null) {
+            reservation.cancelReservation();
+            reservations.remove(id);
         } else {
-            System.out.println("Apartment not found.");
+            throw new ApartmentNotReservedException("Apartment is not reserved. Please try again.");
         }
     }
 
     /**
-     * Lists the apartments on the specified page with a defined page size.
+     * Lists apartments with pagination support.
      *
-     * @param page the page number to display.
-     * @param pageSize the number of apartments to display per page.
+     * @param page     The page number to retrieve.
+     * @param pageSize The number of apartments per page.
+     * @return A list of apartments for the specified page.
+     * @throws ApartmentNotFoundException if the page or page size is invalid or no apartments are found.
      */
-    public void listApartments(int page, int pageSize) {
+    public List<Apartment> listApartments(int page, int pageSize) {
+        if (page <= 0 || pageSize <= 0) {
+            throw new ApartmentNotFoundException("Page number and page size must be greater than 0.");
+        }
+
         List<Apartment> apartmentList = new ArrayList<>(apartments.values());
+        if (apartmentList.isEmpty()) {
+            throw new ApartmentNotFoundException("No apartments found. Please register any apartment.");
+        }
+
+        int totalPages = (int) Math.ceil((double) apartmentList.size() / pageSize);
+        if (page > totalPages) {
+            throw new ApartmentNotFoundException("No apartments found for the requested page number. " +
+                    "Valid page numbers are from 1 to " + totalPages + ".");
+        }
+
         int start = (page - 1) * pageSize;
         int end = Math.min(start + pageSize, apartmentList.size());
 
-        if (start >= apartmentList.size() || start < 0) {
-            System.out.println("No apartments found on this page.");
-            return;
-        }
-
-        for (int i = start; i < end; i++) {
-            System.out.println(apartmentList.get(i));
-        }
+        return apartmentList.subList(start, end);
     }
 }

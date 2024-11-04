@@ -16,6 +16,7 @@ import java.util.*;
 public class HotelService {
     private Map<Integer, Apartment> apartments;
     private Map<Integer, Reservation> reservations;
+    private ValueValidator valueValidator;
     private int nextId;
 
     /**
@@ -25,6 +26,7 @@ public class HotelService {
     public HotelService() {
         this.apartments = new HashMap<>();
         this.reservations = new HashMap<>();
+        this.valueValidator = new ValueValidator(this);
         this.nextId = 1;
     }
 
@@ -61,8 +63,8 @@ public class HotelService {
      * @throws InvalidNameException if the guest name is invalid.
      */
     public void reserveApartment(int id, String guestName) {
-        validateApartmentId(id);
-        validateGuestName(guestName);
+        valueValidator.validateApartmentId(id);
+        valueValidator.validateGuestName(guestName);
 
         Apartment apartment = apartments.get(id);
         if (apartment == null) {
@@ -76,31 +78,6 @@ public class HotelService {
     }
 
     /**
-     * Validates the apartment ID to ensure it is within the valid range.
-     *
-     * @param id The ID of the apartment to validate.
-     * @throws InvalidApartmentIdException if the ID is out of range.
-     */
-    private void validateApartmentId(int id) {
-        if (id < 1 || id > getApartmentsCount()) {
-            throw new InvalidApartmentIdException("Invalid apartment ID. Please enter a number between 1 and " +
-                    getApartmentsCount() + ".");
-        }
-    }
-
-    /**
-     * Validates the guest name to ensure it is not null, empty, or starts with a digit.
-     *
-     * @param guestName The name of the guest to validate.
-     * @throws InvalidNameException if the guest name is null, empty, or starts with a number.
-     */
-    private void validateGuestName(String guestName) {
-        if (guestName == null || guestName.isEmpty() || Character.isDigit(guestName.charAt(0))) {
-            throw new InvalidNameException("Guest name cannot be null or start with a number.");
-        }
-    }
-
-    /**
      * Releases a reserved apartment by its ID. Removes the reservation if it exists.
      *
      * @param id The ID of the apartment to release.
@@ -108,7 +85,7 @@ public class HotelService {
      * @throws ApartmentNotReservedException if the apartment is not currently reserved.
      */
     public void releaseApartment(int id) {
-        validateApartmentId(id);
+        valueValidator.validateApartmentId(id);
         Reservation reservation = reservations.get(id);
 
         if (reservation != null) {

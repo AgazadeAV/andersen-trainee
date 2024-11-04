@@ -1,4 +1,4 @@
-package com.andersenhotels.model.exception;
+package com.andersenhotels.presenter.exceptions;
 
 public class InvalidPriceException extends RuntimeException {
   public InvalidPriceException(String message) {

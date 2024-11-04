@@ -1,7 +1,7 @@
 package com.andersenhotels.presenter;
 
 import com.andersenhotels.model.Apartment;
-import com.andersenhotels.model.exception.*;
+import com.andersenhotels.presenter.exceptions.*;
 import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.view.common.View;
 

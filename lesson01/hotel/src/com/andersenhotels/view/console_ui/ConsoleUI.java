@@ -3,7 +3,7 @@ package com.andersenhotels.view.console_ui;
 import com.andersenhotels.presenter.Presenter;
 import com.andersenhotels.view.common.MenuHandler;
 import com.andersenhotels.view.common.View;
-import com.andersenhotels.view.common.exception.WrongMenuChoiceException;
+import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 
 import java.util.Scanner;
 

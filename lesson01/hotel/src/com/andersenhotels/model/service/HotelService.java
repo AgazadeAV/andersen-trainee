@@ -3,7 +3,7 @@ package com.andersenhotels.model.service;
 import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.Guest;
 import com.andersenhotels.model.Reservation;
-import com.andersenhotels.model.exception.*;
+import com.andersenhotels.presenter.exceptions.*;
 
 import java.util.*;
 

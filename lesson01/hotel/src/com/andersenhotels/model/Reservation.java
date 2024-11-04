@@ -1,7 +1,7 @@
 package com.andersenhotels.model;
 
-import com.andersenhotels.model.exception.ApartmentAlreadyReservedException;
-import com.andersenhotels.model.exception.ApartmentNotReservedException;
+import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException;
+import com.andersenhotels.presenter.exceptions.ApartmentNotReservedException;
 
 /**
  * Manages reservation for an apartment with a guest.

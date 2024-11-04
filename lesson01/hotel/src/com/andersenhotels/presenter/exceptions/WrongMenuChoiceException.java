@@ -1,4 +1,4 @@
-package com.andersenhotels.view.common.exception;
+package com.andersenhotels.presenter.exceptions;
 
 public class WrongMenuChoiceException extends RuntimeException {
     public WrongMenuChoiceException(String message) {

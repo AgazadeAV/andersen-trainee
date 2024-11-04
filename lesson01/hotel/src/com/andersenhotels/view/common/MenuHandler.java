@@ -1,7 +1,7 @@
 package com.andersenhotels.view.common;
 
 import com.andersenhotels.view.common.buttons.*;
-import com.andersenhotels.view.common.exception.WrongMenuChoiceException;
+import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 
 import java.util.ArrayList;
 import java.util.List;

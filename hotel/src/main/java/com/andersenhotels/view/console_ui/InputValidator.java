@@ -26,6 +26,18 @@ class InputValidator {
     }
 
     /**
+     * Constructs an `InputValidator` with the specified View and Scanner.
+     * Primarily used for testing to provide a mock Scanner.
+     *
+     * @param view    The View instance used to display messages and error prompts.
+     * @param scanner A Scanner instance, typically mocked for testing.
+     */
+    InputValidator(View view, Scanner scanner) {
+        this.scanner = scanner;
+        this.view = view;
+    }
+
+    /**
      * Continuously prompts the user for an integer input until a valid integer is entered.
      * If the input is not a valid integer, displays an error message and re-prompts.
      *

@@ -54,7 +54,7 @@ public class ConsoleUI implements View {
     /**
      * Displays a welcome message when the application begins.
      */
-    private void greetings() {
+    void greetings() {
         displayMessage("Welcome to the Hotel Management Console Application!");
     }
 
@@ -64,7 +64,7 @@ public class ConsoleUI implements View {
      *
      * @throws NumberFormatException if the input is not a valid integer.
      */
-    private void selectItemFromMenu() {
+    void selectItemFromMenu() {
         while (isRunning) {
             try {
                 displayMessage(menuHandler.getMenu());

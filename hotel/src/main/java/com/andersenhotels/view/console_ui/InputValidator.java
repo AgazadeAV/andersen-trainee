@@ -5,7 +5,7 @@ import com.andersenhotels.view.common.View;
 import java.util.Scanner;
 
 /**
- * The `InputValidator` class provides methods to validate and retrieve integer and double inputs from the user.
+ * The `InputValidator` class provides methods to validate and retrieve integer, double and string inputs from the user.
  * It displays error messages when invalid input is detected, prompting the user to try again until valid input is received.
  * <p>
  * This class is useful in console-based applications to ensure that user inputs meet expected data types,
@@ -18,11 +18,10 @@ class InputValidator {
     /**
      * Constructs an `InputValidator` with the specified Scanner and View.
      *
-     * @param scanner The Scanner instance for reading user input from the console.
      * @param view    The View instance used to display messages and error prompts, allowing feedback to the user.
      */
-    InputValidator(Scanner scanner, View view) {
-        this.scanner = scanner;
+    InputValidator(View view) {
+        this.scanner = new Scanner(System.in);
         this.view = view;
     }
 
@@ -62,5 +61,21 @@ class InputValidator {
                 view.displayError("Invalid number. Please enter a valid double or integer value.");
             }
         }
+    }
+
+    /**
+     * Prompts the user for a string input and returns the entered value after trimming
+     * any leading or trailing whitespace.
+     * <p>
+     * This method does not perform additional validation on the input, allowing the user
+     * to enter any string, including empty or whitespace-only strings. It displays the specified
+     * prompt message to guide the user.
+     *
+     * @param prompt The message displayed to the user to prompt for input.
+     * @return The user-provided string, trimmed of leading and trailing whitespace.
+     */
+    String getStringInput(String prompt) {
+        view.displayMessage(prompt);
+        return scanner.nextLine().trim();
     }
 }

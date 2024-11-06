@@ -12,6 +12,5 @@ public class RegisterApartment extends Button {
         if (view.registerApartment()) {
             view.displayMessage("Apartment registered successfully.");
         }
-
     }
 }

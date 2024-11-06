@@ -34,6 +34,10 @@ public class MenuHandler {
         buttons.add(new Exit(view));
     }
 
+    public List<Button> getButtons() {
+        return buttons;
+    }
+
     /**
      * Generates and returns a formatted menu string.
      * This string lists all available options, each with an associated number, allowing the user

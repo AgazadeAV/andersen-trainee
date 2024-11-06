@@ -7,7 +7,6 @@ import com.andersenhotels.view.common.MenuHandler;
 import com.andersenhotels.view.common.View;
 
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * ConsoleUI provides a text-based user interface for interacting with the hotel management system.
@@ -18,22 +17,28 @@ import java.util.Scanner;
  * functionality managed by `Presenter`.
  */
 public class ConsoleUI implements View {
-    private Scanner scanner;
     private MenuHandler menuHandler;
     private Presenter presenter;
     private InputValidator inputValidator;
     private boolean isRunning;
 
     /**
-     * Constructs a new ConsoleUI instance with an initialized scanner, menu handler,
+     * Constructs a new ConsoleUI instance with an initialized menu handler,
      * presenter, and input validator. Sets the application to a running state.
      */
     public ConsoleUI() {
-        this.scanner = new Scanner(System.in);
         this.menuHandler = new MenuHandler(this);
         this.presenter = new Presenter(this);
-        this.inputValidator = new InputValidator(scanner, this);
+        this.inputValidator = new InputValidator(this);
         this.isRunning = true;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
     }
 
     /**
@@ -97,9 +102,8 @@ public class ConsoleUI implements View {
     @Override
     public boolean reserveApartment() {
         int reserveId = inputValidator.getIntInput("Enter apartment ID to reserve (integer value):");
-        System.out.println("Enter guest name: ");
-        String clientName = scanner.nextLine().trim();
-        return presenter.reserveApartment(reserveId, clientName);
+        String guestName = inputValidator.getStringInput("Enter guest name: ");
+        return presenter.reserveApartment(reserveId, guestName);
     }
 
     /**

@@ -69,7 +69,7 @@ public class HotelService {
 
         Apartment apartment = apartments.get(id);
         if (apartment == null) {
-            throw new ApartmentNotFoundException("Apartment not found for the given ID.");
+            throw new InvalidApartmentIdException("Apartment not found for the given ID.");
         }
 
         Guest guest = new Guest(guestName);

@@ -32,6 +32,29 @@ public class Presenter {
     }
 
     /**
+     * Constructs a new `Presenter` using a specified `View` and a mockable `HotelService` instance.
+     * <p>
+     * This constructor is intended primarily for testing purposes, allowing the injection
+     * of a mock `HotelService` to facilitate controlled testing scenarios without relying
+     * on the production service behavior. By using this constructor, unit tests can verify
+     * the behavior of the `Presenter` class while simulating interactions with `HotelService`
+     * and `View`, making it possible to inject mocks and control responses.
+     * <p>
+     * In the production environment, use the primary constructor {@link #Presenter(View)}
+     * that instantiates its own `HotelService`.
+     *
+     * @param view         The `View` instance used for user interaction in the UI layer. It displays
+     *                     messages and errors to the user.
+     * @param hotelService The `HotelService` instance, typically mocked during testing to verify and control
+     *                     interactions with the business logic layer.
+     */
+    public Presenter(View view, HotelService hotelService) {
+        this.hotelService = hotelService;
+        this.view = view;
+    }
+
+
+    /**
      * Registers a new apartment with a specified rental price by invoking the `HotelService`.
      * If the registration is successful, a success message is displayed to the user.
      * If the price is invalid, an error message is displayed instead.
@@ -56,16 +79,16 @@ public class Presenter {
      * an invalid ID or already reserved apartment, are displayed as error messages.
      *
      * @param id         The ID of the apartment to reserve. Expected to be within the range of registered apartments.
-     * @param clientName The name of the client reserving the apartment. Should be a non-null, valid name.
+     * @param guestName The name of the client reserving the apartment. Should be a non-null, valid name.
      * @return `true` if the reservation was successfully created, `false` if an error occurred.
      * @throws ApartmentNotFoundException        if the apartment with the given ID does not exist.
      * @throws ApartmentAlreadyReservedException if the apartment is already reserved.
      * @throws InvalidApartmentIdException       if the provided apartment ID is invalid.
      * @throws InvalidNameException              if the client name is invalid (e.g., null or improperly formatted).
      */
-    public boolean reserveApartment(int id, String clientName) {
+    public boolean reserveApartment(int id, String guestName) {
         try {
-            hotelService.reserveApartment(id, clientName);
+            hotelService.reserveApartment(id, guestName);
             return true;
         } catch (ApartmentNotFoundException | ApartmentAlreadyReservedException |
                  InvalidApartmentIdException | InvalidNameException e) {

@@ -1,10 +1,12 @@
 package com.andersenhotels.view.common;
 
+import java.util.List;
+
 /**
  * The `View` interface defines the contract for a user interface in the hotel management application.
  * It provides methods to initiate and terminate application workflows, manage apartment-related operations,
  * and display messages and errors to the user.
- *
+ * <p>
  * Implementations of this interface handle the interaction between the user and the application's core functionality.
  */
 public interface View {
@@ -29,28 +31,28 @@ public interface View {
      * Implementations should request required apartment details (e.g., price)
      * from the user and pass this information to the application's backend.
      */
-    void registerApartment();
+    boolean registerApartment();
 
     /**
      * Initiates the process of reserving an apartment for a guest.
      * Implementations should prompt the user for the apartment ID and guest name,
      * then proceed to create a reservation if the inputs are valid.
      */
-    void reserveApartment();
+    boolean reserveApartment();
 
     /**
      * Initiates the process of releasing a reserved apartment.
      * Implementations should prompt the user for the apartment ID,
      * validate the input, and release the reservation if appropriate.
      */
-    void releaseApartment();
+    boolean releaseApartment();
 
     /**
      * Lists available apartments in the system, supporting pagination
      * by allowing the user to specify a page number and page size.
      * Implementations should display apartment information in a readable format.
      */
-    void listApartments();
+    List<String> listApartments();
 
     /**
      * Displays a generic message to the user.

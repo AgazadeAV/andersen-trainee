@@ -6,6 +6,7 @@ import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.view.common.MenuHandler;
 import com.andersenhotels.view.common.View;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -51,6 +52,7 @@ public class ConsoleUI implements View {
     /**
      * Main loop to display the menu, accept user choice, and execute selected option.
      * Continues until the user exits the application.
+     *
      * @throws NumberFormatException if input is not a valid integer
      */
     private void selectItemFromMenu() {
@@ -74,9 +76,9 @@ public class ConsoleUI implements View {
      * Prompts the user to enter a price, validates it, and sends it to the Presenter to register a new apartment.
      */
     @Override
-    public void registerApartment() {
+    public boolean registerApartment() {
         double price = inputValidator.getDoubleInput("Enter price for the apartment (double or integer value):");
-        presenter.registerApartment(price);
+        return presenter.registerApartment(price);
     }
 
     /**
@@ -84,11 +86,11 @@ public class ConsoleUI implements View {
      * Validates inputs and passes them to the Presenter.
      */
     @Override
-    public void reserveApartment() {
+    public boolean reserveApartment() {
         int reserveId = inputValidator.getIntInput("Enter apartment ID to reserve (integer value):");
         System.out.println("Enter guest name: ");
         String clientName = scanner.nextLine().trim();
-        presenter.reserveApartment(reserveId, clientName);
+        return presenter.reserveApartment(reserveId, clientName);
     }
 
     /**
@@ -96,9 +98,9 @@ public class ConsoleUI implements View {
      * Validates the input and passes it to the Presenter.
      */
     @Override
-    public void releaseApartment() {
+    public boolean releaseApartment() {
         int releaseId = inputValidator.getIntInput("Enter apartment ID to release (integer value):");
-        presenter.releaseApartment(releaseId);
+        return presenter.releaseApartment(releaseId);
     }
 
     /**
@@ -106,13 +108,14 @@ public class ConsoleUI implements View {
      * Validates inputs and sends them to the Presenter.
      */
     @Override
-    public void listApartments() {
+    public List<String> listApartments() {
         int totalPages = presenter.getTotalPages();
-        if (totalPages <= 0 ) {
-                throw new ApartmentNotFoundException("No apartments registered. Nothing to show.");
+        if (totalPages <= 0) {
+            throw new ApartmentNotFoundException("No apartments registered. Nothing to show.");
         }
-        int page = inputValidator.getIntInput("Enter page number from 1 to " + totalPages + " (integer value):");
-        presenter.listApartments(page);
+        int page = inputValidator.getIntInput("Enter page number from 1 to " + totalPages +
+                " (integer value)\nPage size is 5:");
+        return presenter.listApartments(page);
     }
 
     /**

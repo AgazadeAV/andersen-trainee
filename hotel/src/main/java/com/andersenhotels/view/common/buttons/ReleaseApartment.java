@@ -9,6 +9,8 @@ public class ReleaseApartment extends Button {
 
     @Override
     public void execute() {
-        view.releaseApartment();
+        if (view.releaseApartment()) {
+            view.displayMessage("Apartment released successfully.");
+        }
     }
 }

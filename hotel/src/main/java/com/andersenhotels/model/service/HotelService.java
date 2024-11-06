@@ -60,9 +60,9 @@ public class HotelService {
      *
      * @param id        The ID of the apartment to reserve.
      * @param guestName The name of the guest. Cannot be null or start with a digit.
-     * @throws ApartmentNotFoundException if the apartment is not found.
+     * @throws ApartmentNotFoundException  if the apartment is not found.
      * @throws InvalidApartmentIdException if the apartment ID is invalid.
-     * @throws InvalidNameException if the guest name is invalid.
+     * @throws InvalidNameException        if the guest name is invalid.
      */
     public void reserveApartment(int id, String guestName) {
         valueValidator.validateApartmentId(id);
@@ -83,7 +83,7 @@ public class HotelService {
      * Releases a reserved apartment by its ID. Removes the reservation if it exists.
      *
      * @param id The ID of the apartment to release.
-     * @throws InvalidApartmentIdException if the apartment ID is invalid.
+     * @throws InvalidApartmentIdException   if the apartment ID is invalid.
      * @throws ApartmentNotReservedException if the apartment is not currently reserved.
      */
     public void releaseApartment(int id) {
@@ -101,7 +101,7 @@ public class HotelService {
     /**
      * Lists apartments with pagination support.
      *
-     * @param page     The page number to retrieve.
+     * @param page The page number to retrieve.
      * @return A list of apartments for the specified page.
      * @throws ApartmentNotFoundException if the page or page size is invalid or no apartments are found.
      */

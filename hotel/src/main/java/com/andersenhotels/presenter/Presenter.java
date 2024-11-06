@@ -87,17 +87,20 @@ public class Presenter {
      * If no apartments are found, displays an error.
      *
      * @param page     The page number to display.
-     * @param pageSize The number of apartments per page.
      * @throws ApartmentNotFoundException if no apartments are found for the given page and page size.
      */
-    public void listApartments(int page, int pageSize) {
+    public void listApartments(int page) {
         try {
-            List<Apartment> apartments = hotelService.listApartments(page, pageSize);
+            List<Apartment> apartments = hotelService.listApartments(page);
             for (Apartment apartment : apartments) {
                 view.displayMessage(String.format("%s", apartment));
             }
         } catch (ApartmentNotFoundException e) {
             view.displayError(e.getMessage());
         }
+    }
+
+    public int getTotalPages() {
+        return hotelService.getTotalPages();
     }
 }

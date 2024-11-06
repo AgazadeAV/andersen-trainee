@@ -1,5 +1,6 @@
 package com.andersenhotels.view.common.buttons;
 
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.view.common.View;
 
 public class ListApartments extends Button {
@@ -9,6 +10,10 @@ public class ListApartments extends Button {
 
     @Override
     public void execute() {
-        view.listApartments();
+        try {
+            view.listApartments();
+        } catch (ApartmentNotFoundException e) {
+            view.displayError(e.getMessage());
+        }
     }
 }

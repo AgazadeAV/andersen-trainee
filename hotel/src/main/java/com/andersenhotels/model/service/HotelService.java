@@ -14,6 +14,8 @@ import java.util.*;
  * and listing apartments with pagination support.
  */
 public class HotelService {
+    private static final int PAGE_SIZE = 5;
+
     private Map<Integer, Apartment> apartments;
     private Map<Integer, Reservation> reservations;
     private ValueValidator valueValidator;
@@ -100,29 +102,28 @@ public class HotelService {
      * Lists apartments with pagination support.
      *
      * @param page     The page number to retrieve.
-     * @param pageSize The number of apartments per page.
      * @return A list of apartments for the specified page.
      * @throws ApartmentNotFoundException if the page or page size is invalid or no apartments are found.
      */
-    public List<Apartment> listApartments(int page, int pageSize) {
-        if (page <= 0 || pageSize <= 0) {
+    public List<Apartment> listApartments(int page) {
+        if (page <= 0 || PAGE_SIZE <= 0) {
             throw new ApartmentNotFoundException("Page number and page size must be greater than 0.");
         }
 
         List<Apartment> apartmentList = new ArrayList<>(apartments.values());
-        if (apartmentList.isEmpty()) {
-            throw new ApartmentNotFoundException("No apartments found. Please register any apartment.");
-        }
 
-        int totalPages = (int) Math.ceil((double) apartmentList.size() / pageSize);
-        if (page > totalPages) {
+        if (page > getTotalPages()) {
             throw new ApartmentNotFoundException("No apartments found for the requested page number. " +
-                    "Valid page numbers are from 1 to " + totalPages + ".");
+                    "Valid page numbers are from 1 to " + getTotalPages() + ".");
         }
 
-        int start = (page - 1) * pageSize;
-        int end = Math.min(start + pageSize, apartmentList.size());
+        int start = (page - 1) * PAGE_SIZE;
+        int end = Math.min(start + PAGE_SIZE, apartmentList.size());
 
         return apartmentList.subList(start, end);
+    }
+
+    public int getTotalPages() {
+        return (int) Math.ceil((double) apartments.size() / PAGE_SIZE);
     }
 }

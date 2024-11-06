@@ -1,9 +1,10 @@
 package com.andersenhotels.view.console_ui;
 
 import com.andersenhotels.presenter.Presenter;
+import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.view.common.MenuHandler;
 import com.andersenhotels.view.common.View;
-import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 
 import java.util.Scanner;
 
@@ -106,9 +107,12 @@ public class ConsoleUI implements View {
      */
     @Override
     public void listApartments() {
-        int page = inputValidator.getIntInput("Enter page number (integer value):");
-        int pageSize = inputValidator.getIntInput("Enter page size (integer value):");
-        presenter.listApartments(page, pageSize);
+        int totalPages = presenter.getTotalPages();
+        if (totalPages <= 0 ) {
+                throw new ApartmentNotFoundException("No apartments registered. Nothing to show.");
+        }
+        int page = inputValidator.getIntInput("Enter page number from 1 to " + totalPages + " (integer value):");
+        presenter.listApartments(page);
     }
 
     /**

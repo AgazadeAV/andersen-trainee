@@ -4,9 +4,9 @@ import com.andersenhotels.presenter.exceptions.InvalidApartmentIdException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 
 /**
- * A utility class responsible for validating various values related to hotel services, such as
- * apartment IDs and guest names. Ensures that the inputs meet specified criteria and throws
- * exceptions if validation fails.
+ * A utility class responsible for validating various input values for the hotel services.
+ * Ensures inputs such as apartment IDs and guest names meet specific criteria, enhancing data integrity.
+ * Throws custom exceptions when validation fails, enabling clear error handling in the application.
  */
 class ValueValidator {
     private HotelService hotelService;
@@ -14,19 +14,22 @@ class ValueValidator {
     /**
      * Constructs a new ValueValidator instance with the specified HotelService dependency.
      *
-     * @param hotelService The hotel service to use for retrieving hotel-specific information,
-     *                     such as the total number of apartments.
-     *                     It cannot be null and should be properly initialized.
+     * @param hotelService The hotel service instance that provides access to hotel-specific data,
+     *                     such as the total number of registered apartments.
+     *                     This dependency must be initialized and non-null.
      */
     ValueValidator(HotelService hotelService) {
         this.hotelService = hotelService;
     }
 
     /**
-     * Validates the apartment ID to ensure it is within the valid range.
+     * Validates an apartment ID to confirm it is within the valid range of existing apartments.
+     * The valid range is determined by the current number of apartments in the HotelService instance.
      *
-     * @param id The ID of the apartment to validate.
-     * @throws InvalidApartmentIdException if the ID is out of range.
+     * @param id The ID of the apartment to validate. Expected to be a positive integer within the
+     *           range of available apartment IDs.
+     * @throws InvalidApartmentIdException if the ID is less than 1 or exceeds the current total apartment count.
+     *                                     The exception message specifies the acceptable range to guide user input.
      */
     void validateApartmentId(int id) {
         if (id < 1 || id > hotelService.getApartmentsCount()) {
@@ -36,14 +39,19 @@ class ValueValidator {
     }
 
     /**
-     * Validates the guest name to ensure it is not null, empty, or starts with a digit.
+     * Validates a guest name to ensure it conforms to specific criteria:
+     * - The name must not be null or empty.
+     * - The name should not start with a digit, ensuring names are meaningful and readable.
+     * This validation prevents unintended formatting issues and helps maintain data consistency for guest names.
      *
-     * @param guestName The name of the guest to validate.
-     * @throws InvalidNameException if the guest name is null, empty, or starts with a number.
+     * @param guestName The name of the guest to validate. Expected to be a non-null, non-empty string
+     *                  that does not start with a numeric character.
+     * @throws InvalidNameException if the guest name is null, empty, or begins with a digit.
+     *                              Provides feedback on why the name is considered invalid.
      */
     void validateGuestName(String guestName) {
         if (guestName == null || guestName.isEmpty() || Character.isDigit(guestName.charAt(0))) {
-            throw new InvalidNameException("Guest name cannot be null or start with a number.");
+            throw new InvalidNameException("Guest name cannot be null, empty, or start with a number.");
         }
     }
 }

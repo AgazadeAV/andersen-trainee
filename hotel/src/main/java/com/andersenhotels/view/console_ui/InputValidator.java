@@ -6,7 +6,10 @@ import java.util.Scanner;
 
 /**
  * The `InputValidator` class provides methods to validate and retrieve integer and double inputs from the user.
- * It displays error messages and prompts the user to retry if invalid input is provided.
+ * It displays error messages when invalid input is detected, prompting the user to try again until valid input is received.
+ * <p>
+ * This class is useful in console-based applications to ensure that user inputs meet expected data types,
+ * thus preventing runtime errors and improving the user experience by guiding them toward correct input formats.
  */
 class InputValidator {
     private Scanner scanner;
@@ -15,8 +18,8 @@ class InputValidator {
     /**
      * Constructs an `InputValidator` with the specified Scanner and View.
      *
-     * @param scanner The Scanner to read input from.
-     * @param view    The View used to display messages and errors.
+     * @param scanner The Scanner instance for reading user input from the console.
+     * @param view    The View instance used to display messages and error prompts, allowing feedback to the user.
      */
     InputValidator(Scanner scanner, View view) {
         this.scanner = scanner;
@@ -24,11 +27,12 @@ class InputValidator {
     }
 
     /**
-     * Prompts the user for an integer input, displays an error if the input is invalid,
-     * and keeps prompting until a valid integer is entered.
+     * Continuously prompts the user for an integer input until a valid integer is entered.
+     * If the input is not a valid integer, displays an error message and re-prompts.
      *
-     * @param prompt The prompt message to display to the user.
-     * @return A valid integer input from the user.
+     * @param prompt The message displayed to the user to prompt for input.
+     * @return A valid integer provided by the user.
+     * @throws NumberFormatException if the user input cannot be parsed to an integer, which is handled within the loop.
      */
     int getIntInput(String prompt) {
         while (true) {
@@ -42,11 +46,12 @@ class InputValidator {
     }
 
     /**
-     * Prompts the user for a double input, displays an error if the input is invalid,
-     * and keeps prompting until a valid double is entered.
+     * Continuously prompts the user for a double input until a valid double is entered.
+     * If the input is not a valid double, displays an error message and re-prompts.
      *
-     * @param prompt The prompt message to display to the user.
-     * @return A valid double input from the user.
+     * @param prompt The message displayed to the user to prompt for input.
+     * @return A valid double provided by the user.
+     * @throws NumberFormatException if the user input cannot be parsed to a double, which is handled within the loop.
      */
     double getDoubleInput(String prompt) {
         while (true) {

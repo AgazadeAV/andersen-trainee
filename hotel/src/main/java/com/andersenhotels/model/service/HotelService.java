@@ -8,12 +8,12 @@ import com.andersenhotels.presenter.exceptions.*;
 import java.util.*;
 
 /**
- * HotelService is a service class that manages hotel apartments, reservations,
- * and guests in a hotel management system. It provides functionality for
- * registering apartments, reserving apartments for guests, releasing apartments,
- * and listing apartments with pagination support.
+ * Service class that provides core functionalities for managing
+ * hotel apartments, including apartment registration, reservation handling,
+ * and pagination of available apartments.
  */
 public class HotelService {
+    // Defines the maximum number of apartments displayed per page.
     private static final int PAGE_SIZE = 5;
 
     private Map<Integer, Apartment> apartments;
@@ -22,8 +22,8 @@ public class HotelService {
     private int nextId;
 
     /**
-     * Constructs a new HotelService with empty maps for apartments and reservations
-     * and initializes the next ID to 1.
+     * Constructor that initializes the HotelService with empty apartment
+     * and reservation lists and sets up a validator instance.
      */
     public HotelService() {
         this.apartments = new HashMap<>();
@@ -35,7 +35,7 @@ public class HotelService {
     /**
      * Registers a new apartment with a specified price.
      *
-     * @param price The price of the apartment. Must be positive.
+     * @param price The rental price for the apartment. Must be non-negative.
      * @throws InvalidPriceException if the price is negative.
      */
     public void registerApartment(double price) {
@@ -47,22 +47,21 @@ public class HotelService {
     }
 
     /**
-     * Gets the total number of apartments registered in the hotel.
+     * Returns the total number of apartments currently registered.
      *
-     * @return The count of apartments.
+     * @return The count of registered apartments.
      */
     public int getApartmentsCount() {
         return apartments.size();
     }
 
     /**
-     * Reserves an apartment for a guest by apartment ID and guest name.
+     * Reserves an apartment for a specified guest by creating a reservation.
      *
      * @param id        The ID of the apartment to reserve.
-     * @param guestName The name of the guest. Cannot be null or start with a digit.
-     * @throws ApartmentNotFoundException  if the apartment is not found.
-     * @throws InvalidApartmentIdException if the apartment ID is invalid.
-     * @throws InvalidNameException        if the guest name is invalid.
+     * @param guestName The name of the guest for the reservation.
+     * @throws ApartmentNotFoundException if the apartment with the given ID does not exist.
+     * @throws InvalidNameException       if the guest name is invalid.
      */
     public void reserveApartment(int id, String guestName) {
         valueValidator.validateApartmentId(id);
@@ -80,10 +79,9 @@ public class HotelService {
     }
 
     /**
-     * Releases a reserved apartment by its ID. Removes the reservation if it exists.
+     * Releases a reserved apartment by canceling the reservation.
      *
      * @param id The ID of the apartment to release.
-     * @throws InvalidApartmentIdException   if the apartment ID is invalid.
      * @throws ApartmentNotReservedException if the apartment is not currently reserved.
      */
     public void releaseApartment(int id) {
@@ -99,11 +97,11 @@ public class HotelService {
     }
 
     /**
-     * Lists apartments with pagination support.
+     * Lists a paginated view of registered apartments.
      *
-     * @param page The page number to retrieve.
-     * @return A list of apartments for the specified page.
-     * @throws ApartmentNotFoundException if the page or page size is invalid or no apartments are found.
+     * @param page The page number to retrieve, starting from 1.
+     * @return A list of apartments on the specified page.
+     * @throws ApartmentNotFoundException if the page number is out of range or invalid.
      */
     public List<Apartment> listApartments(int page) {
         if (page <= 0 || PAGE_SIZE <= 0) {
@@ -123,6 +121,12 @@ public class HotelService {
         return apartmentList.subList(start, end);
     }
 
+    /**
+     * Calculates the total number of pages available for apartment listings,
+     * based on the defined PAGE_SIZE.
+     *
+     * @return The total number of pages for paginated apartment listings.
+     */
     public int getTotalPages() {
         return (int) Math.ceil((double) apartments.size() / PAGE_SIZE);
     }

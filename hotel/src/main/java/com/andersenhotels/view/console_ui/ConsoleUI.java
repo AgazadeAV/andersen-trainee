@@ -11,8 +11,11 @@ import java.util.Scanner;
 
 /**
  * ConsoleUI provides a text-based user interface for interacting with the hotel management system.
- * It handles menu display, user input validation, and communicates with the Presenter to process actions.
- * This class implements the View interface, allowing it to receive commands and display results in the console.
+ * It handles displaying menus, validating user input, and communicating with the `Presenter` to process actions.
+ * <p>
+ * This class implements the `View` interface, allowing it to receive commands from the user
+ * and display results or errors in the console. It serves as a bridge between user input and the core
+ * functionality managed by `Presenter`.
  */
 public class ConsoleUI implements View {
     private Scanner scanner;
@@ -22,8 +25,8 @@ public class ConsoleUI implements View {
     private boolean isRunning;
 
     /**
-     * Constructs a new ConsoleUI instance with initialized scanner, menu handler, presenter, and input validator.
-     * Sets the application to a running state.
+     * Constructs a new ConsoleUI instance with an initialized scanner, menu handler,
+     * presenter, and input validator. Sets the application to a running state.
      */
     public ConsoleUI() {
         this.scanner = new Scanner(System.in);
@@ -34,7 +37,8 @@ public class ConsoleUI implements View {
     }
 
     /**
-     * Starts the console application, displaying greetings and presenting the menu to the user.
+     * Starts the console application, displaying a greeting message and presenting the menu
+     * to the user, allowing them to begin interacting with the application.
      */
     @Override
     public void startWork() {
@@ -43,17 +47,17 @@ public class ConsoleUI implements View {
     }
 
     /**
-     * Displays a welcome message at the beginning of the application.
+     * Displays a welcome message when the application begins.
      */
     private void greetings() {
         displayMessage("Welcome to the Hotel Management Console Application!");
     }
 
     /**
-     * Main loop to display the menu, accept user choice, and execute selected option.
-     * Continues until the user exits the application.
+     * Main loop to display the menu, accept user choice, and execute the selected option.
+     * Continues until the user chooses to exit the application.
      *
-     * @throws NumberFormatException if input is not a valid integer
+     * @throws NumberFormatException if the input is not a valid integer.
      */
     private void selectItemFromMenu() {
         while (isRunning) {
@@ -73,7 +77,10 @@ public class ConsoleUI implements View {
     }
 
     /**
-     * Prompts the user to enter a price, validates it, and sends it to the Presenter to register a new apartment.
+     * Prompts the user to enter a price, validates it, and sends it to the `Presenter` to register a new apartment.
+     * Displays success or error messages based on the result of the operation.
+     *
+     * @return `true` if the apartment was registered successfully, `false` otherwise.
      */
     @Override
     public boolean registerApartment() {
@@ -83,7 +90,9 @@ public class ConsoleUI implements View {
 
     /**
      * Prompts the user to enter an apartment ID and guest name to make a reservation.
-     * Validates inputs and passes them to the Presenter.
+     * Validates inputs and passes them to the `Presenter` for processing.
+     *
+     * @return `true` if the reservation was successfully made, `false` otherwise.
      */
     @Override
     public boolean reserveApartment() {
@@ -95,7 +104,9 @@ public class ConsoleUI implements View {
 
     /**
      * Prompts the user to enter an apartment ID to release an existing reservation.
-     * Validates the input and passes it to the Presenter.
+     * Validates the input and passes it to the `Presenter` for processing.
+     *
+     * @return `true` if the reservation was successfully released, `false` otherwise.
      */
     @Override
     public boolean releaseApartment() {
@@ -104,8 +115,11 @@ public class ConsoleUI implements View {
     }
 
     /**
-     * Prompts the user to enter page and page size values to view apartments with pagination.
-     * Validates inputs and sends them to the Presenter.
+     * Prompts the user to enter page details to view apartments with pagination.
+     * Retrieves apartment details for the specified page and displays them in a formatted list.
+     *
+     * @return A list of formatted strings containing apartment details for the specified page.
+     * @throws ApartmentNotFoundException if no apartments are found for the selected page.
      */
     @Override
     public List<String> listApartments() {
@@ -119,8 +133,8 @@ public class ConsoleUI implements View {
     }
 
     /**
-     * Exits the console application by setting the running flag to false.
-     * Displays a goodbye message to the user.
+     * Exits the console application by setting the running flag to `false`.
+     * Displays a farewell message before closing the application.
      */
     @Override
     public void finishWork() {
@@ -129,9 +143,9 @@ public class ConsoleUI implements View {
     }
 
     /**
-     * Displays a message to the console output.
+     * Displays a general message to the console output.
      *
-     * @param message The message to display.
+     * @param message The message to display to the user.
      */
     @Override
     public void displayMessage(String message) {
@@ -141,7 +155,7 @@ public class ConsoleUI implements View {
     /**
      * Displays an error message to the console error output.
      *
-     * @param errorMessage The error message to display.
+     * @param errorMessage The error message to display to the user.
      */
     @Override
     public void displayError(String errorMessage) {

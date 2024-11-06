@@ -7,7 +7,9 @@ import java.util.List;
  * It provides methods to initiate and terminate application workflows, manage apartment-related operations,
  * and display messages and errors to the user.
  * <p>
- * Implementations of this interface handle the interaction between the user and the application's core functionality.
+ * Implementations of this interface are responsible for handling user interactions and
+ * managing the communication between the user and the application's core functionality,
+ * ensuring the user interface remains consistent across different implementations (e.g., console or GUI).
  */
 public interface View {
 
@@ -30,6 +32,8 @@ public interface View {
      * Prompts the user to register a new apartment in the system.
      * Implementations should request required apartment details (e.g., price)
      * from the user and pass this information to the application's backend.
+     *
+     * @return `true` if the apartment was successfully registered; `false` otherwise.
      */
     boolean registerApartment();
 
@@ -37,6 +41,8 @@ public interface View {
      * Initiates the process of reserving an apartment for a guest.
      * Implementations should prompt the user for the apartment ID and guest name,
      * then proceed to create a reservation if the inputs are valid.
+     *
+     * @return `true` if the reservation was successfully created; `false` otherwise.
      */
     boolean reserveApartment();
 
@@ -44,6 +50,8 @@ public interface View {
      * Initiates the process of releasing a reserved apartment.
      * Implementations should prompt the user for the apartment ID,
      * validate the input, and release the reservation if appropriate.
+     *
+     * @return `true` if the reservation was successfully released; `false` otherwise.
      */
     boolean releaseApartment();
 
@@ -51,6 +59,8 @@ public interface View {
      * Lists available apartments in the system, supporting pagination
      * by allowing the user to specify a page number and page size.
      * Implementations should display apartment information in a readable format.
+     *
+     * @return A list of strings representing apartment details on the specified page.
      */
     List<String> listApartments();
 

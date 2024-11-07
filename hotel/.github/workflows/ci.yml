@@ -10,9 +10,9 @@ on:
       - main
   # Triggered on pushes to the repository
   push:
-    # For any branch that starts with 'feature/'
+    # For only the branch named 'feature'
     branches:
-      - feature/*
+      - feature
     # Also for pushes directly to the main branch
       - main
 

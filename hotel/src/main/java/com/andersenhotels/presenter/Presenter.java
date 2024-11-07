@@ -83,15 +83,13 @@ public class Presenter {
      * @return `true` if the reservation was successfully created, `false` if an error occurred.
      * @throws ApartmentNotFoundException        if the apartment with the given ID does not exist.
      * @throws ApartmentAlreadyReservedException if the apartment is already reserved.
-     * @throws InvalidApartmentIdException       if the provided apartment ID is invalid.
      * @throws InvalidNameException              if the client name is invalid (e.g., null or improperly formatted).
      */
     public boolean reserveApartment(int id, String guestName) {
         try {
             hotelService.reserveApartment(id, guestName);
             return true;
-        } catch (ApartmentNotFoundException | ApartmentAlreadyReservedException |
-                 InvalidApartmentIdException | InvalidNameException e) {
+        } catch (ApartmentNotFoundException | ApartmentAlreadyReservedException | InvalidNameException e) {
             view.displayError(e.getMessage());
             return false;
         }
@@ -105,13 +103,12 @@ public class Presenter {
      * @return `true` if the apartment was successfully released, `false` if an error occurred.
      * @throws ApartmentNotFoundException    if the apartment with the specified ID does not exist.
      * @throws ApartmentNotReservedException if the apartment is not currently reserved.
-     * @throws InvalidApartmentIdException   if the provided apartment ID is invalid.
      */
     public boolean releaseApartment(int id) {
         try {
             hotelService.releaseApartment(id);
             return true;
-        } catch (ApartmentNotFoundException | ApartmentNotReservedException | InvalidApartmentIdException e) {
+        } catch (ApartmentNotFoundException | ApartmentNotReservedException e) {
             view.displayError(e.getMessage());
             return false;
         }

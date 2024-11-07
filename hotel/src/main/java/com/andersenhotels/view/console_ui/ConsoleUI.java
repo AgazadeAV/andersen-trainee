@@ -41,6 +41,14 @@ public class ConsoleUI implements View {
         isRunning = running;
     }
 
+    public Presenter getPresenter() {
+        return presenter;
+    }
+
+    public void setInputValidator(InputValidator inputValidator) {
+        this.inputValidator = inputValidator;
+    }
+
     /**
      * Starts the console application, displaying a greeting message and presenting the menu
      * to the user, allowing them to begin interacting with the application.

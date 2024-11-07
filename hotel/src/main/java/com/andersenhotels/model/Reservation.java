@@ -35,7 +35,7 @@ public class Reservation {
         if (apartment.getStatus() == ApartmentStatus.AVAILABLE) {
             apartment.setStatus(ApartmentStatus.RESERVED);
         } else {
-            throw new ApartmentAlreadyReservedException("Apartment is already reserved by " + guest.getName() + ".");
+            throw new ApartmentAlreadyReservedException("Apartment is already reserved.");
         }
     }
 

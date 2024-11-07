@@ -11,7 +11,7 @@ import java.util.Scanner;
  * This class is useful in console-based applications to ensure that user inputs meet expected data types,
  * thus preventing runtime errors and improving the user experience by guiding them toward correct input formats.
  */
-class InputValidator {
+public class InputValidator {
     private Scanner scanner;
     private View view;
 
@@ -20,7 +20,7 @@ class InputValidator {
      *
      * @param view    The View instance used to display messages and error prompts, allowing feedback to the user.
      */
-    InputValidator(View view) {
+    public InputValidator(View view) {
         this.scanner = new Scanner(System.in);
         this.view = view;
     }
@@ -32,7 +32,7 @@ class InputValidator {
      * @param view    The View instance used to display messages and error prompts.
      * @param scanner A Scanner instance, typically mocked for testing.
      */
-    InputValidator(View view, Scanner scanner) {
+    public InputValidator(View view, Scanner scanner) {
         this.scanner = scanner;
         this.view = view;
     }
@@ -45,7 +45,7 @@ class InputValidator {
      * @return A valid integer provided by the user.
      * @throws NumberFormatException if the user input cannot be parsed to an integer, which is handled within the loop.
      */
-    int getIntInput(String prompt) {
+    public int getIntInput(String prompt) {
         while (true) {
             view.displayMessage(prompt);
             try {
@@ -64,7 +64,7 @@ class InputValidator {
      * @return A valid double provided by the user.
      * @throws NumberFormatException if the user input cannot be parsed to a double, which is handled within the loop.
      */
-    double getDoubleInput(String prompt) {
+    public double getDoubleInput(String prompt) {
         while (true) {
             view.displayMessage(prompt);
             try {
@@ -86,7 +86,7 @@ class InputValidator {
      * @param prompt The message displayed to the user to prompt for input.
      * @return The user-provided string, trimmed of leading and trailing whitespace.
      */
-    String getStringInput(String prompt) {
+    public String getStringInput(String prompt) {
         view.displayMessage(prompt);
         return scanner.nextLine().trim();
     }

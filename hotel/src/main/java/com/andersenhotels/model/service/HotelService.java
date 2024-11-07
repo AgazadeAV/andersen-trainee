@@ -56,6 +56,15 @@ public class HotelService {
     }
 
     /**
+     * Returns the total number of apartments currently reserved.
+     *
+     * @return The count of reserved apartments.
+     */
+    public int getReservedApartmentsCount() {
+        return reservations.size();
+    }
+
+    /**
      * Reserves an apartment for a specified guest by creating a reservation.
      *
      * @param id        The ID of the apartment to reserve.
@@ -69,7 +78,8 @@ public class HotelService {
 
         Apartment apartment = apartments.get(id);
         if (apartment == null) {
-            throw new InvalidApartmentIdException("Apartment not found for the given ID.");
+            throw new ApartmentNotFoundException("Apartment not found for the given ID. Please provide ID between 1 " +
+                    "and " + getApartmentsCount() + ".");
         }
 
         Guest guest = new Guest(guestName);

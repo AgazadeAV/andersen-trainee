@@ -47,7 +47,7 @@ class HotelServiceTest {
     @Test
     void testReserveApartment_ApartmentNotFound() {
         // Verify that reserving a non-existent apartment throws InvalidApartmentIdException
-        assertThrows(InvalidApartmentIdException.class, () -> hotelService.reserveApartment(999, "Azer Agazade"));
+        assertThrows(ApartmentNotFoundException.class, () -> hotelService.reserveApartment(999, "Azer Agazade"));
     }
 
     @Test

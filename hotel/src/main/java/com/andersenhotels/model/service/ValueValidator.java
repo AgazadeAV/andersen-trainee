@@ -1,6 +1,6 @@
 package com.andersenhotels.model.service;
 
-import com.andersenhotels.presenter.exceptions.InvalidApartmentIdException;
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 
 /**
@@ -28,13 +28,13 @@ class ValueValidator {
      *
      * @param id The ID of the apartment to validate. Expected to be a positive integer within the
      *           range of available apartment IDs.
-     * @throws InvalidApartmentIdException if the ID is less than 1 or exceeds the current total apartment count.
+     * @throws ApartmentNotFoundException if the ID is less than 1 or exceeds the current total apartment count.
      *                                     The exception message specifies the acceptable range to guide user input.
      */
     void validateApartmentId(int id) {
         if (id < 1 || id > hotelService.getApartmentsCount()) {
-            throw new InvalidApartmentIdException("Invalid apartment ID. Please enter a number between 1 and " +
-                    hotelService.getApartmentsCount() + ".");
+            throw new ApartmentNotFoundException("Apartment not found for the given ID. Please provide ID between 1 " +
+                    "and " + hotelService.getApartmentsCount() + ".");
         }
     }
 

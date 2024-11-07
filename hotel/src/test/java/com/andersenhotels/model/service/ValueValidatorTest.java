@@ -1,6 +1,6 @@
 package com.andersenhotels.model.service;
 
-import com.andersenhotels.presenter.exceptions.InvalidApartmentIdException;
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class ValueValidatorTest {
         hotelService.registerApartment(100.0);
 
         // Expect an InvalidApartmentIdException for an ID not in the system
-        assertThrows(InvalidApartmentIdException.class, () -> valueValidator.validateApartmentId(999));
+        assertThrows(ApartmentNotFoundException.class, () -> valueValidator.validateApartmentId(999));
     }
 
     @Test

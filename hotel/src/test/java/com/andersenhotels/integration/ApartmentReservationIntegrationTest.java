@@ -40,7 +40,7 @@ class ApartmentReservationIntegrationTest {
         });
 
         // Verify that the error message specifies the apartment is already reserved
-        assertEquals("Apartment is already reserved by Azer Agazade.", thrown.getMessage());
+        assertEquals("Apartment is already reserved.", thrown.getMessage());
     }
 
     @Test

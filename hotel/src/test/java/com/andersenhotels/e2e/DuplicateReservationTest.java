@@ -18,25 +18,21 @@ public class DuplicateReservationTest {
 
     @BeforeEach
     public void setUp() {
-        // Initialize output streams to capture console output and error messages
         outputStream = new ByteArrayOutputStream();
         errorStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream)); // Redirect standard output
-        System.setErr(new PrintStream(errorStream)); // Redirect error output
+        System.setOut(new PrintStream(outputStream));
+        System.setErr(new PrintStream(errorStream));
 
-        // Simulate user input for registering and reserving apartments, followed by a duplicate reservation
         String simulatedInput = "1\n150.0\n2\n1\nAzer Agazade\n2\n1\nAnar Agazade\n5\n";
-        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes())); // Set input stream for the console UI
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
-        consoleUI = new ConsoleUI(); // Initialize the console UI
+        consoleUI = new ConsoleUI();
     }
 
     @Test
-    public void testDuplicateReservation() {
-        // Start the console UI, which processes the mocked input
+    public void duplicateReservation() {
         consoleUI.startWork();
 
-        // Capture the error output and verify it contains the expected error message for duplicate reservation
         String errorOutput = errorStream.toString();
         assertTrue(errorOutput.contains("Apartment is already reserved."),
                 "Expected error message for duplicate reservation should be displayed.");

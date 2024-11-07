@@ -14,9 +14,8 @@ import static org.mockito.Mockito.*;
 class ButtonsTest {
 
     @Mock
-    private View view; // Mocked View to simulate interactions for testing buttons
+    private View view;
 
-    // Instances of buttons under test
     private RegisterApartment registerButton;
     private ReserveApartment reserveButton;
     private ReleaseApartment releaseButton;
@@ -25,8 +24,7 @@ class ButtonsTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Initialize mocks
-        // Initialize button instances with the mocked view
+        MockitoAnnotations.openMocks(this);
         registerButton = new RegisterApartment(view);
         reserveButton = new ReserveApartment(view);
         releaseButton = new ReleaseApartment(view);
@@ -35,72 +33,55 @@ class ButtonsTest {
     }
 
     @Test
-    void testRegisterApartment_Success() {
-        // Simulate successful apartment registration
+    void registerApartment_Success() {
         when(view.registerApartment()).thenReturn(true);
 
-        // Execute the button's action
         registerButton.execute();
 
-        // Verify that success message is displayed
         verify(view, times(1)).displayMessage("Apartment registered successfully.");
     }
 
     @Test
-    void testReserveApartment_Success() {
-        // Simulate successful apartment reservation
+    void reserveApartment_Success() {
         when(view.reserveApartment()).thenReturn(true);
 
-        // Execute the button's action
         reserveButton.execute();
 
-        // Verify that success message is displayed
         verify(view, times(1)).displayMessage("Apartment reserved successfully.");
     }
 
     @Test
-    void testReleaseApartment_Success() {
-        // Simulate successful apartment release
+    void releaseApartment_Success() {
         when(view.releaseApartment()).thenReturn(true);
 
-        // Execute the button's action
         releaseButton.execute();
 
-        // Verify that success message is displayed
         verify(view, times(1)).displayMessage("Apartment released successfully.");
     }
 
     @Test
-    void testListApartments_Success() {
-        // Simulate successful listing of apartments
+    void listApartments_Success() {
         when(view.listApartments()).thenReturn(List.of("Apartment 1", "Apartment 2"));
 
-        // Execute the button's action
         listButton.execute();
 
-        // Verify that each apartment is displayed
         verify(view, times(1)).displayMessage("Apartment 1");
         verify(view, times(1)).displayMessage("Apartment 2");
     }
 
     @Test
-    void testListApartments_ApartmentNotFoundException() {
-        // Simulate exception when no apartments are available
+    void listApartments_ApartmentNotFoundException() {
         doThrow(new ApartmentNotFoundException("No apartments available")).when(view).listApartments();
 
-        // Execute the button's action
         listButton.execute();
 
-        // Verify that the error message is displayed
         verify(view, times(1)).displayError("No apartments available");
     }
 
     @Test
-    void testExit() {
-        // Execute the exit button's action
+    void exit() {
         exitButton.execute();
 
-        // Verify that finishWork is called to end the application
         verify(view, times(1)).finishWork();
     }
 }

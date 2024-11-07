@@ -9,55 +9,46 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValueValidatorTest {
 
-    private HotelService hotelService; // Instance of HotelService to register apartments for testing
-    private ValueValidator valueValidator; // Instance of ValueValidator to validate inputs
+    private HotelService hotelService;
+    private ValueValidator valueValidator;
 
     @BeforeEach
     void setUp() {
-        // Initialize HotelService and ValueValidator before each test
         hotelService = new HotelService();
         valueValidator = new ValueValidator(hotelService);
     }
 
     @Test
-    void testValidateApartmentId_ValidId() {
-        // Register an apartment to ensure there's an ID to validate
+    void validateApartmentId_ValidId() {
         hotelService.registerApartment(100.0);
 
-        // No exception is expected for a valid apartment ID
         valueValidator.validateApartmentId(1);
     }
 
     @Test
-    void testValidateApartmentId_InvalidId() {
-        // Register an apartment to define a valid ID range
+    void validateApartmentId_InvalidId() {
         hotelService.registerApartment(100.0);
 
-        // Expect an InvalidApartmentIdException for an ID not in the system
         assertThrows(ApartmentNotFoundException.class, () -> valueValidator.validateApartmentId(999));
     }
 
     @Test
-    void testValidateGuestName_ValidName() {
-        // Validate a properly formatted name; no exception is expected
+    void validateGuestName_ValidName() {
         valueValidator.validateGuestName("Azer Agazade");
     }
 
     @Test
-    void testValidateGuestName_NullName() {
-        // Expect an InvalidNameException when the name is null
+    void validateGuestName_NullName() {
         assertThrows(InvalidNameException.class, () -> valueValidator.validateGuestName(null));
     }
 
     @Test
-    void testValidateGuestName_EmptyName() {
-        // Expect an InvalidNameException when the name is empty
+    void validateGuestName_EmptyName() {
         assertThrows(InvalidNameException.class, () -> valueValidator.validateGuestName(""));
     }
 
     @Test
-    void testValidateGuestName_StartsWithDigit() {
-        // Expect an InvalidNameException when the name starts with a digit
+    void validateGuestName_StartsWithDigit() {
         assertThrows(InvalidNameException.class, () -> valueValidator.validateGuestName("1Azer Agazade"));
     }
 }

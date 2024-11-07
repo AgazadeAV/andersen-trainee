@@ -17,23 +17,19 @@ public class ExitTest {
 
     @BeforeEach
     public void setUp() {
-        // Initialize the output stream to capture console output
         outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream)); // Redirect standard output to the ByteArrayOutputStream
+        System.setOut(new PrintStream(outputStream));
 
-        // Simulate user input for the exit option in the menu
-        String simulatedInput = "5\n"; // Assuming '5' is the option to exit
-        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes())); // Set input stream for the console UI
+        String simulatedInput = "5\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
-        consoleUI = new ConsoleUI(); // Initialize the console UI
+        consoleUI = new ConsoleUI();
     }
 
     @Test
-    public void testExitApplication() {
-        // Start the console UI which processes the mocked input
+    public void exitApplication() {
         consoleUI.startWork();
 
-        // Capture the output and verify that it contains the exit message
         String output = outputStream.toString();
         assertTrue(output.contains("Good bye!"), "The application should display a farewell message on exit.");
     }

@@ -17,26 +17,21 @@ public class ReservationTest {
 
     @BeforeEach
     public void setUp() {
-        // Initialize the output stream to capture console output
         outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream)); // Redirect standard output to capture output
+        System.setOut(new PrintStream(outputStream));
 
-        // Simulate user input for registering an apartment, reserving it, and then exiting
-        String simulatedInput = "1\n150.0\n2\n1\nAzer Agazade\n5\n"; // Register and reserve
-        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes())); // Set input stream for the console UI
+        String simulatedInput = "1\n150.0\n2\n1\nAzer Agazade\n5\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
-        consoleUI = new ConsoleUI(); // Initialize the console UI
+        consoleUI = new ConsoleUI();
     }
 
     @Test
-    public void testReserveApartment() {
-        // Start the console UI which processes the mocked input
+    public void reserveApartment() {
         consoleUI.startWork();
 
-        // Capture the output from the console
         String output = outputStream.toString();
 
-        // Verify that the output indicates successful reservation of the apartment
         assertTrue(output.contains("Apartment reserved successfully."),
                 "The output should confirm that the apartment was reserved successfully.");
     }

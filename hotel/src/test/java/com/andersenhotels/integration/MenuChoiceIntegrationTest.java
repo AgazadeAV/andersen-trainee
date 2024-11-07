@@ -16,23 +16,20 @@ public class MenuChoiceIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        // Mock the View interface and initialize MenuHandler with it before each test
         view = mock(View.class);
         menuHandler = new MenuHandler(view);
     }
 
     @Test
-    public void testValidMenuChoice() {
-        // Test that a valid menu choice does not throw an exception
+    public void validMenuChoice() {
         int validChoice = 1;
         assertDoesNotThrow(() -> menuHandler.execute(validChoice),
                 "Menu should accept a valid choice without throwing an exception.");
     }
 
     @Test
-    public void testInvalidMenuChoice() {
-        // Test that an invalid menu choice throws a WrongMenuChoiceException
-        int invalidChoice = menuHandler.getMenuSize() + 1; // Choice outside the valid range
+    public void invalidMenuChoice() {
+        int invalidChoice = menuHandler.getMenuSize() + 1;
         assertThrows(WrongMenuChoiceException.class, () -> menuHandler.execute(invalidChoice),
                 "Menu should throw WrongMenuChoiceException for an invalid choice.");
     }

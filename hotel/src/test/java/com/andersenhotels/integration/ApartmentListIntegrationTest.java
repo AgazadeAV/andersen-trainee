@@ -17,44 +17,37 @@ class ApartmentListIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // Initialize HotelService before each test
         hotelService = new HotelService();
     }
 
     @Test
-    void testListApartments_Success() {
-        // Test the successful listing of apartments when apartments are registered
+    void listApartments_Success() {
         hotelService.registerApartment(100.0);
         hotelService.registerApartment(200.0);
 
         List<Apartment> apartments = hotelService.listApartments(1);
 
-        // Verify that two apartments are returned on the first page
         assertEquals(2, apartments.size());
     }
 
     @Test
-    void testListApartments_Empty() {
-        // Test that listing an empty page throws an ApartmentNotFoundException
+    void listApartments_Empty() {
         ApartmentNotFoundException thrown = assertThrows(ApartmentNotFoundException.class, () -> {
             hotelService.listApartments(1);
         });
 
-        // Verify that the error message indicates no apartments are found on page 1
         assertEquals("No apartments found for the requested page number. Valid page numbers are from 1 to 0.",
                 thrown.getMessage());
     }
 
     @Test
-    void testListApartments_InvalidPage() {
-        // Test that listing a page that doesn’t exist throws an ApartmentNotFoundException
+    void listApartments_InvalidPage() {
         hotelService.registerApartment(100.0);
 
         ApartmentNotFoundException thrown = assertThrows(ApartmentNotFoundException.class, () -> {
-            hotelService.listApartments(2); // Page 2 does not exist
+            hotelService.listApartments(2);
         });
 
-        // Verify that the error message indicates the valid page range
         assertEquals("No apartments found for the requested page number. Valid page numbers are from 1 to 1.",
                 thrown.getMessage());
     }

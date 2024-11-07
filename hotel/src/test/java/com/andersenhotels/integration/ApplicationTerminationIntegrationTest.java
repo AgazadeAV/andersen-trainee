@@ -12,16 +12,13 @@ public class ApplicationTerminationIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // Initialize a new ConsoleUI instance before each test
         consoleUI = new ConsoleUI();
     }
 
     @Test
-    void testApplicationTermination() {
-        // Test application termination by calling the finishWork method
+    void applicationTermination() {
         consoleUI.finishWork();
 
-        // Verify that the isRunning method returns false, indicating the application has terminated
         assertFalse(consoleUI.isRunning(), "The application should be terminated.");
     }
 }

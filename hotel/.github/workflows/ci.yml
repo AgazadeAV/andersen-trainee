@@ -12,7 +12,7 @@ on:
   push:
     # For any branch that starts with 'feature/'
     branches:
-      - feature
+      - feature/*
     # Also for pushes directly to the main branch
       - main
 

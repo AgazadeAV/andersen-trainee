@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -31,13 +32,13 @@ public class MenuHandler {
 
 
     public void execute(int choice) {
-        if (choice >= 1 && choice <= getMenuSize()) {
-            Button button = buttons.get(choice - 1);
-            button.execute();
-        } else {
-            throw new WrongMenuChoiceException("Invalid menu option entered. " +
-                    "Please enter a valid number from the menu: from 1 to " + getMenuSize() + ".");
-        }
+        Optional.of(choice)
+                .filter(c -> c >= 1 && c <= getMenuSize())
+                .map(c -> buttons.get(c - 1))
+                .ifPresentOrElse(Button::execute, () -> {
+                    throw new WrongMenuChoiceException("Invalid menu option entered. " +
+                            "Please enter a valid number from the menu: from 1 to " + getMenuSize() + ".");
+                });
     }
 
     public int getMenuSize() {

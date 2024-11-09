@@ -3,6 +3,8 @@ package com.andersenhotels.model.service;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 
+import java.util.Optional;
+
 class ValueValidator {
     private final HotelService hotelService;
 
@@ -18,8 +20,8 @@ class ValueValidator {
     }
 
     void validateGuestName(String guestName) {
-        if (guestName == null || guestName.isEmpty() || Character.isDigit(guestName.charAt(0))) {
-            throw new InvalidNameException("Guest name cannot be null, empty, or start with a number.");
-        }
+        Optional.ofNullable(guestName)
+                .filter(name -> !name.isEmpty() && !Character.isDigit(name.charAt(0)))
+                .orElseThrow(() -> new InvalidNameException("Guest name cannot be null, empty, or start with a number."));
     }
 }

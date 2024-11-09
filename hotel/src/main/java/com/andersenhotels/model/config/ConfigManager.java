@@ -2,6 +2,7 @@ package com.andersenhotels.model.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 
 public class ConfigManager {
@@ -21,16 +22,20 @@ public class ConfigManager {
         }
     }
 
-
     public static String getStateFilePath() {
-        return properties.getProperty("stateFilePath");
+        return Optional.ofNullable(properties.getProperty("stateFilePath"))
+                .orElse("");
     }
 
     public static boolean isAllowApartmentStatusChange() {
-        return Boolean.parseBoolean(properties.getProperty("allowApartmentStatusChange"));
+        return Optional.ofNullable(properties.getProperty("allowApartmentStatusChange"))
+                .map(Boolean::parseBoolean)
+                .orElse(false);
     }
 
     public static int getPageSizeForPagination() {
-        return Integer.parseInt(properties.getProperty("pageSizeForPagination"));
+        return Optional.ofNullable(properties.getProperty("pageSizeForPagination"))
+                .map(Integer::parseInt)
+                .orElse(10);
     }
 }

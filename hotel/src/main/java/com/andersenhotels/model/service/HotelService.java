@@ -53,11 +53,10 @@ public class HotelService {
         valueValidator.validateApartmentId(id);
         valueValidator.validateGuestName(guestName);
 
-        Apartment apartment = apartments.get(id);
-        if (apartment == null) {
-            throw new ApartmentNotFoundException("Apartment not found for the given ID. Please provide ID between 1 " +
-                    "and " + apartmentsCount() + ".");
-        }
+        Apartment apartment = Optional.ofNullable(apartments.get(id))
+                .orElseThrow(() -> new ApartmentNotFoundException(
+                        "Apartment not found for the given ID. Please provide ID between 1 and " + apartmentsCount() + "."
+                ));
 
         Guest guest = new Guest(guestName);
         Reservation reservation = new Reservation(apartment, guest);
@@ -67,14 +66,12 @@ public class HotelService {
 
     public void releaseApartment(int id) {
         valueValidator.validateApartmentId(id);
-        Reservation reservation = reservations.get(id);
 
-        if (reservation != null) {
-            reservation.cancelReservation();
-            reservations.remove(id);
-        } else {
-            throw new ApartmentNotReservedException("Apartment is not reserved. Please try again.");
-        }
+        Reservation reservation = Optional.ofNullable(reservations.get(id))
+                .orElseThrow(() -> new ApartmentNotReservedException("Apartment is not reserved. Please try again."));
+
+        reservation.cancelReservation();
+        reservations.remove(id);
     }
 
     public List<Apartment> listApartments(int page) {
@@ -99,11 +96,9 @@ public class HotelService {
             throw new UnsupportedOperationException("Changing apartment status is disabled by configuration.");
         }
 
-        Apartment apartment = apartments.get(apartmentId);
-        if (apartment != null) {
-            apartment.setStatus(newStatus);
-        } else {
-            throw new ApartmentNotFoundException("Apartment not found for the given ID.");
-        }
+        Apartment apartment = Optional.ofNullable(apartments.get(apartmentId))
+                .orElseThrow(() -> new ApartmentNotFoundException("Apartment not found for the given ID."));
+
+        apartment.setStatus(newStatus);
     }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,15 +32,18 @@ public class PaginationTest {
         consoleUI.startWork();
 
         String output = outputStream.toString();
+        List<String> expectedMessages = List.of(
+                "Apartment ID: 1, Price: 100.0, Status: AVAILABLE.",
+                "Apartment ID: 2, Price: 200.0, Status: AVAILABLE.",
+                "Apartment ID: 3, Price: 300.0, Status: AVAILABLE.",
+                "Apartment ID: 4, Price: 400.0, Status: AVAILABLE.",
+                "Apartment ID: 5, Price: 500.0, Status: AVAILABLE.",
+                "Apartment ID: 6, Price: 600.0, Status: AVAILABLE."
+        );
 
-        assertTrue(output.contains("Apartment ID: 1, Price: 100.0, Status: AVAILABLE."),
-                "Expected apartment details should be printed for the first page.");
-        assertTrue(output.contains("Apartment ID: 2, Price: 200.0, Status: AVAILABLE."));
-        assertTrue(output.contains("Apartment ID: 3, Price: 300.0, Status: AVAILABLE."));
-        assertTrue(output.contains("Apartment ID: 4, Price: 400.0, Status: AVAILABLE."));
-        assertTrue(output.contains("Apartment ID: 5, Price: 500.0, Status: AVAILABLE."));
+        boolean allMessagesPresent = expectedMessages.stream()
+                .allMatch(output::contains);
 
-        assertTrue(output.contains("Apartment ID: 6, Price: 600.0, Status: AVAILABLE."),
-                "Expected apartment details should be printed for the second page.");
+        assertTrue(allMessagesPresent, "All expected apartment details should be present in the output.");
     }
 }

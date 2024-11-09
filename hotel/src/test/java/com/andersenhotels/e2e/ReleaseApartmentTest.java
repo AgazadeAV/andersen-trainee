@@ -31,8 +31,12 @@ public class ReleaseApartmentTest {
         consoleUI.startWork();
 
         String output = outputStream.toString();
+        String expectedMessage = "Apartment released successfully.";
 
-        assertTrue(output.contains("Apartment released successfully."),
-                "The output should confirm that the apartment was released successfully.");
+        long count = output.lines()
+                .filter(line -> line.contains(expectedMessage))
+                .count();
+
+        assertTrue(count == 1, "The output should confirm that the apartment was released successfully.");
     }
 }

@@ -31,8 +31,12 @@ public class ReservationTest {
         consoleUI.startWork();
 
         String output = outputStream.toString();
+        String expectedMessage = "Apartment reserved successfully.";
 
-        assertTrue(output.contains("Apartment reserved successfully."),
-                "The output should confirm that the apartment was reserved successfully.");
+        long count = output.lines()
+                .filter(line -> line.contains(expectedMessage))
+                .count();
+
+        assertTrue(count == 1, "The output should confirm that the apartment was reserved successfully.");
     }
 }

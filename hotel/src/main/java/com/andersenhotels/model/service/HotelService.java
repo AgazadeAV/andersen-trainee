@@ -72,17 +72,16 @@ public class HotelService {
             throw new ApartmentNotFoundException("Page number and page size must be greater than 0.");
         }
 
-        List<Apartment> apartmentList = new ArrayList<>(apartments.values());
-
         if (page > getTotalPages()) {
             throw new ApartmentNotFoundException("No apartments found for the requested page number. " +
                     "Valid page numbers are from 1 to " + getTotalPages() + ".");
         }
 
-        int start = (page - 1) * PAGE_SIZE;
-        int end = Math.min(start + PAGE_SIZE, apartmentList.size());
-
-        return apartmentList.subList(start, end);
+        return apartments.values().stream()
+                .sorted(Comparator.comparingInt(Apartment::getId))
+                .skip((long) (page - 1) * PAGE_SIZE)
+                .limit(PAGE_SIZE)
+                .toList();
     }
 
     public int getTotalPages() {

@@ -27,10 +27,10 @@ class MenuHandlerTest {
                 3. Release Apartment
                 4. List Apartments
                 5. Exit
-                """;
+                """.stripTrailing();;
 
         String actualMenu = menuHandler.getMenu();
-        assertEquals(expectedMenu, actualMenu);
+        assertEquals(expectedMenu.trim(), actualMenu.trim());
     }
 
     @Test

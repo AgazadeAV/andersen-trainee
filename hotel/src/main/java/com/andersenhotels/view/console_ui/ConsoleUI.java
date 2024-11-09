@@ -45,14 +45,13 @@ public class ConsoleUI implements View {
 
     private void selectItemFromMenu() {
         while (isRunning) {
+            displayMessage(menuHandler.getMenu());
+
+            int menuChoice = inputValidator.getIntInput("Please select an option from the menu:");
             try {
-                displayMessage(menuHandler.getMenu());
-                int menuChoice = inputValidator.getIntInput("Please select an option from menu:");
-                try {
-                    menuHandler.execute(menuChoice);
-                } catch (WrongMenuChoiceException e) {
-                    displayError(e.getMessage());
-                }
+                menuHandler.execute(menuChoice);
+            } catch (WrongMenuChoiceException e) {
+                displayError(e.getMessage());
             } catch (NumberFormatException e) {
                 displayError("Invalid input. Please enter a valid integer from the menu: from 1 to " +
                         menuHandler.getMenuSize() + ".");

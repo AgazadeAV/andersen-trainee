@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,9 +70,8 @@ class HotelServiceTest {
 
     @Test
     void listApartments_Success() {
-        for (int i = 0; i < 7; i++) {
-            hotelService.registerApartment(100.0 + i);
-        }
+        IntStream.range(0, 7)
+                .forEach(i -> hotelService.registerApartment(100.0 + i));
 
         List<Apartment> apartmentsPage1 = hotelService.listApartments(1);
         List<Apartment> apartmentsPage2 = hotelService.listApartments(2);

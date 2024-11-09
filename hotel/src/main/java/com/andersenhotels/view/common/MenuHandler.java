@@ -5,6 +5,8 @@ import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MenuHandler {
     private List<Button> buttons;
@@ -23,16 +25,12 @@ public class MenuHandler {
     }
 
     public String getMenu() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Menu:\n");
-        for (int i = 0; i < buttons.size(); i++) {
-            sb.append(i + 1)
-                    .append(". ")
-                    .append(buttons.get(i).getDescription())
-                    .append("\n");
-        }
-        return sb.toString();
+        return "Menu:\n" +
+                IntStream.range(0, buttons.size())
+                        .mapToObj(i -> (i + 1) + ". " + buttons.get(i).getDescription())
+                        .collect(Collectors.joining("\n"));
     }
+
 
     public void execute(int choice) {
         if (choice >= 1 && choice <= getMenuSize()) {

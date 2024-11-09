@@ -53,17 +53,16 @@ public class Presenter {
     }
 
     public List<String> listApartments(int page) {
-        List<String> apartmentList = new ArrayList<>();
         try {
-            List<Apartment> apartments = hotelService.listApartments(page);
-            for (Apartment apartment : apartments) {
-                apartmentList.add(apartment.toString());
-            }
+            return hotelService.listApartments(page).stream()
+                    .map(Apartment::toString)
+                    .toList();
         } catch (ApartmentNotFoundException e) {
             view.displayError(e.getMessage());
+            return new ArrayList<>();
         }
-        return apartmentList;
     }
+
 
     public int getTotalPages() {
         return hotelService.getTotalPages();

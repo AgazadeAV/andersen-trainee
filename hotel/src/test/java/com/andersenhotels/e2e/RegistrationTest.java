@@ -31,10 +31,12 @@ public class RegistrationTest {
         consoleUI.startWork();
 
         String output = outputStream.toString();
+        String expectedMessage = "Apartment registered successfully.";
 
-        assertTrue(output.contains("Apartment registered successfully."),
-                "The output should confirm that the apartment was registered successfully.");
-        assertTrue(output.contains("Apartment registered successfully."),
-                "The output should confirm that the second apartment was registered successfully.");
+        long count = output.lines()
+                .filter(line -> line.contains(expectedMessage))
+                .count();
+
+        assertTrue(count == 2, "The output should confirm that both apartments were registered successfully.");
     }
 }

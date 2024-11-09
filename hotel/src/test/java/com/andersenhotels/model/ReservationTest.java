@@ -40,7 +40,8 @@ class ReservationTest {
         reservation.createReservation();
         reservation.cancelReservation();
 
-        assertEquals(ApartmentStatus.AVAILABLE, apartment.getStatus(), "Apartment should be available after cancellation");
+        assertEquals(ApartmentStatus.AVAILABLE, apartment.getStatus(),
+                "Apartment should be available after cancellation");
     }
 
     @Test

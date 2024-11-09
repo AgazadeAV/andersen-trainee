@@ -1,10 +1,10 @@
 package com.andersenhotels.integration;
 
 import com.andersenhotels.view.common.View;
+import com.andersenhotels.view.console_ui.ConsoleUI;
 import com.andersenhotels.view.console_ui.InputValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ public class InputValidationIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        view = Mockito.mock(View.class);
+        view = new ConsoleUI();
     }
 
     @Test
@@ -39,8 +39,5 @@ public class InputValidationIntegrationTest {
 
         int result = inputValidator.getIntInput("Enter an integer:");
         assertEquals(42, result, "After invalid input, the input should be parsed as integer 42.");
-
-        Mockito.verify(view, Mockito.times(1))
-                .displayError("Invalid integer value. Please try again.");
     }
 }

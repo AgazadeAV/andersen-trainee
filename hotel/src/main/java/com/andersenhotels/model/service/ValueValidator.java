@@ -3,8 +3,6 @@ package com.andersenhotels.model.service;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 
-//TODO make methods in this class static, remove fields, because method that is using here
-// also will be static in another class
 class ValueValidator {
     private HotelService hotelService;
 
@@ -13,9 +11,9 @@ class ValueValidator {
     }
 
     void validateApartmentId(int id) {
-        if (id < 1 || id > hotelService.getApartmentsCount()) {
+        if (id < 1 || id > hotelService.apartmentsCount()) {
             throw new ApartmentNotFoundException("Apartment not found for the given ID. Please provide ID between 1 " +
-                    "and " + hotelService.getApartmentsCount() + ".");
+                    "and " + hotelService.apartmentsCount() + ".");
         }
     }
 

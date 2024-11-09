@@ -29,20 +29,16 @@ public class HotelService {
         this.nextId = 1;
     }
 
-    //TODO getApartmentsCount, getReservedApartmentsCount and getTotalPages
-    // to another class and make this methods static
-    @JsonIgnore
-    public int getApartmentsCount() {
+    public int apartmentsCount() {
         return apartments.size();
     }
 
-    @JsonIgnore
-    public int getReservedApartmentsCount() {
+    public int reservedApartmentsCount() {
         return reservations.size();
     }
 
     @JsonIgnore
-    public int getTotalPages() {
+    public int totalPages() {
         return (int) Math.ceil((double) apartments.size() / PAGE_SIZE);
     }
 
@@ -61,7 +57,7 @@ public class HotelService {
         Apartment apartment = apartments.get(id);
         if (apartment == null) {
             throw new ApartmentNotFoundException("Apartment not found for the given ID. Please provide ID between 1 " +
-                    "and " + getApartmentsCount() + ".");
+                    "and " + apartmentsCount() + ".");
         }
 
         Guest guest = new Guest(guestName);
@@ -87,9 +83,9 @@ public class HotelService {
             throw new ApartmentNotFoundException("Page number and page size must be greater than 0.");
         }
 
-        if (page > getTotalPages()) {
+        if (page > totalPages()) {
             throw new ApartmentNotFoundException("No apartments found for the requested page number. " +
-                    "Valid page numbers are from 1 to " + getTotalPages() + ".");
+                    "Valid page numbers are from 1 to " + totalPages() + ".");
         }
 
         return apartments.values().stream()

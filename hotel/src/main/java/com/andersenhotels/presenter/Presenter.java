@@ -66,7 +66,7 @@ public class Presenter {
     }
 
     public int getTotalPages() {
-        return hotelService.getTotalPages();
+        return hotelService.totalPages();
     }
 
     public boolean saveState(String filePath) {

@@ -5,9 +5,13 @@ import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.view.common.MenuHandler;
 import com.andersenhotels.view.common.View;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Setter
+@Getter
 public class ConsoleUI implements View {
     private MenuHandler menuHandler;
     private Presenter presenter;
@@ -21,18 +25,6 @@ public class ConsoleUI implements View {
         this.presenter = new Presenter(this);
         this.inputValidator = new InputValidator(this);
         this.isRunning = true;
-    }
-
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    public void setRunning(boolean running) {
-        isRunning = running;
-    }
-
-    public Presenter getPresenter() {
-        return presenter;
     }
 
     @Override

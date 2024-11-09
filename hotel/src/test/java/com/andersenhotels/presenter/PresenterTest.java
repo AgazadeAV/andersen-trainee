@@ -143,10 +143,10 @@ class PresenterTest {
 
     @Test
     void getTotalPages() {
-        when(hotelService.getTotalPages()).thenReturn(5);
+        when(hotelService.totalPages()).thenReturn(5);
 
         int totalPages = presenter.getTotalPages();
         assertEquals(5, totalPages);
-        verify(hotelService, times(1)).getTotalPages();
+        verify(hotelService, times(1)).totalPages();
     }
 }

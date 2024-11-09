@@ -23,7 +23,7 @@ class HotelServiceTest {
     void registerApartment_Success() {
         hotelService.registerApartment(100.0);
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 
     @Test
@@ -36,7 +36,7 @@ class HotelServiceTest {
         hotelService.registerApartment(100.0);
         hotelService.reserveApartment(1, "Azer Agazade");
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 
     @Test
@@ -58,7 +58,7 @@ class HotelServiceTest {
         hotelService.reserveApartment(1, "Azer Agazade");
         hotelService.releaseApartment(1);
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 
     @Test
@@ -86,11 +86,11 @@ class HotelServiceTest {
     }
 
     @Test
-    void getTotalPages() {
+    void totalPages() {
         for (int i = 0; i < 12; i++) {
             hotelService.registerApartment(100.0 + i);
         }
 
-        assertEquals(3, hotelService.getTotalPages());
+        assertEquals(3, hotelService.totalPages());
     }
 }

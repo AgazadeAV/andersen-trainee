@@ -4,47 +4,20 @@ import com.andersenhotels.view.common.View;
 
 import java.util.Scanner;
 
-/**
- * The `InputValidator` class provides methods to validate and retrieve integer, double and string inputs from the user.
- * It displays error messages when invalid input is detected, prompting the user to try again until valid input is received.
- * <p>
- * This class is useful in console-based applications to ensure that user inputs meet expected data types,
- * thus preventing runtime errors and improving the user experience by guiding them toward correct input formats.
- */
 public class InputValidator {
     private Scanner scanner;
     private View view;
 
-    /**
-     * Constructs an `InputValidator` with the specified Scanner and View.
-     *
-     * @param view    The View instance used to display messages and error prompts, allowing feedback to the user.
-     */
     public InputValidator(View view) {
         this.scanner = new Scanner(System.in);
         this.view = view;
     }
 
-    /**
-     * Constructs an `InputValidator` with the specified View and Scanner.
-     * Primarily used for testing to provide a mock Scanner.
-     *
-     * @param view    The View instance used to display messages and error prompts.
-     * @param scanner A Scanner instance, typically mocked for testing.
-     */
     public InputValidator(View view, Scanner scanner) {
         this.scanner = scanner;
         this.view = view;
     }
 
-    /**
-     * Continuously prompts the user for an integer input until a valid integer is entered.
-     * If the input is not a valid integer, displays an error message and re-prompts.
-     *
-     * @param prompt The message displayed to the user to prompt for input.
-     * @return A valid integer provided by the user.
-     * @throws NumberFormatException if the user input cannot be parsed to an integer, which is handled within the loop.
-     */
     public int getIntInput(String prompt) {
         while (true) {
             view.displayMessage(prompt);
@@ -56,14 +29,6 @@ public class InputValidator {
         }
     }
 
-    /**
-     * Continuously prompts the user for a double input until a valid double is entered.
-     * If the input is not a valid double, displays an error message and re-prompts.
-     *
-     * @param prompt The message displayed to the user to prompt for input.
-     * @return A valid double provided by the user.
-     * @throws NumberFormatException if the user input cannot be parsed to a double, which is handled within the loop.
-     */
     public double getDoubleInput(String prompt) {
         while (true) {
             view.displayMessage(prompt);
@@ -75,17 +40,6 @@ public class InputValidator {
         }
     }
 
-    /**
-     * Prompts the user for a string input and returns the entered value after trimming
-     * any leading or trailing whitespace.
-     * <p>
-     * This method does not perform additional validation on the input, allowing the user
-     * to enter any string, including empty or whitespace-only strings. It displays the specified
-     * prompt message to guide the user.
-     *
-     * @param prompt The message displayed to the user to prompt for input.
-     * @return The user-provided string, trimmed of leading and trailing whitespace.
-     */
     public String getStringInput(String prompt) {
         view.displayMessage(prompt);
         return scanner.nextLine().trim();

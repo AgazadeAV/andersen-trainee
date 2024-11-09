@@ -7,11 +7,6 @@ import com.andersenhotels.presenter.exceptions.*;
 
 import java.util.*;
 
-/**
- * Service class that provides core functionalities for managing
- * hotel apartments, including apartment registration, reservation handling,
- * and pagination of available apartments.
- */
 public class HotelService {
     // Defines the maximum number of apartments displayed per page.
     private static final int PAGE_SIZE = 5;
@@ -21,10 +16,6 @@ public class HotelService {
     private ValueValidator valueValidator;
     private int nextId;
 
-    /**
-     * Constructor that initializes the HotelService with empty apartment
-     * and reservation lists and sets up a validator instance.
-     */
     public HotelService() {
         this.apartments = new HashMap<>();
         this.reservations = new HashMap<>();
@@ -32,12 +23,6 @@ public class HotelService {
         this.nextId = 1;
     }
 
-    /**
-     * Registers a new apartment with a specified price.
-     *
-     * @param price The rental price for the apartment. Must be non-negative.
-     * @throws InvalidPriceException if the price is negative.
-     */
     public void registerApartment(double price) {
         if (price < 0) {
             throw new InvalidPriceException("The price should be a positive number. Please try again.");
@@ -46,32 +31,14 @@ public class HotelService {
         apartments.put(apartment.getId(), apartment);
     }
 
-    /**
-     * Returns the total number of apartments currently registered.
-     *
-     * @return The count of registered apartments.
-     */
     public int getApartmentsCount() {
         return apartments.size();
     }
 
-    /**
-     * Returns the total number of apartments currently reserved.
-     *
-     * @return The count of reserved apartments.
-     */
     public int getReservedApartmentsCount() {
         return reservations.size();
     }
 
-    /**
-     * Reserves an apartment for a specified guest by creating a reservation.
-     *
-     * @param id        The ID of the apartment to reserve.
-     * @param guestName The name of the guest for the reservation.
-     * @throws ApartmentNotFoundException if the apartment with the given ID does not exist.
-     * @throws InvalidNameException       if the guest name is invalid.
-     */
     public void reserveApartment(int id, String guestName) {
         valueValidator.validateApartmentId(id);
         valueValidator.validateGuestName(guestName);
@@ -88,12 +55,6 @@ public class HotelService {
         reservations.put(id, reservation);
     }
 
-    /**
-     * Releases a reserved apartment by canceling the reservation.
-     *
-     * @param id The ID of the apartment to release.
-     * @throws ApartmentNotReservedException if the apartment is not currently reserved.
-     */
     public void releaseApartment(int id) {
         valueValidator.validateApartmentId(id);
         Reservation reservation = reservations.get(id);
@@ -106,13 +67,6 @@ public class HotelService {
         }
     }
 
-    /**
-     * Lists a paginated view of registered apartments.
-     *
-     * @param page The page number to retrieve, starting from 1.
-     * @return A list of apartments on the specified page.
-     * @throws ApartmentNotFoundException if the page number is out of range or invalid.
-     */
     public List<Apartment> listApartments(int page) {
         if (page <= 0 || PAGE_SIZE <= 0) {
             throw new ApartmentNotFoundException("Page number and page size must be greater than 0.");
@@ -131,12 +85,6 @@ public class HotelService {
         return apartmentList.subList(start, end);
     }
 
-    /**
-     * Calculates the total number of pages available for apartment listings,
-     * based on the defined PAGE_SIZE.
-     *
-     * @return The total number of pages for paginated apartment listings.
-     */
     public int getTotalPages() {
         return (int) Math.ceil((double) apartments.size() / PAGE_SIZE);
     }

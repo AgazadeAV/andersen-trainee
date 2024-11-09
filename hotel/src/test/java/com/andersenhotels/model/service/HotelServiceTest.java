@@ -40,7 +40,8 @@ class HotelServiceTest {
 
     @Test
     void reserveApartment_ApartmentNotFound() {
-        assertThrows(ApartmentNotFoundException.class, () -> hotelService.reserveApartment(999, "Azer Agazade"));
+        assertThrows(ApartmentNotFoundException.class, () ->
+                hotelService.reserveApartment(999, "Azer Agazade"));
     }
 
     @Test

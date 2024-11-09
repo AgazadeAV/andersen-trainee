@@ -45,7 +45,8 @@ class InputValidatorTest {
         int result = inputValidator.getIntInput("Enter an integer:");
         assertEquals(10, result);
 
-        verify(view, times(1)).displayError("Invalid integer value. Please try again.");
+        verify(view, times(1)).
+                displayError("Invalid integer value. Please try again.");
     }
 
     @Test
@@ -69,7 +70,8 @@ class InputValidatorTest {
         double result = inputValidator.getDoubleInput("Enter a double:");
         assertEquals(10.5, result);
 
-        verify(view, times(1)).displayError("Invalid number. Please enter a valid double or integer value.");
+        verify(view, times(1)).
+                displayError("Invalid number. Please enter a valid double or integer value.");
     }
 
     @Test

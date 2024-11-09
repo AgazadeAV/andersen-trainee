@@ -31,6 +31,7 @@ public class ExitTest {
         consoleUI.startWork();
 
         String output = outputStream.toString();
-        assertTrue(output.contains("Good bye!"), "The application should display a farewell message on exit.");
+        assertTrue(output.contains("Good bye!"),
+                "The application should display a farewell message on exit.");
     }
 }

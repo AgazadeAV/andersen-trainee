@@ -47,7 +47,8 @@ class PresenterTest {
                 .when(hotelService).registerApartment(price);
 
         assertFalse(presenter.registerApartment(price));
-        verify(view, times(1)).displayError("The price should be a positive number.");
+        verify(view, times(1)).
+                displayError("The price should be a positive number.");
     }
 
     @Test
@@ -136,7 +137,8 @@ class PresenterTest {
 
         List<String> result = presenter.listApartments(page);
         assertTrue(result.isEmpty());
-        verify(view, times(1)).displayError("No apartments found for the requested page number.");
+        verify(view, times(1)).
+                displayError("No apartments found for the requested page number.");
     }
 
     @Test

@@ -38,6 +38,7 @@ public class InputValidationIntegrationTest {
         inputValidator = new InputValidator(view, new Scanner(inputStream));
 
         int result = inputValidator.getIntInput("Enter an integer:");
-        assertEquals(42, result, "After invalid input, the input should be parsed as integer 42.");
+        assertEquals(42, result,
+                "After invalid input, the input should be parsed as integer 42.");
     }
 }

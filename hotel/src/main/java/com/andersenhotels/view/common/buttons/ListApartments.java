@@ -11,8 +11,7 @@ public class ListApartments extends Button {
     @Override
     public void execute() {
         try {
-            view.listApartments().stream()
-                    .forEach(view::displayMessage);
+            view.listApartments().forEach(view::displayMessage);
         } catch (ApartmentNotFoundException e) {
             view.displayError(e.getMessage());
         }

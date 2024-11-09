@@ -2,14 +2,16 @@ package com.andersenhotels.view.common;
 
 import com.andersenhotels.view.common.buttons.*;
 import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Getter
 public class MenuHandler {
-    private List<Button> buttons;
+    private final List<Button> buttons;
 
     public MenuHandler(View view) {
         buttons = new ArrayList<>();
@@ -18,10 +20,6 @@ public class MenuHandler {
         buttons.add(new ReleaseApartment(view));
         buttons.add(new ListApartments(view));
         buttons.add(new Exit(view));
-    }
-
-    public List<Button> getButtons() {
-        return buttons;
     }
 
     public String getMenu() {

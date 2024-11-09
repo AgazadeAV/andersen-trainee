@@ -6,8 +6,8 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 public class InputValidator {
-    private Scanner scanner;
-    private View view;
+    private final Scanner scanner;
+    private final View view;
 
     public InputValidator(View view) {
         this.scanner = new Scanner(System.in);

@@ -1,0 +1,42 @@
+{
+  "apartments" : {
+    "1" : {
+      "id" : 1,
+      "price" : 100.0,
+      "status" : "RESERVED"
+    },
+    "2" : {
+      "id" : 2,
+      "price" : 200.0,
+      "status" : "RESERVED"
+    },
+    "3" : {
+      "id" : 3,
+      "price" : 300.0,
+      "status" : "AVAILABLE"
+    }
+  },
+  "reservations" : {
+    "1" : {
+      "apartment" : {
+        "id" : 1,
+        "price" : 100.0,
+        "status" : "RESERVED"
+      },
+      "guest" : {
+        "name" : "Azer Agazade"
+      }
+    },
+    "2" : {
+      "apartment" : {
+        "id" : 2,
+        "price" : 200.0,
+        "status" : "RESERVED"
+      },
+      "guest" : {
+        "name" : "Anar Agazade"
+      }
+    }
+  },
+  "nextApartmentId" : 4
+}

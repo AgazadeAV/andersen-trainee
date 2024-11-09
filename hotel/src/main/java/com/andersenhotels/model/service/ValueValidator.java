@@ -4,7 +4,7 @@ import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 
 class ValueValidator {
-    private HotelService hotelService;
+    private final HotelService hotelService;
 
     ValueValidator(HotelService hotelService) {
         this.hotelService = hotelService;

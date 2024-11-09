@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Presenter {
     private HotelService hotelService;
-    private View view;
+    private final View view;
 
     public Presenter(View view) {
         this.hotelService = new HotelService();
@@ -69,18 +69,18 @@ public class Presenter {
         return hotelService.totalPages();
     }
 
-    public boolean saveState(String filePath) {
+    public boolean saveState() {
         try {
-            StateManager.saveState(hotelService, filePath);
+            StateManager.saveState(hotelService);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    public boolean loadState(String filePath) {
+    public boolean loadState() {
         try {
-            this.hotelService = StateManager.loadState(filePath);
+            this.hotelService = StateManager.loadState();
             return true;
         } catch (IOException e) {
             return false;

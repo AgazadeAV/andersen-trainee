@@ -1,6 +1,8 @@
 package com.andersenhotels.model.service;
 
+import com.andersenhotels.model.config.ConfigManager;
 import com.andersenhotels.model.Apartment;
+import com.andersenhotels.model.ApartmentStatus;
 import com.andersenhotels.model.Guest;
 import com.andersenhotels.model.Reservation;
 import com.andersenhotels.presenter.exceptions.*;
@@ -15,18 +17,16 @@ import java.util.*;
 public class HotelService {
     private Map<Integer, Apartment> apartments;
     private Map<Integer, Reservation> reservations;
-    private int nextId;
+    private int nextApartmentId;
 
     @JsonIgnore
     private ValueValidator valueValidator;
-
-    private static final int PAGE_SIZE = 5;
 
     public HotelService() {
         this.apartments = new HashMap<>();
         this.reservations = new HashMap<>();
         this.valueValidator = new ValueValidator(this);
-        this.nextId = 1;
+        this.nextApartmentId = 1;
     }
 
     public int apartmentsCount() {
@@ -37,16 +37,15 @@ public class HotelService {
         return reservations.size();
     }
 
-    @JsonIgnore
     public int totalPages() {
-        return (int) Math.ceil((double) apartments.size() / PAGE_SIZE);
+        return (int) Math.ceil((double) apartments.size() / ConfigManager.getPageSizeForPagination());
     }
 
     public void registerApartment(double price) {
         if (price < 0) {
             throw new InvalidPriceException("The price should be a positive number. Please try again.");
         }
-        Apartment apartment = new Apartment(nextId++, price);
+        Apartment apartment = new Apartment(nextApartmentId++, price);
         apartments.put(apartment.getId(), apartment);
     }
 
@@ -79,7 +78,7 @@ public class HotelService {
     }
 
     public List<Apartment> listApartments(int page) {
-        if (page <= 0 || PAGE_SIZE <= 0) {
+        if (page <= 0 || ConfigManager.getPageSizeForPagination() <= 0) {
             throw new ApartmentNotFoundException("Page number and page size must be greater than 0.");
         }
 
@@ -90,8 +89,21 @@ public class HotelService {
 
         return apartments.values().stream()
                 .sorted(Comparator.comparingInt(Apartment::getId))
-                .skip((long) (page - 1) * PAGE_SIZE)
-                .limit(PAGE_SIZE)
+                .skip((long) (page - 1) * ConfigManager.getPageSizeForPagination())
+                .limit(ConfigManager.getPageSizeForPagination())
                 .toList();
+    }
+
+    public void changeApartmentStatus(int apartmentId, ApartmentStatus newStatus) {
+        if (!ConfigManager.isAllowApartmentStatusChange()) {
+            throw new UnsupportedOperationException("Changing apartment status is disabled by configuration.");
+        }
+
+        Apartment apartment = apartments.get(apartmentId);
+        if (apartment != null) {
+            apartment.setStatus(newStatus);
+        } else {
+            throw new ApartmentNotFoundException("Apartment not found for the given ID.");
+        }
     }
 }

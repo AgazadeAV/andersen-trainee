@@ -25,6 +25,10 @@ class PresenterTest {
 
     private Presenter presenter;
 
+    private static int ID = 1;
+    private static String CLIENT_NAME = "Azer Agazade";
+
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -53,65 +57,51 @@ class PresenterTest {
 
     @Test
     void reserveApartment_Success() {
-        int id = 1;
-        String clientName = "Azer Agazade";
-
-        assertTrue(presenter.reserveApartment(id, clientName));
-        verify(hotelService, times(1)).reserveApartment(id, clientName);
+        assertTrue(presenter.reserveApartment(ID, CLIENT_NAME));
+        verify(hotelService, times(1)).reserveApartment(ID, CLIENT_NAME);
     }
 
     @Test
     void reserveApartment_ApartmentNotFoundException() {
-        int id = 1;
-        String clientName = "Azer Agazade";
-
         doThrow(new ApartmentNotFoundException("Apartment not found."))
-                .when(hotelService).reserveApartment(id, clientName);
+                .when(hotelService).reserveApartment(ID, CLIENT_NAME);
 
-        assertFalse(presenter.reserveApartment(id, clientName));
+        assertFalse(presenter.reserveApartment(ID, CLIENT_NAME));
         verify(view, times(1)).displayError("Apartment not found.");
     }
 
     @Test
     void reserveApartment_ApartmentAlreadyReservedException() {
-        int id = 1;
-        String clientName = "Azer Agazade";
-
         doThrow(new ApartmentAlreadyReservedException("Apartment is already reserved."))
-                .when(hotelService).reserveApartment(id, clientName);
+                .when(hotelService).reserveApartment(ID, CLIENT_NAME);
 
-        assertFalse(presenter.reserveApartment(id, clientName));
+        assertFalse(presenter.reserveApartment(ID, CLIENT_NAME));
         verify(view, times(1)).displayError("Apartment is already reserved.");
     }
 
     @Test
     void reserveApartment_InvalidNameException() {
-        int id = 1;
         String clientName = "";
 
         doThrow(new InvalidNameException("Invalid name."))
-                .when(hotelService).reserveApartment(id, clientName);
+                .when(hotelService).reserveApartment(ID, clientName);
 
-        assertFalse(presenter.reserveApartment(id, clientName));
+        assertFalse(presenter.reserveApartment(ID, clientName));
         verify(view, times(1)).displayError("Invalid name.");
     }
 
     @Test
     void releaseApartment_Success() {
-        int id = 1;
-
-        assertTrue(presenter.releaseApartment(id));
-        verify(hotelService, times(1)).releaseApartment(id);
+        assertTrue(presenter.releaseApartment(ID));
+        verify(hotelService, times(1)).releaseApartment(ID);
     }
 
     @Test
     void releaseApartment_ApartmentNotReservedException() {
-        int id = 1;
-
         doThrow(new ApartmentNotReservedException("Apartment is not reserved."))
-                .when(hotelService).releaseApartment(id);
+                .when(hotelService).releaseApartment(ID);
 
-        assertFalse(presenter.releaseApartment(id));
+        assertFalse(presenter.releaseApartment(ID));
         verify(view, times(1)).displayError("Apartment is not reserved.");
     }
 

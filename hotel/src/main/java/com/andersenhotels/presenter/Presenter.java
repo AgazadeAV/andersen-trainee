@@ -1,10 +1,12 @@
 package com.andersenhotels.presenter;
 
 import com.andersenhotels.model.Apartment;
+import com.andersenhotels.model.service.StateManager;
 import com.andersenhotels.presenter.exceptions.*;
 import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.view.common.View;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,8 +65,25 @@ public class Presenter {
         }
     }
 
-
     public int getTotalPages() {
         return hotelService.getTotalPages();
+    }
+
+    public boolean saveState(String filePath) {
+        try {
+            StateManager.saveState(hotelService, filePath);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public boolean loadState(String filePath) {
+        try {
+            this.hotelService = StateManager.loadState(filePath);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

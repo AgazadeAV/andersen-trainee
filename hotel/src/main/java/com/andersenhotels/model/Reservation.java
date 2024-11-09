@@ -2,12 +2,19 @@ package com.andersenhotels.model;
 
 import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException;
 import com.andersenhotels.presenter.exceptions.ApartmentNotReservedException;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class Reservation {
     private Apartment apartment;
     private Guest guest;
 
-    public Reservation(Apartment apartment, Guest guest) {
+    @JsonCreator
+    public Reservation(@JsonProperty("apartment") Apartment apartment, @JsonProperty("guest") Guest guest) {
         this.apartment = apartment;
         this.guest = guest;
     }

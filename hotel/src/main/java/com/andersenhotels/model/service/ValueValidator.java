@@ -3,6 +3,8 @@ package com.andersenhotels.model.service;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 
+//TODO make methods in this class static, remove fields, because method that is using here
+// also will be static in another class
 class ValueValidator {
     private HotelService hotelService;
 

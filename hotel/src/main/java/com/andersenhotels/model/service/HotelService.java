@@ -4,17 +4,23 @@ import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.Guest;
 import com.andersenhotels.model.Reservation;
 import com.andersenhotels.presenter.exceptions.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
+@Setter
+@Getter
 public class HotelService {
-    // Defines the maximum number of apartments displayed per page.
-    private static final int PAGE_SIZE = 5;
-
     private Map<Integer, Apartment> apartments;
     private Map<Integer, Reservation> reservations;
-    private ValueValidator valueValidator;
     private int nextId;
+
+    @JsonIgnore
+    private ValueValidator valueValidator;
+
+    private static final int PAGE_SIZE = 5;
 
     public HotelService() {
         this.apartments = new HashMap<>();
@@ -23,20 +29,29 @@ public class HotelService {
         this.nextId = 1;
     }
 
+    //TODO getApartmentsCount, getReservedApartmentsCount and getTotalPages
+    // to another class and make this methods static
+    @JsonIgnore
+    public int getApartmentsCount() {
+        return apartments.size();
+    }
+
+    @JsonIgnore
+    public int getReservedApartmentsCount() {
+        return reservations.size();
+    }
+
+    @JsonIgnore
+    public int getTotalPages() {
+        return (int) Math.ceil((double) apartments.size() / PAGE_SIZE);
+    }
+
     public void registerApartment(double price) {
         if (price < 0) {
             throw new InvalidPriceException("The price should be a positive number. Please try again.");
         }
         Apartment apartment = new Apartment(nextId++, price);
         apartments.put(apartment.getId(), apartment);
-    }
-
-    public int getApartmentsCount() {
-        return apartments.size();
-    }
-
-    public int getReservedApartmentsCount() {
-        return reservations.size();
     }
 
     public void reserveApartment(int id, String guestName) {
@@ -82,9 +97,5 @@ public class HotelService {
                 .skip((long) (page - 1) * PAGE_SIZE)
                 .limit(PAGE_SIZE)
                 .toList();
-    }
-
-    public int getTotalPages() {
-        return (int) Math.ceil((double) apartments.size() / PAGE_SIZE);
     }
 }

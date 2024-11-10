@@ -34,8 +34,8 @@ public class MenuHandler {
 
     public void execute(int choice) {
         Optional.of(choice)
-                .filter(c -> c >= 1 && c <= getMenuSize())
-                .map(c -> buttons.get(c - 1))
+                .filter(selectedChoice -> selectedChoice >= 1 && selectedChoice <= getMenuSize())
+                .map(selectedChoice -> buttons.get(selectedChoice - 1))
                 .ifPresentOrElse(Button::execute, () -> {
                     throw new WrongMenuChoiceException("Invalid menu option entered. " +
                             "Please enter a valid number from the menu: from 1 to " + getMenuSize() + ".");

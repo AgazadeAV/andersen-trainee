@@ -24,7 +24,7 @@ class ApartmentReleaseIntegrationTest {
     void releaseApartment_Success() {
         hotelService.releaseApartment(1);
 
-        assertEquals(0, hotelService.getReservedApartmentsCount());
+        assertEquals(0, hotelService.reservedApartmentsCount());
     }
 
     @Test
@@ -45,6 +45,6 @@ class ApartmentReleaseIntegrationTest {
         });
 
         assertEquals("Apartment not found for the given ID. Please provide ID between 1 " +
-                "and " + hotelService.getApartmentsCount() + ".", thrown.getMessage());
+                "and " + hotelService.apartmentsCount() + ".", thrown.getMessage());
     }
 }

@@ -1,12 +1,16 @@
 package com.andersenhotels.e2e;
 
 import com.andersenhotels.view.console_ui.ConsoleUI;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,6 +28,12 @@ public class PaginationTest {
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
         consoleUI = new ConsoleUI();
+        consoleUI.setTesting(true);
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        Files.deleteIfExists(Path.of(ConsoleUI.getTEST_PATH()));
     }
 
     @Test
@@ -31,15 +41,18 @@ public class PaginationTest {
         consoleUI.startWork();
 
         String output = outputStream.toString();
+        List<String> expectedMessages = List.of(
+                "Apartment ID: 1, Price: 100.0, Status: AVAILABLE.",
+                "Apartment ID: 2, Price: 200.0, Status: AVAILABLE.",
+                "Apartment ID: 3, Price: 300.0, Status: AVAILABLE.",
+                "Apartment ID: 4, Price: 400.0, Status: AVAILABLE.",
+                "Apartment ID: 5, Price: 500.0, Status: AVAILABLE.",
+                "Apartment ID: 6, Price: 600.0, Status: AVAILABLE."
+        );
 
-        assertTrue(output.contains("Apartment ID: 1, Price: 100.0, Status: AVAILABLE."),
-                "Expected apartment details should be printed for the first page.");
-        assertTrue(output.contains("Apartment ID: 2, Price: 200.0, Status: AVAILABLE."));
-        assertTrue(output.contains("Apartment ID: 3, Price: 300.0, Status: AVAILABLE."));
-        assertTrue(output.contains("Apartment ID: 4, Price: 400.0, Status: AVAILABLE."));
-        assertTrue(output.contains("Apartment ID: 5, Price: 500.0, Status: AVAILABLE."));
+        boolean allMessagesPresent = expectedMessages.stream()
+                .allMatch(output::contains);
 
-        assertTrue(output.contains("Apartment ID: 6, Price: 600.0, Status: AVAILABLE."),
-                "Expected apartment details should be printed for the second page.");
+        assertTrue(allMessagesPresent, "All expected apartment details should be present in the output.");
     }
 }

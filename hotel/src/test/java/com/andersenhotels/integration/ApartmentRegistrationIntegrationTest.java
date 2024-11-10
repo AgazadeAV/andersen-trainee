@@ -21,7 +21,7 @@ class ApartmentRegistrationIntegrationTest {
     void registerApartment_Success() {
         hotelService.registerApartment(150.0);
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 
     @Test
@@ -37,6 +37,6 @@ class ApartmentRegistrationIntegrationTest {
     void registerApartment_ZeroPrice() {
         hotelService.registerApartment(0.0);
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 }

@@ -1,53 +1,63 @@
 package com.andersenhotels.model.service;
 
+import com.andersenhotels.model.config.ConfigManager;
 import com.andersenhotels.model.Apartment;
+import com.andersenhotels.model.ApartmentStatus;
 import com.andersenhotels.model.Guest;
 import com.andersenhotels.model.Reservation;
 import com.andersenhotels.presenter.exceptions.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
+@Setter
+@Getter
 public class HotelService {
-    // Defines the maximum number of apartments displayed per page.
-    private static final int PAGE_SIZE = 5;
 
     private Map<Integer, Apartment> apartments;
     private Map<Integer, Reservation> reservations;
+    private int nextApartmentId;
+
+    @JsonIgnore
     private ValueValidator valueValidator;
-    private int nextId;
 
     public HotelService() {
         this.apartments = new HashMap<>();
         this.reservations = new HashMap<>();
         this.valueValidator = new ValueValidator(this);
-        this.nextId = 1;
+        this.nextApartmentId = 1;
+    }
+
+    public int apartmentsCount() {
+        return apartments.size();
+    }
+
+    public int reservedApartmentsCount() {
+        return reservations.size();
+    }
+
+    public int totalPages() {
+        return (int) Math.ceil((double) apartments.size() / ConfigManager.getPageSizeForPagination());
     }
 
     public void registerApartment(double price) {
         if (price < 0) {
             throw new InvalidPriceException("The price should be a positive number. Please try again.");
         }
-        Apartment apartment = new Apartment(nextId++, price);
+        Apartment apartment = new Apartment(nextApartmentId++, price);
         apartments.put(apartment.getId(), apartment);
-    }
-
-    public int getApartmentsCount() {
-        return apartments.size();
-    }
-
-    public int getReservedApartmentsCount() {
-        return reservations.size();
     }
 
     public void reserveApartment(int id, String guestName) {
         valueValidator.validateApartmentId(id);
         valueValidator.validateGuestName(guestName);
 
-        Apartment apartment = apartments.get(id);
-        if (apartment == null) {
-            throw new ApartmentNotFoundException("Apartment not found for the given ID. Please provide ID between 1 " +
-                    "and " + getApartmentsCount() + ".");
-        }
+        Apartment apartment = Optional.ofNullable(apartments.get(id))
+                .orElseThrow(() -> new ApartmentNotFoundException(
+                        "Apartment not found for the given ID. Please provide ID between 1 and " + apartmentsCount() + "."
+                ));
 
         Guest guest = new Guest(guestName);
         Reservation reservation = new Reservation(apartment, guest);
@@ -57,35 +67,39 @@ public class HotelService {
 
     public void releaseApartment(int id) {
         valueValidator.validateApartmentId(id);
-        Reservation reservation = reservations.get(id);
 
-        if (reservation != null) {
-            reservation.cancelReservation();
-            reservations.remove(id);
-        } else {
-            throw new ApartmentNotReservedException("Apartment is not reserved. Please try again.");
-        }
+        Reservation reservation = Optional.ofNullable(reservations.get(id))
+                .orElseThrow(() -> new ApartmentNotReservedException("Apartment is not reserved. Please try again."));
+
+        reservation.cancelReservation();
+        reservations.remove(id);
     }
 
     public List<Apartment> listApartments(int page) {
-        if (page <= 0 || PAGE_SIZE <= 0) {
+        if (page <= 0 || ConfigManager.getPageSizeForPagination() <= 0) {
             throw new ApartmentNotFoundException("Page number and page size must be greater than 0.");
         }
 
-        List<Apartment> apartmentList = new ArrayList<>(apartments.values());
-
-        if (page > getTotalPages()) {
+        if (page > totalPages()) {
             throw new ApartmentNotFoundException("No apartments found for the requested page number. " +
-                    "Valid page numbers are from 1 to " + getTotalPages() + ".");
+                    "Valid page numbers are from 1 to " + totalPages() + ".");
         }
 
-        int start = (page - 1) * PAGE_SIZE;
-        int end = Math.min(start + PAGE_SIZE, apartmentList.size());
-
-        return apartmentList.subList(start, end);
+        return apartments.values().stream()
+                .sorted(Comparator.comparingInt(Apartment::getId))
+                .skip((long) (page - 1) * ConfigManager.getPageSizeForPagination())
+                .limit(ConfigManager.getPageSizeForPagination())
+                .toList();
     }
 
-    public int getTotalPages() {
-        return (int) Math.ceil((double) apartments.size() / PAGE_SIZE);
+    public void changeApartmentStatus(int apartmentId, ApartmentStatus newStatus) {
+        if (!ConfigManager.isAllowApartmentStatusChange()) {
+            throw new UnsupportedOperationException("Changing apartment status is disabled by configuration.");
+        }
+
+        Apartment apartment = Optional.ofNullable(apartments.get(apartmentId))
+                .orElseThrow(() -> new ApartmentNotFoundException("Apartment not found for the given ID."));
+
+        apartment.setStatus(newStatus);
     }
 }

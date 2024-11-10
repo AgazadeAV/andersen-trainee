@@ -1,26 +1,23 @@
 package com.andersenhotels.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class Apartment {
+
     private int id;
     private double price;
     private ApartmentStatus status;
 
-    public Apartment(int id, double price) {
+    @JsonCreator
+    public Apartment(@JsonProperty("id") int id, @JsonProperty("price") double price) {
         this.id = id;
         this.price = price;
-        this.status = ApartmentStatus.AVAILABLE; // New apartments are available by default
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public ApartmentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ApartmentStatus status) {
-        this.status = status;
+        this.status = ApartmentStatus.AVAILABLE;
     }
 
     @Override

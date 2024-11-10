@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Reservation {
+
     private Apartment apartment;
     private Guest guest;
 

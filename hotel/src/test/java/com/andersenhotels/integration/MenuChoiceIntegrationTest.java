@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MenuChoiceIntegrationTest {
+
     private MenuHandler menuHandler;
     private View view;
 

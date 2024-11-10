@@ -4,6 +4,7 @@ import com.andersenhotels.view.common.View;
 import lombok.Getter;
 
 public abstract class Button {
+
     @Getter
     protected final String description;
     protected View view;

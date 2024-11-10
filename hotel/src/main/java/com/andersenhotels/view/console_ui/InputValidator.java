@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 public class InputValidator {
+
     private final Scanner scanner;
     private final View view;
 

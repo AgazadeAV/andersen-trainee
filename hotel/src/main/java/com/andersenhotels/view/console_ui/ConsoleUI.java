@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @Getter
 public class ConsoleUI implements View {
+
     private MenuHandler menuHandler;
     private Presenter presenter;
     private InputValidator inputValidator;

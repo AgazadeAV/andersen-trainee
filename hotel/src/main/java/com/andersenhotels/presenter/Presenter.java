@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Presenter {
+
     private HotelService hotelService;
     private final View view;
 

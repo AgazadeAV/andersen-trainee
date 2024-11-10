@@ -6,6 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Guest {
+
     private String name;
 
     public Guest(String name) {

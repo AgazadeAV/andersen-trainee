@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Apartment {
+
     private int id;
     private double price;
     private ApartmentStatus status;

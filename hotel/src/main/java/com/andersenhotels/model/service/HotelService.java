@@ -15,6 +15,7 @@ import java.util.*;
 @Setter
 @Getter
 public class HotelService {
+
     private Map<Integer, Apartment> apartments;
     private Map<Integer, Reservation> reservations;
     private int nextApartmentId;

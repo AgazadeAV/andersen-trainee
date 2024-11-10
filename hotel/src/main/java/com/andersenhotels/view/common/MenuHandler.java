@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 
 @Getter
 public class MenuHandler {
+
     private final List<Button> buttons;
 
     public MenuHandler(View view) {

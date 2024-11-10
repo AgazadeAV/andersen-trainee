@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class StateManager {
+
     @Getter
     private static String PATH = ConfigManager.getStateFilePath();
 

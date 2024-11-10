@@ -4,6 +4,7 @@ import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.view.common.View;
 
 public class ListApartments extends Button {
+
     public ListApartments(View view) {
         super("List Apartments", view);
     }

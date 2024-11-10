@@ -6,6 +6,7 @@ import com.andersenhotels.presenter.exceptions.InvalidNameException;
 import java.util.Optional;
 
 class ValueValidator {
+
     private final HotelService hotelService;
 
     ValueValidator(HotelService hotelService) {

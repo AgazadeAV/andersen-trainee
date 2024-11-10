@@ -6,21 +6,9 @@ import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The `MenuHandler` class manages the display and execution of a menu in the console UI.
- * It initializes a list of `Button` objects, each representing an action in the application,
- * and allows the user to execute a selected action.
- */
 public class MenuHandler {
     private List<Button> buttons;
 
-    /**
-     * Constructs a `MenuHandler` with predefined menu actions.
-     * Initializes buttons for actions such as registering apartments, reserving apartments, releasing apartments,
-     * listing apartments, and exiting the application.
-     *
-     * @param view The `View` instance that each button will interact with.
-     */
     public MenuHandler(View view) {
         buttons = new ArrayList<>();
         buttons.add(new RegisterApartment(view));
@@ -30,12 +18,10 @@ public class MenuHandler {
         buttons.add(new Exit(view));
     }
 
-    /**
-     * Generates and returns a formatted menu as a string.
-     * The menu lists all available options, each associated with a number.
-     *
-     * @return A formatted menu string displaying each menu option.
-     */
+    public List<Button> getButtons() {
+        return buttons;
+    }
+
     public String getMenu() {
         StringBuilder sb = new StringBuilder();
         sb.append("Menu:\n");
@@ -48,13 +34,6 @@ public class MenuHandler {
         return sb.toString();
     }
 
-    /**
-     * Executes the action associated with the selected menu option.
-     * Validates the user's choice to ensure it falls within the valid range of menu options.
-     *
-     * @param choice The menu option number selected by the user.
-     * @throws WrongMenuChoiceException if the choice is invalid, i.e., outside the range of available options.
-     */
     public void execute(int choice) {
         if (choice >= 1 && choice <= getMenuSize()) {
             Button button = buttons.get(choice - 1);
@@ -65,11 +44,6 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Gets the total number of menu options.
-     *
-     * @return The number of buttons in the menu.
-     */
     public int getMenuSize() {
         return buttons.size();
     }

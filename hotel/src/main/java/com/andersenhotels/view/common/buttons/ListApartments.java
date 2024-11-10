@@ -11,7 +11,9 @@ public class ListApartments extends Button {
     @Override
     public void execute() {
         try {
-            view.listApartments();
+            for (String apartment : view.listApartments()) {
+                view.displayMessage(apartment);
+            }
         } catch (ApartmentNotFoundException e) {
             view.displayError(e.getMessage());
         }

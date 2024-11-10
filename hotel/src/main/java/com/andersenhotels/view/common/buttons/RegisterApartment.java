@@ -9,6 +9,8 @@ public class RegisterApartment extends Button {
 
     @Override
     public void execute() {
-        view.registerApartment();
+        if (view.registerApartment()) {
+            view.displayMessage("Apartment registered successfully.");
+        }
     }
 }

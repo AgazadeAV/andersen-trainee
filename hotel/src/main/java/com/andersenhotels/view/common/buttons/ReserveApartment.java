@@ -9,6 +9,8 @@ public class ReserveApartment extends Button {
 
     @Override
     public void execute() {
-        view.reserveApartment();
+        if (view.reserveApartment()) {
+            view.displayMessage("Apartment reserved successfully.");
+        }
     }
 }

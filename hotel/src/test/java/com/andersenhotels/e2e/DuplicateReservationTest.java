@@ -1,6 +1,5 @@
 package com.andersenhotels.e2e;
 
-import com.andersenhotels.model.service.StateManager;
 import com.andersenhotels.view.console_ui.ConsoleUI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +21,6 @@ public class DuplicateReservationTest {
 
     @BeforeEach
     public void setUp() {
-        StateManager.setPATH("src/main/resources/hotel_service_state_test.json");
         outputStream = new ByteArrayOutputStream();
         errorStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
@@ -32,11 +30,12 @@ public class DuplicateReservationTest {
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
         consoleUI = new ConsoleUI();
+        consoleUI.setTesting(true);
     }
 
     @AfterEach
     public void tearDown() throws Exception {
-        Files.deleteIfExists(Path.of(StateManager.getPATH()));
+        Files.deleteIfExists(Path.of(ConsoleUI.getTEST_PATH()));
     }
 
     @Test

@@ -18,6 +18,10 @@ public class ConsoleUI implements View {
     private Presenter presenter;
     private InputValidator inputValidator;
     private boolean isRunning;
+    private boolean isTesting;
+
+    @Getter
+    private static final String TEST_PATH = "src/main/resources/hotel_service_state_test.json";
 
     public ConsoleUI() {
         this.menuHandler = new MenuHandler(this);
@@ -29,7 +33,7 @@ public class ConsoleUI implements View {
     @Override
     public void startWork() {
         greetings();
-        if (presenter.loadState()) {
+        if (loadState()) {
             displayMessage("Application state loaded successfully.");
         } else {
             displayError("Error loading application state. Starting with a new instance.");
@@ -39,6 +43,10 @@ public class ConsoleUI implements View {
 
     private void greetings() {
         displayMessage("Welcome to the Hotel Management Console Application!");
+    }
+
+    private boolean loadState() {
+        return isTesting ? presenter.loadStateForTests(TEST_PATH) : presenter.loadState();
     }
 
     private void selectItemFromMenu() {
@@ -89,13 +97,17 @@ public class ConsoleUI implements View {
 
     @Override
     public void finishWork() {
-        if (presenter.saveState()) {
+        if (saveState()) {
             displayMessage("Application state saved successfully.");
         } else {
             displayError("Error saving application state.");
         }
         this.isRunning = false;
         displayMessage("Good bye!");
+    }
+
+    private boolean saveState() {
+        return isTesting ? presenter.saveStateForTests(TEST_PATH) : presenter.saveState();
     }
 
     @Override

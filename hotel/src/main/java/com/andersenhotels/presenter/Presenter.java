@@ -87,4 +87,22 @@ public class Presenter {
             return false;
         }
     }
+
+    public boolean saveStateForTests(String testPath) {
+        try {
+            StateManager.saveStateForTests(hotelService, testPath);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public boolean loadStateForTests(String testPath) {
+        try {
+            this.hotelService = StateManager.loadStateForTests(testPath);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

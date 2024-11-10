@@ -24,7 +24,7 @@ class ApartmentReservationIntegrationTest {
     void reserveApartment_Success() {
         hotelService.reserveApartment(1, "Azer Agazade");
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 
     @Test
@@ -45,7 +45,7 @@ class ApartmentReservationIntegrationTest {
         });
 
         assertEquals("Apartment not found for the given ID. Please provide ID between 1 " +
-                "and " + hotelService.getApartmentsCount() + ".", thrown.getMessage());
+                "and " + hotelService.apartmentsCount() + ".", thrown.getMessage());
     }
 
     @Test

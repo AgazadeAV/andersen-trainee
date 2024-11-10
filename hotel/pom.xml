@@ -13,6 +13,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit-jupiter-api.version>5.11.3</junit-jupiter-api.version>
         <mockito-core.version>5.14.2</mockito-core.version>
+        <jackson-databind.version>2.18.1</jackson-databind.version>
+        <lombok.verion>1.18.34</lombok.verion>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
     </properties>
@@ -37,6 +39,19 @@
             <artifactId>mockito-core</artifactId>
             <version>${mockito-core.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.verion}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

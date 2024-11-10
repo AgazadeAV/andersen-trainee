@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,7 @@ class HotelServiceTest {
     void registerApartment_Success() {
         hotelService.registerApartment(100.0);
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 
     @Test
@@ -35,7 +36,7 @@ class HotelServiceTest {
         hotelService.registerApartment(100.0);
         hotelService.reserveApartment(1, "Azer Agazade");
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 
     @Test
@@ -57,7 +58,7 @@ class HotelServiceTest {
         hotelService.reserveApartment(1, "Azer Agazade");
         hotelService.releaseApartment(1);
 
-        assertEquals(1, hotelService.getApartmentsCount());
+        assertEquals(1, hotelService.apartmentsCount());
     }
 
     @Test
@@ -69,9 +70,8 @@ class HotelServiceTest {
 
     @Test
     void listApartments_Success() {
-        for (int i = 0; i < 7; i++) {
-            hotelService.registerApartment(100.0 + i);
-        }
+        IntStream.range(0, 7)
+                .forEach(i -> hotelService.registerApartment(100.0 + i));
 
         List<Apartment> apartmentsPage1 = hotelService.listApartments(1);
         List<Apartment> apartmentsPage2 = hotelService.listApartments(2);
@@ -86,11 +86,11 @@ class HotelServiceTest {
     }
 
     @Test
-    void getTotalPages() {
+    void totalPages() {
         for (int i = 0; i < 12; i++) {
             hotelService.registerApartment(100.0 + i);
         }
 
-        assertEquals(3, hotelService.getTotalPages());
+        assertEquals(3, hotelService.totalPages());
     }
 }

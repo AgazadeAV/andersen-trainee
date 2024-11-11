@@ -25,8 +25,8 @@ class PresenterTest {
 
     private Presenter presenter;
 
-    private static int ID = 1;
-    private static String CLIENT_NAME = "Azer Agazade";
+    private static final int ID = 1;
+    private static final String CLIENT_NAME = "Azer Agazade";
 
 
     @BeforeEach

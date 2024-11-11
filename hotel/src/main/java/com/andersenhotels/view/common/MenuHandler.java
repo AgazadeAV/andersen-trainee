@@ -31,7 +31,6 @@ public class MenuHandler {
                         .collect(Collectors.joining("\n"));
     }
 
-
     public void execute(int choice) {
         Optional.of(choice)
                 .filter(selectedChoice -> selectedChoice >= 1 && selectedChoice <= getMenuSize())

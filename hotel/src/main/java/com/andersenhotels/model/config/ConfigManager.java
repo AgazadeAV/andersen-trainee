@@ -1,5 +1,6 @@
 package com.andersenhotels.model.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -12,21 +13,31 @@ public class ConfigManager {
 
     static {
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
-            if (input == null) {
-                System.err.println("Configuration file '" + CONFIG_FILE + "' not found in 'src/main/resources'. "
-                        + "Please ensure the file exists and is placed correctly.");
-            } else {
+            if (input != null) {
                 properties.load(input);
                 System.out.println("Configuration loaded successfully.");
+            } else {
+                System.err.println("Configuration file '" + CONFIG_FILE + "' not found.");
             }
-        } catch (IOException e) {
-            System.err.println("Error occurred while loading configuration file '" + CONFIG_FILE + "'.");
+        } catch (Exception e) { //TODO ИСПОЛЬЗОВАТЬ СПЕЦИФИЧНОЕ ИСКЛЮЧЕНИЕ
+            System.err.println("Error loading configuration file: " + e.getMessage());
         }
     }
 
     public static String getStateFilePath() {
-        return Optional.ofNullable(properties.getProperty("stateFilePath"))
-                .orElse("");
+        String configuredPath = properties.getProperty("stateFilePath");
+        if (configuredPath == null) {
+            throw new IllegalStateException("stateFilePath is not configured in config.properties");
+        }
+
+        File file = new File(configuredPath);
+
+        if (!file.isAbsolute()) {
+            String baseDir = System.getProperty("catalina.base", System.getProperty("user.dir"));
+            file = new File(baseDir, configuredPath);
+        }
+
+        return file.getAbsolutePath();
     }
 
     public static boolean isAllowApartmentStatusChange() {

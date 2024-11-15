@@ -1,66 +1,87 @@
 package com.andersenhotels.view.web_ui;
 
 import com.andersenhotels.presenter.Presenter;
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.view.common.View;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 public class WebUI implements View {
 
-    private final HttpServletRequest request;
-    private final HttpServletResponse response;
+    @Setter
+    private RequestHandler requestHandler;
+    @Getter
     private final Presenter presenter;
 
-    public WebUI(HttpServletRequest request, HttpServletResponse response) {
-        this.request = request;
-        this.response = response;
+    public WebUI() {
         this.presenter = new Presenter(this);
     }
 
     @Override
     public void startWork() {
-        // Логика начала работы, если требуется
+        // Логика начала работы
     }
 
     @Override
     public void finishWork() {
-        // Завершающая логика, если требуется
+        // Завершающая логика
     }
 
     @Override
     public boolean registerApartment() {
-        double price = (double) request.getAttribute("price");
-        return presenter.registerApartment(price);
+        double price = requestHandler.getDoubleAttribute("price");
+        boolean success = presenter.registerApartment(price);
+        if (success) {
+            presenter.saveState();
+        }
+        return success;
     }
 
     @Override
     public boolean reserveApartment() {
-        int apartmentId = (int) request.getAttribute("apartmentId");
-        String guestName = (String) request.getAttribute("guestName");
-        return presenter.reserveApartment(apartmentId, guestName);
+        int apartmentId = requestHandler.getIntAttribute("apartmentId");
+        String guestName = requestHandler.getStringAttribute("guestName");
+        boolean success = presenter.reserveApartment(apartmentId, guestName);
+        if (success) {
+            presenter.saveState();
+        }
+        return success;
     }
 
     @Override
     public boolean releaseApartment() {
-        int apartmentId = (int) request.getAttribute("apartmentId");
-        return presenter.releaseApartment(apartmentId);
+        int apartmentId = requestHandler.getIntAttribute("apartmentId");
+        boolean success = presenter.releaseApartment(apartmentId);
+        if (success) {
+            presenter.saveState();
+        }
+        return success;
     }
 
     @Override
     public List<String> listApartments() {
-        int page = (int) request.getAttribute("page");
+        int page = requestHandler.getIntAttribute("page");
         return presenter.listApartments(page);
+    }
+
+    public void printListApartments() {
+        try {
+            List<String> listApartments = listApartments();
+            listApartments.forEach(this::displayMessage);
+        } catch (ApartmentNotFoundException e) {
+            displayError(e.getMessage());
+        }
     }
 
     @Override
     public void displayMessage(String message) {
-        request.setAttribute("message", message);
+        requestHandler.setAttribute("message", message);
     }
 
     @Override
     public void displayError(String errorMessage) {
-        request.setAttribute("error", errorMessage);
+        requestHandler.setAttribute("error", errorMessage);
     }
 }

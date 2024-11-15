@@ -20,25 +20,8 @@
         </div>
     </c:if>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Apartment ID</th>
-                <th>Price</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="apartment" items="${apartments}">
-                <tr>
-                    <td>${apartment.id}</td>
-                    <td>${apartment.price}</td>
-                    <td>${apartment.status}</td>
-                </tr>
-            </c:forEach>
-        </tbody>
-    </table>
+    <!-- НУЖНО ЕЩЁ ДОРАБОТАТЬ, ДОБАВИТЬ НОРМАЛЬНОЕ ОТОБРАЖЕНИЕ АПАРТАМЕНТОВ -->
 
-    <a href="addApartment">Add New Apartment</a>
+    <a href="index.jsp">Back to Home</a>
 </body>
 </html>

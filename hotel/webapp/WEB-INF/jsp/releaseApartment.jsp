@@ -27,6 +27,6 @@
         </div>
     </c:if>
 
-    <a href="apartments">Back to Apartments</a>
+    <a href="index.jsp">Back to Home</a>
 </body>
 </html>

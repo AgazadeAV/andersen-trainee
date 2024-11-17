@@ -37,7 +37,7 @@ public class ReservationTest {
 
     @Test
     public void reserveApartment() {
-        consoleUI.startWork();
+        consoleUI.initialize();
 
         String output = outputStream.toString();
         String expectedMessage = "Apartment reserved successfully.";

@@ -37,7 +37,7 @@ public class ExitTest {
 
     @Test
     public void exitApplication() {
-        consoleUI.startWork();
+        consoleUI.initialize();
 
         String output = outputStream.toString();
         assertTrue(output.contains("Good bye!"),

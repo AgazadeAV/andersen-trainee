@@ -31,7 +31,7 @@ public class ConsoleUI implements View {
     }
 
     @Override
-    public void startWork() {
+    public void initialize() {
         greetings();
         if (loadState()) {
             displayMessage("Application state loaded successfully.");
@@ -96,7 +96,7 @@ public class ConsoleUI implements View {
     }
 
     @Override
-    public void finishWork() {
+    public void complete() {
         if (saveState()) {
             displayMessage("Application state saved successfully.");
         } else {
@@ -118,5 +118,10 @@ public class ConsoleUI implements View {
     @Override
     public void displayError(String errorMessage) {
         System.err.println(errorMessage);
+    }
+
+    public static void main(String[] args) {
+        View view = new ConsoleUI();
+        view.initialize();
     }
 }

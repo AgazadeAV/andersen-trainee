@@ -37,7 +37,7 @@ public class ReleaseApartmentTest {
 
     @Test
     public void releaseApartment() {
-        consoleUI.startWork();
+        consoleUI.initialize();
 
         String output = outputStream.toString();
         String expectedMessage = "Apartment released successfully.";

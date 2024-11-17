@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class StateManager {
+
     public static void saveState(HotelService hotelService) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);

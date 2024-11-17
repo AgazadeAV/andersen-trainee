@@ -37,7 +37,7 @@ public class InvalidMenuChoiceTest {
 
     @Test
     public void invalidMenuChoice() {
-        consoleUI.startWork();
+        consoleUI.initialize();
 
         String errorOutput = errorStream.toString();
         assertTrue(errorOutput.contains("Invalid menu option entered. Please enter a valid number from the menu:"),

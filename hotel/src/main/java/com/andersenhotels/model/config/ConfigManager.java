@@ -19,26 +19,39 @@ public class ConfigManager {
             } else {
                 System.err.println("Configuration file '" + CONFIG_FILE + "' not found.");
             }
-        } catch (Exception e) { //TODO ИСПОЛЬЗОВАТЬ СПЕЦИФИЧНОЕ ИСКЛЮЧЕНИЕ
+        } catch (IOException e) {
             System.err.println("Error loading configuration file: " + e.getMessage());
         }
     }
 
     public static String getStateFilePath() {
-        String configuredPath = properties.getProperty("stateFilePath");
-        if (configuredPath == null) {
-            throw new IllegalStateException("stateFilePath is not configured in config.properties");
-        }
+        return Optional.ofNullable(properties.getProperty("stateFilePath"))
+                .map(ConfigManager::resolveFilePath)
+                .orElseThrow(() -> new IllegalStateException("stateFilePath is not configured in config.properties"));
+    }
 
-        File file = new File(configuredPath);
-
-        if (!file.isAbsolute()) {
+    private static String resolveFilePath(String configuredPath) {
+        File file;
+        if (isWebVersion()) {
             String baseDir = System.getProperty("catalina.base", System.getProperty("user.dir"));
-            file = new File(baseDir, configuredPath);
+            File webappsDir = new File(baseDir, "state");
+            file = new File(webappsDir, configuredPath);
+        } else {
+            file = new File(configuredPath);
+            if (!file.isAbsolute()) {
+                String baseDir = System.getProperty("user.dir");
+                file = new File(baseDir, configuredPath);
+            }
         }
-
         return file.getAbsolutePath();
     }
+
+    private static boolean isWebVersion() {
+        return Optional.ofNullable(System.getProperty("web.version"))
+                .map(Boolean::parseBoolean)
+                .orElse(false);
+    }
+
 
     public static boolean isAllowApartmentStatusChange() {
         return Optional.ofNullable(properties.getProperty("allowApartmentStatusChange"))

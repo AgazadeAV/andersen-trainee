@@ -12,7 +12,7 @@ public class StateListener implements ServletContextListener {
         WebUI webUI = new WebUI();
 
         try {
-            webUI.getPresenter().loadState();
+            webUI.initialize();
             System.out.println("State loaded successfully.");
         } catch (Exception e) {
             logError("Failed to load state.", e);
@@ -27,7 +27,7 @@ public class StateListener implements ServletContextListener {
 
         if (webUI != null) {
             try {
-                webUI.getPresenter().saveState();
+                webUI.complete();
                 System.out.println("State saved successfully.");
             } catch (Exception e) {
                 logError("Failed to save state.", e);

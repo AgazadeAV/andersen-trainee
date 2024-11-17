@@ -82,6 +82,6 @@ class ButtonsTest {
     void exit() {
         exitButton.execute();
 
-        verify(view, times(1)).finishWork();
+        verify(view, times(1)).complete();
     }
 }

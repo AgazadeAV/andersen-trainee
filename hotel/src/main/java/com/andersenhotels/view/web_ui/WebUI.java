@@ -8,11 +8,11 @@ import lombok.Setter;
 
 import java.util.List;
 
+@Getter
 public class WebUI implements View {
 
     @Setter
     private RequestHandler requestHandler;
-    @Getter
     private final Presenter presenter;
 
     public WebUI() {
@@ -20,13 +20,13 @@ public class WebUI implements View {
     }
 
     @Override
-    public void startWork() {
-        // Логика начала работы
+    public void initialize() {
+        presenter.loadState();
     }
 
     @Override
-    public void finishWork() {
-        // Завершающая логика
+    public void complete() {
+        presenter.saveState();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class WebUI implements View {
         double price = requestHandler.getDoubleAttribute("price");
         boolean success = presenter.registerApartment(price);
         if (success) {
-            presenter.saveState();
+            complete();
         }
         return success;
     }
@@ -45,7 +45,7 @@ public class WebUI implements View {
         String guestName = requestHandler.getStringAttribute("guestName");
         boolean success = presenter.reserveApartment(apartmentId, guestName);
         if (success) {
-            presenter.saveState();
+            complete();
         }
         return success;
     }
@@ -55,7 +55,7 @@ public class WebUI implements View {
         int apartmentId = requestHandler.getIntAttribute("apartmentId");
         boolean success = presenter.releaseApartment(apartmentId);
         if (success) {
-            presenter.saveState();
+            complete();
         }
         return success;
     }

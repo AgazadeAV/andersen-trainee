@@ -21,7 +21,7 @@ public class ListApartmentsServlet extends HttpServlet {
         WebUI webUI = Optional.ofNullable((WebUI) getServletContext().getAttribute("webUI"))
                 .orElseThrow(() -> new IllegalStateException("WebUI is not initialized in the application context."));
         webUI.setRequestHandler(requestHandler);
-//TODO ДОБАВИТЬ ВОЗМОЖНОСТЬ СЧИТЫВАНИЯ НУЖНОГО НОМЕРА СТРАНИЦЫ
+
         int page = Optional.ofNullable(request.getParameter("page"))
                 .map(String::trim)
                 .filter(param -> !param.isEmpty())

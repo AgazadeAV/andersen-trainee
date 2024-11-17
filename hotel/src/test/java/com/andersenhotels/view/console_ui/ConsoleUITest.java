@@ -115,8 +115,8 @@ class ConsoleUITest {
     }
 
     @Test
-    void finishWork() {
-        consoleUI.finishWork();
+    void complete() {
+        consoleUI.complete();
 
         assertFalse(consoleUI.isRunning());
     }

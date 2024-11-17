@@ -27,7 +27,7 @@ public class ApplicationTerminationIntegrationTest {
 
     @Test
     void applicationTermination() {
-        consoleUI.finishWork();
+        consoleUI.complete();
 
         assertFalse(consoleUI.isRunning(), "The application should be terminated.");
     }

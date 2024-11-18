@@ -10,13 +10,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class ReservationTest {
 
     private Apartment apartment;
-    private Guest guest;
     private Reservation reservation;
 
     @BeforeEach
     void setUp() {
+        Guest guest = new Guest("Azer Agazade");
         apartment = new Apartment(1, 150.0);
-        guest = new Guest("Azer Agazade");
         reservation = new Reservation(apartment, guest);
     }
 

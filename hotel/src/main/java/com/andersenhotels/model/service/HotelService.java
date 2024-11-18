@@ -76,6 +76,10 @@ public class HotelService {
     }
 
     public List<Apartment> listApartments(int page) {
+        if (totalPages() == 0) {
+            throw new ApartmentNotFoundException("No apartments were registered.");
+        }
+
         if (page <= 0 || ConfigManager.getPageSizeForPagination() <= 0) {
             throw new ApartmentNotFoundException("Page number and page size must be greater than 0.");
         }

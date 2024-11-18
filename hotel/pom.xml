@@ -20,6 +20,7 @@
         <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
         <byte-buddy-agent.version>1.15.4</byte-buddy-agent.version>
         <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+        <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
     </properties>
 
     <dependencies>
@@ -62,6 +63,13 @@
             <artifactId>byte-buddy-agent</artifactId>
             <version>${byte-buddy-agent.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta.servlet-api.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

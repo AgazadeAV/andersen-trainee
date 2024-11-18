@@ -10,6 +10,6 @@ public class Exit extends Button {
 
     @Override
     public void execute() {
-        view.finishWork();
+        view.complete();
     }
 }

@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface View {
 
-    void startWork();
+    void initialize();
 
-    void finishWork();
+    void complete();
 
     boolean registerApartment();
 

@@ -40,7 +40,7 @@ public class DuplicateReservationTest {
 
     @Test
     public void duplicateReservation() {
-        consoleUI.startWork();
+        consoleUI.initialize();
 
         String errorOutput = errorStream.toString();
         assertTrue(errorOutput.contains("Apartment is already reserved."),

@@ -18,11 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MenuChoiceIntegrationTest {
 
     private MenuHandler menuHandler;
-    private ConsoleUI consoleUI;
 
     @BeforeEach
     public void setUp() {
-        consoleUI = new ConsoleUI();
+        ConsoleUI consoleUI = new ConsoleUI();
         menuHandler = new MenuHandler(consoleUI);
         consoleUI.setTesting(true);
     }

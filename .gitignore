@@ -37,3 +37,6 @@ Thumbs.db
 
 # Environment settings
 # *.properties
+
+# Tomcat files
+.smarttomcat/

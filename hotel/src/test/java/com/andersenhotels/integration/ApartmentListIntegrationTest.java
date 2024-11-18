@@ -36,7 +36,7 @@ class ApartmentListIntegrationTest {
             hotelService.listApartments(1);
         });
 
-        assertEquals("No apartments found for the requested page number. Valid page numbers are from 1 to 0.",
+        assertEquals("No apartments were registered.",
                 thrown.getMessage());
     }
 

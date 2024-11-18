@@ -37,7 +37,7 @@ public class RegistrationTest {
 
     @Test
     public void registerAndListApartments() {
-        consoleUI.startWork();
+        consoleUI.initialize();
 
         String output = outputStream.toString();
         String expectedMessage = "Apartment registered successfully.";

@@ -38,7 +38,7 @@ public class PaginationTest {
 
     @Test
     public void pagination() {
-        consoleUI.startWork();
+        consoleUI.initialize();
 
         String output = outputStream.toString();
         List<String> expectedMessages = List.of(

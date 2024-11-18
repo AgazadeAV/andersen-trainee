@@ -167,7 +167,7 @@ public class DatabaseStorage implements DataStorage {
                 if (resultSet.next()) {
                     return resultSet.getInt("value");
                 } else {
-                    return 1; // Значение по умолчанию, если запись не найдена
+                    return 1; // The default value if the record is not found
                 }
             }
         }

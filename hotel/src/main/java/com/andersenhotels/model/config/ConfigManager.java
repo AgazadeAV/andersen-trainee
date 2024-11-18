@@ -18,21 +18,6 @@ public class ConfigManager {
         // Private constructor to prevent instantiation
     }
 
-    private static Properties loadProperties(String fileName) {
-        Properties props = new Properties();
-        try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(fileName)) {
-            if (input != null) {
-                props.load(input);
-                System.out.println(fileName + " loaded successfully.");
-            } else {
-                System.err.println(fileName + " not found.");
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading " + fileName + ": " + e.getMessage());
-        }
-        return props;
-    }
-
     public static String getStateFilePath() {
         return getProperty(properties, "stateFilePath")
                 .map(ConfigManager::resolveFilePath)
@@ -65,6 +50,21 @@ public class ConfigManager {
         return getProperty(properties, "pageSizeForPagination")
                 .map(Integer::parseInt)
                 .orElse(10);
+    }
+
+    private static Properties loadProperties(String fileName) {
+        Properties props = new Properties();
+        try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(fileName)) {
+            if (input != null) {
+                props.load(input);
+                System.out.println(fileName + " loaded successfully.");
+            } else {
+                System.err.println(fileName + " not found.");
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading " + fileName + ": " + e.getMessage());
+        }
+        return props;
     }
 
     private static Optional<String> getProperty(Properties props, String key) {

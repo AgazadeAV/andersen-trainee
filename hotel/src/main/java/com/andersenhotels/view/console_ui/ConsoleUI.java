@@ -30,6 +30,11 @@ public class ConsoleUI implements View {
         this.isRunning = true;
     }
 
+    public static void main(String[] args) {
+        View view = new ConsoleUI();
+        view.initialize();
+    }
+
     @Override
     public void initialize() {
         greetings();
@@ -118,10 +123,5 @@ public class ConsoleUI implements View {
     @Override
     public void displayError(String errorMessage) {
         System.err.println(errorMessage);
-    }
-
-    public static void main(String[] args) {
-        View view = new ConsoleUI();
-        view.initialize();
     }
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="Azer_Agazade">
+        <createTable tableName="apartments">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="Azer_Agazade">
+        <createTable tableName="reservations">
+            <column name="apartment_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="guest_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="apartment_id"
+                                 baseTableName="reservations"
+                                 referencedColumnNames="id"
+                                 referencedTableName="apartments"
+                                 constraintName="fk_apartment_reservation"/>
+    </changeSet>
+
+    <changeSet id="3" author="Azer_Agazade">
+        <createTable tableName="metadata">
+            <column name="key_name" type="VARCHAR(255)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="value" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

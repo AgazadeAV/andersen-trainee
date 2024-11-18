@@ -1,5 +1,6 @@
 package com.andersenhotels.e2e;
 
+import com.andersenhotels.presenter.Presenter;
 import com.andersenhotels.view.console_ui.ConsoleUI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,7 @@ public class PaginationTest {
         outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
 
-        String simulatedInput = "1\n100.0\n1\n200.0\n1\n300.0\n1\n400.0\n1\n500.0\n1\n600.0\n4\n1\n4\n2\n5\n";
+        String simulatedInput = "1\n1\n100.0\n1\n200.0\n1\n300.0\n1\n400.0\n1\n500.0\n1\n600.0\n4\n1\n4\n2\n5\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
         consoleUI = new ConsoleUI();
@@ -33,7 +34,7 @@ public class PaginationTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        Files.deleteIfExists(Path.of(ConsoleUI.getTEST_PATH()));
+        Files.deleteIfExists(Path.of(Presenter.getTEST_PATH()));
     }
 
     @Test

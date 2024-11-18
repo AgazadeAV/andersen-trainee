@@ -30,6 +30,18 @@ public class ConfigManager {
                 .orElseThrow(() -> new IllegalStateException("stateFilePath is not configured in config.properties"));
     }
 
+    public static boolean isAllowApartmentStatusChange() {
+        return Optional.ofNullable(properties.getProperty("allowApartmentStatusChange"))
+                .map(Boolean::parseBoolean)
+                .orElse(false);
+    }
+
+    public static int getPageSizeForPagination() {
+        return Optional.ofNullable(properties.getProperty("pageSizeForPagination"))
+                .map(Integer::parseInt)
+                .orElse(10);
+    }
+
     private static String resolveFilePath(String configuredPath) {
         File file;
         if (isWebVersion()) {
@@ -50,18 +62,5 @@ public class ConfigManager {
         return Optional.ofNullable(System.getProperty("web.version"))
                 .map(Boolean::parseBoolean)
                 .orElse(false);
-    }
-
-
-    public static boolean isAllowApartmentStatusChange() {
-        return Optional.ofNullable(properties.getProperty("allowApartmentStatusChange"))
-                .map(Boolean::parseBoolean)
-                .orElse(false);
-    }
-
-    public static int getPageSizeForPagination() {
-        return Optional.ofNullable(properties.getProperty("pageSizeForPagination"))
-                .map(Integer::parseInt)
-                .orElse(10);
     }
 }

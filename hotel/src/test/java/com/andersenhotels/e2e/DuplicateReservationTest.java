@@ -1,5 +1,6 @@
 package com.andersenhotels.e2e;
 
+import com.andersenhotels.presenter.Presenter;
 import com.andersenhotels.view.console_ui.ConsoleUI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ public class DuplicateReservationTest {
         System.setOut(new PrintStream(outputStream));
         System.setErr(new PrintStream(errorStream));
 
-        String simulatedInput = "1\n150.0\n2\n1\nAzer Agazade\n2\n1\nAnar Agazade\n5\n";
+        String simulatedInput = "1\n1\n150.0\n2\n1\nAzer Agazade\n2\n1\nAnar Agazade\n5\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
         consoleUI = new ConsoleUI();
@@ -35,7 +36,7 @@ public class DuplicateReservationTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        Files.deleteIfExists(Path.of(ConsoleUI.getTEST_PATH()));
+        Files.deleteIfExists(Path.of(Presenter.getTEST_PATH()));
     }
 
     @Test

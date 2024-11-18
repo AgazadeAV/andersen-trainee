@@ -20,6 +20,12 @@ public class Apartment {
         this.status = ApartmentStatus.AVAILABLE;
     }
 
+    public Apartment(int id, double price, ApartmentStatus status) {
+        this.id = id;
+        this.price = price;
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Apartment ID: " + id + ", Price: " + price + ", Status: " + status + ".";

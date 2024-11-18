@@ -1,29 +1,53 @@
 package com.andersenhotels.presenter;
 
 import com.andersenhotels.model.Apartment;
-import com.andersenhotels.model.service.StateManager;
+import com.andersenhotels.model.storage.*;
+import com.andersenhotels.model.storage.DataStorageFactory;
+import com.andersenhotels.model.storage.DataStorageType;
+import com.andersenhotels.model.storage.db_storage.LiquibaseRunner;
+import com.andersenhotels.model.storage.json_storage.JsonStorage;
 import com.andersenhotels.presenter.exceptions.*;
 import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.view.common.View;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class Presenter {
 
     private HotelService hotelService;
     private final View view;
+    private DataStorage currentStorage;
 
     public Presenter(View view) {
         this.hotelService = new HotelService();
         this.view = view;
+        this.currentStorage = DataStorageFactory.getStorage(DataStorageType.JSON);
     }
 
     public Presenter(View view, HotelService hotelService) {
         this.hotelService = hotelService;
         this.view = view;
     }
+
+    public void setStorageType(int choice) {
+        if (choice == 1) {
+            currentStorage = DataStorageFactory.getStorage(DataStorageType.JSON);
+            view.displayMessage("Storage type switched to JSON.");
+        } else if (choice == 2) {
+            currentStorage = DataStorageFactory.getStorage(DataStorageType.DATABASE);
+            view.displayMessage("Storage type switched to Database.");
+
+            LiquibaseRunner.runLiquibaseMigrations();
+            view.displayMessage("Database migrations applied successfully.");
+        } else {
+            view.displayError("Invalid storage type.");
+        }
+    }
+
 
     public boolean registerApartment(double price) {
         try {
@@ -72,7 +96,7 @@ public class Presenter {
 
     public boolean saveState() {
         try {
-            StateManager.saveState(hotelService);
+            currentStorage.saveState(hotelService);
             return true;
         } catch (IOException e) {
             return false;
@@ -81,28 +105,32 @@ public class Presenter {
 
     public boolean loadState() {
         try {
-            this.hotelService = StateManager.loadState();
+            this.hotelService = currentStorage.loadState();
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    public boolean saveStateForTests(String testPath) {
+    public boolean saveStateForTests() {
         try {
-            StateManager.saveStateForTests(hotelService, testPath);
+            currentStorage.saveStateForTests(hotelService);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    public boolean loadStateForTests(String testPath) {
+    public boolean loadStateForTests() {
         try {
-            this.hotelService = StateManager.loadStateForTests(testPath);
+            this.hotelService = currentStorage.loadStateForTests();
             return true;
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public static String getTEST_PATH() {
+        return JsonStorage.getTEST_PATH();
     }
 }

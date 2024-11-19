@@ -1,5 +1,6 @@
 package com.andersenhotels.model.service;
 
+import com.andersenhotels.model.Hotel;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,12 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValueValidatorTest {
 
+    private Hotel hotel;
     private HotelService hotelService;
     private ValueValidator valueValidator;
 
     @BeforeEach
     void setUp() {
-        hotelService = new HotelService();
+        hotel = new Hotel();
+        hotelService = new HotelService(hotel);
         valueValidator = new ValueValidator(hotelService);
     }
 

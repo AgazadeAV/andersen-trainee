@@ -1,5 +1,6 @@
 package com.andersenhotels.integration;
 
+import com.andersenhotels.model.Hotel;
 import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
@@ -12,11 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ApartmentReservationIntegrationTest {
 
+    private Hotel hotel;
     private HotelService hotelService;
 
     @BeforeEach
     void setUp() {
-        hotelService = new HotelService();
+        hotel = new Hotel();
+        hotelService = new HotelService(hotel);
         hotelService.registerApartment(100.0);
     }
 
@@ -24,7 +27,7 @@ class ApartmentReservationIntegrationTest {
     void reserveApartment_Success() {
         hotelService.reserveApartment(1, "Azer Agazade");
 
-        assertEquals(1, hotelService.apartmentsCount());
+        assertEquals(1, hotelService.getApartmentsCount());
     }
 
     @Test
@@ -45,7 +48,7 @@ class ApartmentReservationIntegrationTest {
         });
 
         assertEquals("Apartment not found for the given ID. Please provide ID between 1 " +
-                "and " + hotelService.apartmentsCount() + ".", thrown.getMessage());
+                "and " + hotelService.getApartmentsCount() + ".", thrown.getMessage());
     }
 
     @Test

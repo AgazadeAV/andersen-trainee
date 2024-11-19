@@ -1,5 +1,6 @@
 package com.andersenhotels.integration;
 
+import com.andersenhotels.model.Hotel;
 import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.presenter.exceptions.InvalidPriceException;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,18 +11,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ApartmentRegistrationIntegrationTest {
 
+    private Hotel hotel;
     private HotelService hotelService;
 
     @BeforeEach
     void setUp() {
-        hotelService = new HotelService();
+        hotel = new Hotel();
+        hotelService = new HotelService(hotel);
     }
 
     @Test
     void registerApartment_Success() {
         hotelService.registerApartment(150.0);
 
-        assertEquals(1, hotelService.apartmentsCount());
+        assertEquals(1, hotelService.getApartmentsCount());
     }
 
     @Test
@@ -37,6 +40,6 @@ class ApartmentRegistrationIntegrationTest {
     void registerApartment_ZeroPrice() {
         hotelService.registerApartment(0.0);
 
-        assertEquals(1, hotelService.apartmentsCount());
+        assertEquals(1, hotelService.getApartmentsCount());
     }
 }

@@ -1,7 +1,7 @@
 package com.andersenhotels.model.storage.json_storage;
 
 import com.andersenhotels.model.config.ConfigManager;
-import com.andersenhotels.model.service.HotelService;
+import com.andersenhotels.model.Hotel;
 import com.andersenhotels.model.storage.DataStorage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -28,12 +28,12 @@ public class JsonStorage implements DataStorage {
     }
 
     @Override
-    public void saveState(HotelService hotelService) throws IOException {
+    public void saveState(Hotel hotel) throws IOException {
         File file = new File(ConfigManager.getStateFilePath());
         LOGGER.info("Saving state to: {}", file.getAbsolutePath());
 
         try {
-            mapper.writeValue(file, hotelService);
+            mapper.writeValue(file, hotel);
             LOGGER.info("State saved successfully to: {}", file.getAbsolutePath());
         } catch (IOException e) {
             LOGGER.error("Failed to save state to file: {}", file.getAbsolutePath(), e);
@@ -42,19 +42,19 @@ public class JsonStorage implements DataStorage {
     }
 
     @Override
-    public HotelService loadState() throws IOException {
+    public Hotel loadState() throws IOException {
         File file = new File(ConfigManager.getStateFilePath());
         LOGGER.info("Loading state from: {}", file.getAbsolutePath());
 
         if (!file.exists()) {
             LOGGER.warn("State file not found: {}. Creating a new instance.", file.getAbsolutePath());
-            return new HotelService();
+            return new Hotel();
         }
 
         try {
-            HotelService hotelService = mapper.readValue(file, HotelService.class);
+            Hotel hotel = mapper.readValue(file, Hotel.class);
             LOGGER.info("State loaded successfully from: {}", file.getAbsolutePath());
-            return hotelService;
+            return hotel;
         } catch (IOException e) {
             LOGGER.error("Failed to load state from file: {}", file.getAbsolutePath(), e);
             throw e;
@@ -62,12 +62,12 @@ public class JsonStorage implements DataStorage {
     }
 
     @Override
-    public void saveStateForTests(HotelService hotelService) throws IOException {
+    public void saveStateForTests(Hotel hotel) throws IOException {
         File file = new File(TEST_PATH);
         LOGGER.info("Saving test state to: {}", file.getAbsolutePath());
 
         try {
-            mapper.writeValue(file, hotelService);
+            mapper.writeValue(file, hotel);
             LOGGER.info("Test state saved successfully to: {}", file.getAbsolutePath());
         } catch (IOException e) {
             LOGGER.error("Failed to save test state to file: {}", file.getAbsolutePath(), e);
@@ -76,19 +76,19 @@ public class JsonStorage implements DataStorage {
     }
 
     @Override
-    public HotelService loadStateForTests() throws IOException {
+    public Hotel loadStateForTests() throws IOException {
         File file = new File(TEST_PATH);
         LOGGER.info("Loading test state from: {}", file.getAbsolutePath());
 
         if (!file.exists()) {
             LOGGER.warn("Test state file not found: {}. Creating a new instance.", file.getAbsolutePath());
-            return new HotelService();
+            return new Hotel();
         }
 
         try {
-            HotelService hotelService = mapper.readValue(file, HotelService.class);
+            Hotel hotel = mapper.readValue(file, Hotel.class);
             LOGGER.info("Test state loaded successfully from: {}", file.getAbsolutePath());
-            return hotelService;
+            return hotel;
         } catch (IOException e) {
             LOGGER.error("Failed to load test state from file: {}", file.getAbsolutePath(), e);
             throw e;

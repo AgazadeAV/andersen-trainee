@@ -1,6 +1,7 @@
 package com.andersenhotels.integration;
 
 import com.andersenhotels.model.Apartment;
+import com.andersenhotels.model.Hotel;
 import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ApartmentListIntegrationTest {
 
+    private Hotel hotel;
     private HotelService hotelService;
 
     @BeforeEach
     void setUp() {
-        hotelService = new HotelService();
+        hotel = new Hotel();
+        hotelService = new HotelService(hotel);
     }
 
     @Test

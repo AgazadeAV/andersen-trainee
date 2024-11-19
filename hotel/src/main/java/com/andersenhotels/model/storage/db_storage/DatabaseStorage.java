@@ -4,7 +4,7 @@ import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.ApartmentStatus;
 import com.andersenhotels.model.Guest;
 import com.andersenhotels.model.Reservation;
-import com.andersenhotels.model.service.HotelService;
+import com.andersenhotels.model.Hotel;
 import com.andersenhotels.model.storage.DataStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,20 +39,20 @@ public class DatabaseStorage implements DataStorage {
             "SELECT 1 FROM %s LIMIT 1";
 
     @Override
-    public void saveState(HotelService hotelService) throws IOException {
+    public void saveState(Hotel hotel) throws IOException {
         try (Connection connection = DatabaseConnectionPool.getDataSource().getConnection()) {
             connection.setAutoCommit(false);
 
             try {
                 LOGGER.info("Saving state to database...");
-                saveApartments(hotelService.getApartments(), connection);
-                LOGGER.info("Apartments saved: {}", hotelService.getApartments().size());
+                saveApartments(hotel.getApartments(), connection);
+                LOGGER.info("Apartments saved: {}", hotel.getApartments().size());
 
-                saveReservations(hotelService.getReservations(), connection);
-                LOGGER.info("Reservations saved: {}", hotelService.getReservations().size());
+                saveReservations(hotel.getReservations(), connection);
+                LOGGER.info("Reservations saved: {}", hotel.getReservations().size());
 
-                saveNextApartmentId(hotelService.getNextApartmentId(), connection);
-                LOGGER.info("Next apartment ID saved: {}", hotelService.getNextApartmentId());
+                saveNextApartmentId(hotel.getNextApartmentId(), connection);
+                LOGGER.info("Next apartment ID saved: {}", hotel.getNextApartmentId());
 
                 connection.commit();
                 LOGGER.info("State saved successfully.");
@@ -68,8 +68,8 @@ public class DatabaseStorage implements DataStorage {
     }
 
     @Override
-    public HotelService loadState() throws IOException {
-        HotelService hotelService = new HotelService();
+    public Hotel loadState() throws IOException {
+        Hotel hotel = new Hotel();
 
         try (Connection connection = DatabaseConnectionPool.getDataSource().getConnection()) {
             LOGGER.info("Loading state from database...");
@@ -77,15 +77,15 @@ public class DatabaseStorage implements DataStorage {
 
             Map<Integer, Apartment> apartments = loadApartments(connection);
             LOGGER.info("Apartments loaded: {}", apartments.size());
-            hotelService.setApartments(apartments);
+            hotel.setApartments(apartments);
 
             Map<Integer, Reservation> reservations = loadReservations(apartments, connection);
             LOGGER.info("Reservations loaded: {}", reservations.size());
-            hotelService.setReservations(reservations);
+            hotel.setReservations(reservations);
 
             int nextApartmentId = loadNextApartmentId(connection);
             LOGGER.info("Next apartment ID loaded: {}", nextApartmentId);
-            hotelService.setNextApartmentId(nextApartmentId);
+            hotel.setNextApartmentId(nextApartmentId);
 
             LOGGER.info("State loaded successfully.");
         } catch (SQLException e) {
@@ -93,16 +93,16 @@ public class DatabaseStorage implements DataStorage {
             throw new IOException("Failed to load state from database", e);
         }
 
-        return hotelService;
+        return hotel;
     }
 
     @Override
-    public void saveStateForTests(HotelService hotelService) throws IOException {
-        saveState(hotelService);
+    public void saveStateForTests(Hotel hotel) throws IOException {
+        saveState(hotel);
     }
 
     @Override
-    public HotelService loadStateForTests() throws IOException {
+    public Hotel loadStateForTests() throws IOException {
         return loadState();
     }
 

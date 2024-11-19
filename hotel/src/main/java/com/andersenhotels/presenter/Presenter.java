@@ -1,12 +1,13 @@
 package com.andersenhotels.presenter;
 
 import com.andersenhotels.model.Apartment;
+import com.andersenhotels.model.Hotel;
+import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.model.storage.DataStorage;
 import com.andersenhotels.model.storage.DataStorageFactory;
 import com.andersenhotels.model.storage.DataStorageType;
 import com.andersenhotels.model.storage.db_storage.LiquibaseRunner;
 import com.andersenhotels.presenter.exceptions.*;
-import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.view.common.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,20 +20,25 @@ public class Presenter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Presenter.class);
 
-    private HotelService hotelService;
     private final View view;
+
+    private Hotel hotel;
+    private HotelService hotelService;
     private DataStorage currentStorage;
 
     public Presenter(View view) {
-        this.hotelService = new HotelService();
         this.view = view;
+        this.hotel = new Hotel();
+        this.hotelService = new HotelService(hotel);
         this.currentStorage = DataStorageFactory.getStorage(DataStorageType.JSON);
         LOGGER.info("Presenter initialized with default JSON storage.");
     }
 
     public Presenter(View view, HotelService hotelService) {
-        this.hotelService = hotelService;
         this.view = view;
+        this.hotel = hotelService.getHotel();
+        this.hotelService = hotelService;
+        this.currentStorage = DataStorageFactory.getStorage(DataStorageType.JSON);
         LOGGER.info("Presenter initialized with provided HotelService.");
     }
 
@@ -111,14 +117,14 @@ public class Presenter {
     }
 
     public int getTotalPages() {
-        int totalPages = hotelService.totalPages();
+        int totalPages = hotelService.getTotalPages();
         LOGGER.debug("Total pages calculated: {}", totalPages);
         return totalPages;
     }
 
     public boolean saveState() {
         try {
-            currentStorage.saveState(hotelService);
+            currentStorage.saveState(hotel);
             LOGGER.info("Application state saved successfully.");
             return true;
         } catch (IOException e) {
@@ -130,7 +136,8 @@ public class Presenter {
 
     public boolean loadState() {
         try {
-            this.hotelService = currentStorage.loadState();
+            this.hotel = currentStorage.loadState();
+            this.hotelService = new HotelService(hotel);
             LOGGER.info("Application state loaded successfully.");
             return true;
         } catch (IOException e) {
@@ -142,7 +149,7 @@ public class Presenter {
 
     public boolean saveStateForTests() {
         try {
-            currentStorage.saveStateForTests(hotelService);
+            currentStorage.saveStateForTests(hotel);
             LOGGER.info("Test state saved successfully.");
             return true;
         } catch (IOException e) {
@@ -154,7 +161,8 @@ public class Presenter {
 
     public boolean loadStateForTests() {
         try {
-            this.hotelService = currentStorage.loadStateForTests();
+            this.hotel = currentStorage.loadStateForTests();
+            this.hotelService = new HotelService(hotel);
             LOGGER.info("Test state loaded successfully.");
             return true;
         } catch (IOException e) {

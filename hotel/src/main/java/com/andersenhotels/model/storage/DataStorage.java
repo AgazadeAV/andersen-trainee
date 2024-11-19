@@ -1,16 +1,16 @@
 package com.andersenhotels.model.storage;
 
-import com.andersenhotels.model.service.HotelService;
+import com.andersenhotels.model.Hotel;
 
 import java.io.IOException;
 
 public interface DataStorage {
 
-    void saveState(HotelService hotelService) throws IOException;
+    void saveState(Hotel hotel) throws IOException;
 
-    HotelService loadState() throws IOException;
+    Hotel loadState() throws IOException;
 
-    void saveStateForTests(HotelService hotelService) throws IOException;
+    void saveStateForTests(Hotel hotel) throws IOException;
 
-    HotelService loadStateForTests() throws IOException;
+    Hotel loadStateForTests() throws IOException;
 }

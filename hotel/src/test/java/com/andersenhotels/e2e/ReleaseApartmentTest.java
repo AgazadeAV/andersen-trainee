@@ -1,6 +1,6 @@
 package com.andersenhotels.e2e;
 
-import com.andersenhotels.presenter.Presenter;
+import com.andersenhotels.model.storage.json_storage.JsonStorage;
 import com.andersenhotels.view.console_ui.ConsoleUI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ public class ReleaseApartmentTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        Files.deleteIfExists(Path.of(Presenter.getTEST_PATH()));
+        Files.deleteIfExists(Path.of(JsonStorage.getTEST_PATH()));
     }
 
     @Test

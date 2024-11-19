@@ -6,12 +6,9 @@ import com.andersenhotels.model.storage.json_storage.JsonStorage;
 public class DataStorageFactory {
 
     public static DataStorage getStorage(DataStorageType type) {
-        switch (type) {
-            case DATABASE:
-                return new DatabaseStorage();
-            case JSON:
-            default:
-                return new JsonStorage();
-        }
+        return switch (type) {
+            case DATABASE -> new DatabaseStorage();
+            default -> new JsonStorage();
+        };
     }
 }

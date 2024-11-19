@@ -1,5 +1,8 @@
 package com.andersenhotels.model.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,46 +11,52 @@ import java.util.Properties;
 
 public class ConfigManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigManager.class);
+
     private static final String CONFIG_FILE = "config.properties";
     private static final String LIQUIBASE_FILE = "liquibase.properties";
 
-    private static final Properties properties = loadProperties(CONFIG_FILE);
-    private static final Properties liquibaseProperties = loadProperties(LIQUIBASE_FILE);
+    private static final Properties PROPERTIES = loadProperties(CONFIG_FILE);
+    private static final Properties LIQUIBASE_PROPERTIES = loadProperties(LIQUIBASE_FILE);
 
     private ConfigManager() {
         // Private constructor to prevent instantiation
     }
 
     public static String getStateFilePath() {
-        return getProperty(properties, "stateFilePath")
+        return getProperty(PROPERTIES, "stateFilePath")
                 .map(ConfigManager::resolveFilePath)
                 .orElseThrow(() -> new IllegalStateException("stateFilePath is not configured in config.properties"));
     }
 
     public static String getDatabaseUrl() {
-        return getRequiredProperty(liquibaseProperties, "url", "Database URL is not configured in liquibase.properties");
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "url",
+                "Database URL is not configured in liquibase.properties");
     }
 
     public static String getDatabaseUsername() {
-        return getRequiredProperty(liquibaseProperties, "username", "Database username is not configured in liquibase.properties");
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "username",
+                "Database username is not configured in liquibase.properties");
     }
 
     public static String getDatabasePassword() {
-        return getRequiredProperty(liquibaseProperties, "password", "Database password is not configured in liquibase.properties");
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "password",
+                "Database password is not configured in liquibase.properties");
     }
 
     public static String getLiquibaseChangeLogFile() {
-        return getRequiredProperty(liquibaseProperties, "changeLogFile", "Liquibase changeLogFile is not configured in liquibase.properties");
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "changeLogFile",
+                "Liquibase changeLogFile is not configured in liquibase.properties");
     }
 
     public static boolean isAllowApartmentStatusChange() {
-        return getProperty(properties, "allowApartmentStatusChange")
+        return getProperty(PROPERTIES, "allowApartmentStatusChange")
                 .map(Boolean::parseBoolean)
                 .orElse(false);
     }
 
     public static int getPageSizeForPagination() {
-        return getProperty(properties, "pageSizeForPagination")
+        return getProperty(PROPERTIES, "pageSizeForPagination")
                 .map(Integer::parseInt)
                 .orElse(10);
     }
@@ -57,12 +66,12 @@ public class ConfigManager {
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(fileName)) {
             if (input != null) {
                 props.load(input);
-                System.out.println(fileName + " loaded successfully.");
+                LOGGER.info("{} loaded successfully.", fileName);
             } else {
-                System.err.println(fileName + " not found.");
+                LOGGER.warn("{} not found.", fileName);
             }
         } catch (IOException e) {
-            System.err.println("Error loading " + fileName + ": " + e.getMessage());
+            LOGGER.error("Error loading {}: {}", fileName, e.getMessage(), e);
         }
         return props;
     }
@@ -89,11 +98,12 @@ public class ConfigManager {
                 file = new File(baseDir, configuredPath);
             }
         }
+        LOGGER.debug("Resolved file path: {}", file.getAbsolutePath());
         return file.getAbsolutePath();
     }
 
     private static boolean isWebVersion() {
-        return getProperty(properties, "web.version")
+        return getProperty(PROPERTIES, "web.version")
                 .map(Boolean::parseBoolean)
                 .orElse(false);
     }

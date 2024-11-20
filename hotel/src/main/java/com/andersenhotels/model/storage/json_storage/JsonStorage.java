@@ -16,9 +16,6 @@ public class JsonStorage implements DataStorage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonStorage.class);
 
-    @Getter
-    private static final String TEST_PATH = "src/main/resources/hotel_service_state_test.json";
-
     private final ObjectMapper mapper;
 
     public JsonStorage() {
@@ -63,7 +60,7 @@ public class JsonStorage implements DataStorage {
 
     @Override
     public void saveStateForTests(Hotel hotel) throws IOException {
-        File file = new File(TEST_PATH);
+        File file = new File(ConfigManager.getTestStateFilePath());
         LOGGER.info("Saving test state to: {}", file.getAbsolutePath());
 
         try {
@@ -77,7 +74,7 @@ public class JsonStorage implements DataStorage {
 
     @Override
     public Hotel loadStateForTests() throws IOException {
-        File file = new File(TEST_PATH);
+        File file = new File(ConfigManager.getTestStateFilePath());
         LOGGER.info("Loading test state from: {}", file.getAbsolutePath());
 
         if (!file.exists()) {

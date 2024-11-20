@@ -29,6 +29,12 @@ public class ConfigManager {
                 .orElseThrow(() -> new IllegalStateException("stateFilePath is not configured in config.properties"));
     }
 
+    public static String getTestStateFilePath() {
+        return getProperty(PROPERTIES, "testStateFilePath")
+                .map(ConfigManager::resolveFilePath)
+                .orElseThrow(() -> new IllegalStateException("testStateFilePath is not configured in config.properties"));
+    }
+
     public static String getDatabaseUrl() {
         return getRequiredProperty(LIQUIBASE_PROPERTIES, "url",
                 "Database URL is not configured in liquibase.properties");

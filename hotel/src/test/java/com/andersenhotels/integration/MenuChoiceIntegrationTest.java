@@ -1,6 +1,6 @@
 package com.andersenhotels.integration;
 
-import com.andersenhotels.model.storage.json_storage.JsonStorage;
+import com.andersenhotels.model.config.ConfigManager;
 import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 import com.andersenhotels.view.console_ui.MenuHandler;
 import com.andersenhotels.view.console_ui.ConsoleUI;
@@ -29,7 +29,7 @@ public class MenuChoiceIntegrationTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        Files.deleteIfExists(Path.of(JsonStorage.getTEST_PATH()));
+        Files.deleteIfExists(Path.of(ConfigManager.getTestStateFilePath()));
     }
 
     @Test

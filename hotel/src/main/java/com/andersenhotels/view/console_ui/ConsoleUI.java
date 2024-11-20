@@ -20,9 +20,6 @@ public class ConsoleUI implements View {
     private boolean isRunning;
     private boolean isTesting;
 
-    @Getter
-    private static final String TEST_PATH = "src/main/resources/hotel_service_state_test.json";
-
     public ConsoleUI() {
         this.menuHandler = new MenuHandler(this);
         this.presenter = new Presenter(this);
@@ -37,6 +34,7 @@ public class ConsoleUI implements View {
 
     @Override
     public void initialize() {
+        selectStorageType();
         greetings();
         if (loadState()) {
             displayMessage("Application state loaded successfully.");
@@ -46,12 +44,37 @@ public class ConsoleUI implements View {
         selectItemFromMenu();
     }
 
+    public void selectStorageType() {
+        System.out.println("Choose storage type:");
+        System.out.println("1. JSON");
+        System.out.println("2. Database");
+
+        int choice = -1;
+        while (choice < 1 || choice > 2) {
+            try {
+                choice = inputValidator.getIntInput("Enter your choice (1 or 2): ");
+
+                if (choice == 1) {
+                    presenter.setStorageType(1);
+                    System.out.println("Selected JSON storage.");
+                } else if (choice == 2) {
+                    presenter.setStorageType(2);
+                    System.out.println("Selected Database storage.");
+                } else {
+                    System.out.println("Invalid choice. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1 or 2).");
+            }
+        }
+    }
+
     private void greetings() {
         displayMessage("Welcome to the Hotel Management Console Application!");
     }
 
     private boolean loadState() {
-        return isTesting ? presenter.loadStateForTests(TEST_PATH) : presenter.loadState();
+        return isTesting ? presenter.loadStateForTests() : presenter.loadState();
     }
 
     private void selectItemFromMenu() {
@@ -112,7 +135,7 @@ public class ConsoleUI implements View {
     }
 
     private boolean saveState() {
-        return isTesting ? presenter.saveStateForTests(TEST_PATH) : presenter.saveState();
+        return isTesting ? presenter.saveStateForTests() : presenter.saveState();
     }
 
     @Override

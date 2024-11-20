@@ -1,5 +1,8 @@
 package com.andersenhotels.model.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,38 +11,78 @@ import java.util.Properties;
 
 public class ConfigManager {
 
-    private static final String CONFIG_FILE = "config.properties";
-    private static final Properties properties = new Properties();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigManager.class);
 
-    static {
-        try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
-            if (input != null) {
-                properties.load(input);
-                System.out.println("Configuration loaded successfully.");
-            } else {
-                System.err.println("Configuration file '" + CONFIG_FILE + "' not found.");
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading configuration file: " + e.getMessage());
-        }
+    private static final String CONFIG_FILE = "config.properties";
+    private static final String LIQUIBASE_FILE = "liquibase.properties";
+
+    private static final Properties PROPERTIES = loadProperties(CONFIG_FILE);
+    private static final Properties LIQUIBASE_PROPERTIES = loadProperties(LIQUIBASE_FILE);
+
+    private ConfigManager() {
+        // Private constructor to prevent instantiation
     }
 
     public static String getStateFilePath() {
-        return Optional.ofNullable(properties.getProperty("stateFilePath"))
+        return getProperty(PROPERTIES, "stateFilePath")
                 .map(ConfigManager::resolveFilePath)
                 .orElseThrow(() -> new IllegalStateException("stateFilePath is not configured in config.properties"));
     }
 
+    public static String getDatabaseUrl() {
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "url",
+                "Database URL is not configured in liquibase.properties");
+    }
+
+    public static String getDatabaseUsername() {
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "username",
+                "Database username is not configured in liquibase.properties");
+    }
+
+    public static String getDatabasePassword() {
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "password",
+                "Database password is not configured in liquibase.properties");
+    }
+
+    public static String getLiquibaseChangeLogFile() {
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "changeLogFile",
+                "Liquibase changeLogFile is not configured in liquibase.properties");
+    }
+
     public static boolean isAllowApartmentStatusChange() {
-        return Optional.ofNullable(properties.getProperty("allowApartmentStatusChange"))
+        return getProperty(PROPERTIES, "allowApartmentStatusChange")
                 .map(Boolean::parseBoolean)
                 .orElse(false);
     }
 
     public static int getPageSizeForPagination() {
-        return Optional.ofNullable(properties.getProperty("pageSizeForPagination"))
+        return getProperty(PROPERTIES, "pageSizeForPagination")
                 .map(Integer::parseInt)
                 .orElse(10);
+    }
+
+    private static Properties loadProperties(String fileName) {
+        Properties props = new Properties();
+        try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(fileName)) {
+            if (input != null) {
+                props.load(input);
+                LOGGER.info("{} loaded successfully.", fileName);
+            } else {
+                LOGGER.warn("{} not found.", fileName);
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error loading {}: {}", fileName, e.getMessage(), e);
+        }
+        return props;
+    }
+
+    private static Optional<String> getProperty(Properties props, String key) {
+        return Optional.ofNullable(props.getProperty(key));
+    }
+
+    private static String getRequiredProperty(Properties props, String key, String errorMessage) {
+        return getProperty(props, key)
+                .orElseThrow(() -> new IllegalStateException(errorMessage));
     }
 
     private static String resolveFilePath(String configuredPath) {
@@ -55,11 +98,12 @@ public class ConfigManager {
                 file = new File(baseDir, configuredPath);
             }
         }
+        LOGGER.debug("Resolved file path: {}", file.getAbsolutePath());
         return file.getAbsolutePath();
     }
 
     private static boolean isWebVersion() {
-        return Optional.ofNullable(System.getProperty("web.version"))
+        return getProperty(PROPERTIES, "web.version")
                 .map(Boolean::parseBoolean)
                 .orElse(false);
     }

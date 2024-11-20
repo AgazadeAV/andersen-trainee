@@ -1,6 +1,7 @@
 package com.andersenhotels.model.service;
 
 import com.andersenhotels.model.Apartment;
+import com.andersenhotels.model.Hotel;
 import com.andersenhotels.presenter.exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,18 +13,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HotelServiceTest {
 
+    private Hotel hotel;
     private HotelService hotelService;
 
     @BeforeEach
     void setUp() {
-        hotelService = new HotelService();
+        hotel = new Hotel();
+        hotelService = new HotelService(hotel);
     }
 
     @Test
     void registerApartment_Success() {
         hotelService.registerApartment(100.0);
 
-        assertEquals(1, hotelService.apartmentsCount());
+        assertEquals(1, hotelService.getApartmentsCount());
     }
 
     @Test
@@ -36,7 +39,7 @@ class HotelServiceTest {
         hotelService.registerApartment(100.0);
         hotelService.reserveApartment(1, "Azer Agazade");
 
-        assertEquals(1, hotelService.apartmentsCount());
+        assertEquals(1, hotelService.getApartmentsCount());
     }
 
     @Test
@@ -58,7 +61,7 @@ class HotelServiceTest {
         hotelService.reserveApartment(1, "Azer Agazade");
         hotelService.releaseApartment(1);
 
-        assertEquals(1, hotelService.apartmentsCount());
+        assertEquals(1, hotelService.getApartmentsCount());
     }
 
     @Test
@@ -91,6 +94,6 @@ class HotelServiceTest {
             hotelService.registerApartment(100.0 + i);
         }
 
-        assertEquals(3, hotelService.totalPages());
+        assertEquals(3, hotelService.getTotalPages());
     }
 }

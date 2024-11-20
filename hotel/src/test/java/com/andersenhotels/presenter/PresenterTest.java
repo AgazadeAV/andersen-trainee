@@ -1,8 +1,8 @@
 package com.andersenhotels.presenter;
 
 import com.andersenhotels.model.Apartment;
-import com.andersenhotels.presenter.exceptions.*;
 import com.andersenhotels.model.service.HotelService;
+import com.andersenhotels.presenter.exceptions.*;
 import com.andersenhotels.view.common.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -133,10 +133,10 @@ class PresenterTest {
 
     @Test
     void getTotalPages() {
-        when(hotelService.totalPages()).thenReturn(5);
+        when(hotelService.getTotalPages()).thenReturn(5);
 
         int totalPages = presenter.getTotalPages();
         assertEquals(5, totalPages);
-        verify(hotelService, times(1)).totalPages();
+        verify(hotelService, times(1)).getTotalPages();
     }
 }

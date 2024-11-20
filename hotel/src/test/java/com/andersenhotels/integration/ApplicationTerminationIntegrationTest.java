@@ -1,5 +1,6 @@
 package com.andersenhotels.integration;
 
+import com.andersenhotels.model.storage.json_storage.JsonStorage;
 import com.andersenhotels.view.console_ui.ConsoleUI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,7 @@ public class ApplicationTerminationIntegrationTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        Files.deleteIfExists(Path.of(ConsoleUI.getTEST_PATH()));
+        Files.deleteIfExists(Path.of(JsonStorage.getTEST_PATH()));
     }
 
     @Test

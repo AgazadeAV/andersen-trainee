@@ -3,7 +3,7 @@ package com.andersenhotels.presenter;
 import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.presenter.exceptions.*;
-import com.andersenhotels.view.common.View;
+import com.andersenhotels.view.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

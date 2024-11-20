@@ -8,7 +8,7 @@ import com.andersenhotels.model.storage.DataStorageFactory;
 import com.andersenhotels.model.storage.DataStorageType;
 import com.andersenhotels.model.storage.db_storage.LiquibaseRunner;
 import com.andersenhotels.presenter.exceptions.*;
-import com.andersenhotels.view.common.View;
+import com.andersenhotels.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

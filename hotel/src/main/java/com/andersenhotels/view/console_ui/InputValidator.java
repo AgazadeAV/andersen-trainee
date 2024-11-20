@@ -1,6 +1,6 @@
 package com.andersenhotels.view.console_ui;
 
-import com.andersenhotels.view.common.View;
+import com.andersenhotels.view.View;
 
 import java.util.Scanner;
 import java.util.function.Function;

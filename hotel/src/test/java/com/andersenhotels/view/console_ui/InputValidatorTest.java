@@ -1,6 +1,6 @@
 package com.andersenhotels.view.console_ui;
 
-import com.andersenhotels.view.common.View;
+import com.andersenhotels.view.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -1,4 +1,4 @@
-package com.andersenhotels.view.common;
+package com.andersenhotels.view;
 
 import java.util.List;
 

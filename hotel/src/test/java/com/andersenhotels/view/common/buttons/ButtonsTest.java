@@ -1,7 +1,7 @@
 package com.andersenhotels.view.common.buttons;
 
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
-import com.andersenhotels.view.common.View;
+import com.andersenhotels.view.View;
 import com.andersenhotels.view.console_ui.buttons.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

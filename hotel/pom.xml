@@ -27,6 +27,8 @@
         <liquibase-maven-plugin.version>4.30.0</liquibase-maven-plugin.version>
         <slf4j-api.version>2.0.16</slf4j-api.version>
         <logback-classic.version>1.5.12</logback-classic.version>
+        <hibernate-core.version>6.6.2.Final</hibernate-core.version>
+        <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
     </properties>
 
     <dependencies>
@@ -107,6 +109,20 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback-classic.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta.persistence-api.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -139,7 +155,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <argLine>-javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar</argLine>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy-agent.version}/byte-buddy-agent-${byte-buddy-agent.version}.jar
+                    </argLine>
                 </configuration>
             </plugin>
 

@@ -16,16 +16,25 @@
             <column name="status" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="hotel_id" type="INT">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
     </changeSet>
 
     <changeSet id="2" author="Azer_Agazade">
         <createTable tableName="reservations">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
             <column name="apartment_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="guest_name" type="VARCHAR(255)">
+            <column name="guest_id" type="INT">
                 <constraints nullable="false"/>
+            </column>
+            <column name="hotel_id" type="INT">
+                <constraints nullable="true"/>
             </column>
         </createTable>
 
@@ -33,17 +42,45 @@
                                  baseTableName="reservations"
                                  referencedColumnNames="id"
                                  referencedTableName="apartments"
-                                 constraintName="fk_apartment_reservation"/>
+                                 constraintName="fk_reservation_apartment"/>
+
+        <addForeignKeyConstraint baseColumnNames="guest_id"
+                                 baseTableName="reservations"
+                                 referencedColumnNames="id"
+                                 referencedTableName="guests"
+                                 constraintName="fk_reservation_guest"/>
     </changeSet>
 
     <changeSet id="3" author="Azer_Agazade">
-        <createTable tableName="metadata">
-            <column name="key_name" type="VARCHAR(255)">
+        <createTable tableName="guests">
+            <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="value" type="INT">
+            <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="Azer_Agazade">
+        <createTable tableName="hotels">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="Azer_Agazade">
+        <addForeignKeyConstraint baseColumnNames="hotel_id"
+                                 baseTableName="apartments"
+                                 referencedColumnNames="id"
+                                 referencedTableName="hotels"
+                                 constraintName="fk_apartment_hotel"/>
+
+        <addForeignKeyConstraint baseColumnNames="hotel_id"
+                                 baseTableName="reservations"
+                                 referencedColumnNames="id"
+                                 referencedTableName="hotels"
+                                 constraintName="fk_reservation_hotel"/>
     </changeSet>
 </databaseChangeLog>

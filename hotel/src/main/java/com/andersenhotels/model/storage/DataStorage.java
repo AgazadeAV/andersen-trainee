@@ -8,7 +8,7 @@ public interface DataStorage {
 
     void saveState(Hotel hotel) throws IOException;
 
-    Hotel loadState() throws IOException;
+    Hotel loadState() throws Exception;
 
     void saveStateForTests(Hotel hotel) throws IOException;
 

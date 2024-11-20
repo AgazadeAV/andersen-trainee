@@ -3,7 +3,6 @@ package com.andersenhotels.view.console_ui;
 import com.andersenhotels.presenter.Presenter;
 import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
-import com.andersenhotels.view.common.MenuHandler;
 import com.andersenhotels.view.common.View;
 import lombok.Getter;
 import lombok.Setter;

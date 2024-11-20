@@ -1,7 +1,9 @@
 package com.andersenhotels.view.common;
 
 import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
-import com.andersenhotels.view.common.buttons.*;
+import com.andersenhotels.view.console_ui.MenuHandler;
+import com.andersenhotels.view.console_ui.buttons.Button;
+import com.andersenhotels.view.console_ui.buttons.RegisterApartment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

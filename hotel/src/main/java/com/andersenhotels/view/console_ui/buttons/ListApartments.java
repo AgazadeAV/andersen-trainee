@@ -1,4 +1,4 @@
-package com.andersenhotels.view.common.buttons;
+package com.andersenhotels.view.console_ui.buttons;
 
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.view.common.View;

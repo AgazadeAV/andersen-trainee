@@ -2,7 +2,7 @@ package com.andersenhotels.integration;
 
 import com.andersenhotels.model.storage.json_storage.JsonStorage;
 import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
-import com.andersenhotels.view.common.MenuHandler;
+import com.andersenhotels.view.console_ui.MenuHandler;
 import com.andersenhotels.view.console_ui.ConsoleUI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

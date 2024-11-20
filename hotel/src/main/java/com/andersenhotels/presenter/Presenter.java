@@ -140,7 +140,7 @@ public class Presenter {
             this.hotelService = new HotelService(hotel);
             LOGGER.info("Application state loaded successfully.");
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             view.displayError("Failed to load application state.");
             LOGGER.error("Failed to load application state", e);
             return false;

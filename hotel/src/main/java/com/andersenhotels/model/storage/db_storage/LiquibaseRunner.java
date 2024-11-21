@@ -5,12 +5,14 @@ import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class LiquibaseRunner {
 
@@ -38,14 +40,12 @@ public class LiquibaseRunner {
                 liquibase.update(new Contexts());
                 LOGGER.info("Liquibase migrations executed successfully.");
 
-            } catch (Exception e) {
-                LOGGER.error("Error during Liquibase migrations: {}", e.getMessage(), e);
-                throw new RuntimeException("Error running Liquibase migrations", e);
+            } catch (LiquibaseException e) {
+                LOGGER.error("Liquibase migration error: {}", e.getMessage());
             }
 
-        } catch (Exception e) {
-            LOGGER.error("Failed to establish database connection or run migrations: {}", e.getMessage(), e);
-            throw new RuntimeException("Error running Liquibase migrations", e);
+        } catch (SQLException e) {
+            LOGGER.error("Database connection error: {}", e.getMessage());
         }
     }
 }

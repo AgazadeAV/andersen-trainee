@@ -48,11 +48,14 @@ public class Hotel {
 
     public void addReservation(Reservation reservation) {
         LOGGER.info("Attempting to add reservation for Apartment ID = {}", reservation.getApartment().getId());
-        if (reservations.stream().anyMatch(reservationForCheck -> reservationForCheck.getApartment().getId() == reservation.getApartment().getId())) {
-            throw new IllegalStateException("Reservation for apartment ID " + reservation.getApartment().getId() + " already exists.");
+        if (reservations.stream().anyMatch(reservationForCheck ->
+                reservationForCheck.getApartment().getId() == reservation.getApartment().getId())) {
+            throw new IllegalStateException("Reservation for apartment ID " +
+                    reservation.getApartment().getId() + " already exists.");
         }
         reservations.add(reservation);
-        LOGGER.info("Reservation added successfully: Apartment ID = {}, Guest = {}", reservation.getApartment().getId(), reservation.getGuest().getName());
+        LOGGER.info("Reservation added successfully: Apartment ID = {}, Guest = {}",
+                reservation.getApartment().getId(), reservation.getGuest().getName());
     }
 
     public void removeReservation(int apartmentId) {
@@ -60,7 +63,8 @@ public class Hotel {
         Reservation reservation = reservations.stream()
                 .filter(reservationForCheck -> reservationForCheck.getApartment().getId() == apartmentId)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Reservation for apartment ID " + apartmentId + " does not exist."));
+                .orElseThrow(() ->
+                        new IllegalStateException("Reservation for apartment ID " + apartmentId + " does not exist."));
 
         reservations.remove(reservation);
         LOGGER.info("Reservation removed successfully for Apartment ID = {}", apartmentId);

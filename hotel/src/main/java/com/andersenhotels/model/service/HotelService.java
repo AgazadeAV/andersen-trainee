@@ -25,7 +25,7 @@ public class HotelService {
 
     public HotelService(Hotel hotel) {
         this.hotel = hotel;
-        this.entityManagerFactory = Persistence.createEntityManagerFactory("andersen-hotels");
+        this.entityManagerFactory = Persistence.createEntityManagerFactory(ConfigManager.getPersistenceUnitName());
     }
 
     public int getApartmentsCount() {

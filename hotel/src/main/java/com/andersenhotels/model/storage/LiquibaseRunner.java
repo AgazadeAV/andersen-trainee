@@ -1,4 +1,4 @@
-package com.andersenhotels.model.storage.db_storage;
+package com.andersenhotels.model.storage;
 
 import com.andersenhotels.model.config.ConfigManager;
 import liquibase.Contexts;

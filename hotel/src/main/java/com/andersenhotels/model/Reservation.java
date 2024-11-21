@@ -33,34 +33,11 @@ public class Reservation {
     public Reservation() {
     }
 
-    @JsonCreator
-    public Reservation(@JsonProperty("apartment") Apartment apartment, @JsonProperty("guest") Guest guest) {
+    public Reservation(Apartment apartment, Guest guest) {
+        if (apartment == null || guest == null) {
+            throw new IllegalArgumentException("Apartment and Guest cannot be null.");
+        }
         this.apartment = apartment;
         this.guest = guest;
-        LOGGER.info("Reservation created: Apartment ID = {}, Guest = {}",
-                apartment.getId(),
-                guest.getName());
-    }
-
-    public void createReservation() {
-        LOGGER.info("Attempting to create a reservation for Apartment ID = {}", apartment.getId());
-        if (apartment.getStatus() == ApartmentStatus.AVAILABLE) {
-            apartment.setStatus(ApartmentStatus.RESERVED);
-            LOGGER.info("Reservation successful: Apartment ID = {} is now RESERVED", apartment.getId());
-        } else {
-            LOGGER.warn("Failed to reserve Apartment ID = {}: Already RESERVED", apartment.getId());
-            throw new ApartmentAlreadyReservedException("Apartment is already reserved.");
-        }
-    }
-
-    public void cancelReservation() {
-        LOGGER.info("Attempting to cancel reservation for Apartment ID = {}", apartment.getId());
-        if (apartment.getStatus() == ApartmentStatus.RESERVED) {
-            apartment.setStatus(ApartmentStatus.AVAILABLE);
-            LOGGER.info("Reservation cancelled: Apartment ID = {} is now AVAILABLE", apartment.getId());
-        } else {
-            LOGGER.warn("Failed to cancel reservation for Apartment ID = {}: Not RESERVED", apartment.getId());
-            throw new ApartmentNotReservedException("Apartment is not reserved.");
-        }
     }
 }

@@ -1,8 +1,7 @@
-package com.andersenhotels.model.storage.db_storage;
+package com.andersenhotels.model.storage;
 
 import com.andersenhotels.model.Hotel;
 import com.andersenhotels.model.config.ConfigManager;
-import com.andersenhotels.model.storage.DataStorage;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -12,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class DatabaseStorage implements DataStorage {
+public class DatabaseStorage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseStorage.class);
     private static final String PERSISTENCE_UNIT_NAME = ConfigManager.getPersistenceUnitName();
@@ -23,7 +22,6 @@ public class DatabaseStorage implements DataStorage {
         LOGGER.info("EntityManagerFactory initialized for persistence unit '{}'", PERSISTENCE_UNIT_NAME);
     }
 
-    @Override
     public void saveState(Hotel hotel) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
@@ -39,7 +37,6 @@ public class DatabaseStorage implements DataStorage {
         }
     }
 
-    @Override
     public Hotel loadState() {
         try (EntityManager em = emf.createEntityManager()) {
             LOGGER.info("Loading hotel state from the database...");
@@ -52,12 +49,10 @@ public class DatabaseStorage implements DataStorage {
         }
     }
 
-    @Override
     public void saveStateForTests(Hotel hotel) {
         saveState(hotel);
     }
 
-    @Override
     public Hotel loadStateForTests() {
         return loadState();
     }

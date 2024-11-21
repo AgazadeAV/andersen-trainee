@@ -3,16 +3,13 @@ package com.andersenhotels.presenter;
 import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.Hotel;
 import com.andersenhotels.model.service.HotelService;
-import com.andersenhotels.model.storage.DataStorage;
-import com.andersenhotels.model.storage.DataStorageFactory;
-import com.andersenhotels.model.storage.DataStorageType;
-import com.andersenhotels.model.storage.db_storage.LiquibaseRunner;
+import com.andersenhotels.model.storage.DatabaseStorage;
+import com.andersenhotels.model.storage.LiquibaseRunner;
 import com.andersenhotels.presenter.exceptions.*;
 import com.andersenhotels.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,54 +18,32 @@ public class Presenter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Presenter.class);
 
     private final View view;
-
+    private final DatabaseStorage databaseStorage;
     private Hotel hotel;
     private HotelService hotelService;
-    private DataStorage currentStorage;
 
     public Presenter(View view) {
         this.view = view;
-        this.hotel = new Hotel();
-        this.hotelService = new HotelService(hotel);
-        this.currentStorage = DataStorageFactory.getStorage(DataStorageType.JSON);
-        LOGGER.info("Presenter initialized with default JSON storage.");
-    }
+        this.databaseStorage = new DatabaseStorage();
 
-    public Presenter(View view, HotelService hotelService) {
-        this.view = view;
-        this.hotel = hotelService.getHotel();
-        this.hotelService = hotelService;
-        this.currentStorage = DataStorageFactory.getStorage(DataStorageType.JSON);
-        LOGGER.info("Presenter initialized with provided HotelService.");
-    }
-
-    public void setStorageType(int choice) {
-        if (choice == 1) {
-            currentStorage = DataStorageFactory.getStorage(DataStorageType.JSON);
-            view.displayMessage("Storage type switched to JSON.");
-            LOGGER.info("Storage type switched to JSON.");
-        } else if (choice == 2) {
-            currentStorage = DataStorageFactory.getStorage(DataStorageType.DATABASE);
-            view.displayMessage("Storage type switched to Database.");
-            LOGGER.info("Storage type switched to Database.");
-
-            try {
-                LiquibaseRunner.runLiquibaseMigrations();
-                view.displayMessage("Database migrations applied successfully.");
-                LOGGER.info("Liquibase migrations applied successfully.");
-            } catch (RuntimeException e) {
-                view.displayError("Error applying database migrations: " + e.getMessage());
-                LOGGER.error("Error applying database migrations", e);
-            }
-        } else {
-            view.displayError("Invalid storage type.");
-            LOGGER.warn("Invalid storage type choice: {}", choice);
+        try {
+            LiquibaseRunner.runLiquibaseMigrations();
+            LOGGER.info("Database migrations applied successfully.");
+        } catch (RuntimeException e) {
+            LOGGER.error("Failed to apply database migrations: {}", e.getMessage());
+            view.displayError("Error applying database migrations: " + e.getMessage());
         }
+
+        this.hotel = databaseStorage.loadState();
+        this.hotelService = new HotelService(hotel);
+
+        LOGGER.info("Presenter initialized with database storage.");
     }
 
     public boolean registerApartment(double price) {
         try {
             hotelService.registerApartment(price);
+            saveState();
             LOGGER.info("Apartment registered with price: {}", price);
             return true;
         } catch (InvalidPriceException e) {
@@ -81,6 +56,7 @@ public class Presenter {
     public boolean reserveApartment(int id, String guestName) {
         try {
             hotelService.reserveApartment(id, guestName);
+            saveState();
             LOGGER.info("Apartment reserved: ID = {}, Guest = {}", id, guestName);
             return true;
         } catch (ApartmentNotFoundException | ApartmentAlreadyReservedException | InvalidNameException e) {
@@ -93,6 +69,7 @@ public class Presenter {
     public boolean releaseApartment(int id) {
         try {
             hotelService.releaseApartment(id);
+            saveState();
             LOGGER.info("Apartment released: ID = {}", id);
             return true;
         } catch (ApartmentNotFoundException | ApartmentNotReservedException e) {
@@ -124,51 +101,34 @@ public class Presenter {
 
     public boolean saveState() {
         try {
-            currentStorage.saveState(hotel);
-            LOGGER.info("Application state saved successfully.");
+            databaseStorage.saveState(hotel);
+            LOGGER.info("Hotel state saved to the database successfully.");
             return true;
-        } catch (IOException e) {
-            view.displayError("Failed to save application state.");
-            LOGGER.error("Failed to save application state", e);
+        } catch (Exception e) {
+            view.displayError("Failed to save hotel state to the database.");
+            LOGGER.error("Failed to save hotel state to the database", e);
             return false;
         }
     }
 
     public boolean loadState() {
         try {
-            this.hotel = currentStorage.loadState();
+            this.hotel = databaseStorage.loadState();
             this.hotelService = new HotelService(hotel);
-            LOGGER.info("Application state loaded successfully.");
+            LOGGER.info("Hotel state loaded from the database successfully.");
             return true;
         } catch (Exception e) {
-            view.displayError("Failed to load application state.");
-            LOGGER.error("Failed to load application state", e);
+            view.displayError("Failed to load hotel state from the database.");
+            LOGGER.error("Failed to load hotel state from the database", e);
             return false;
         }
     }
 
     public boolean saveStateForTests() {
-        try {
-            currentStorage.saveStateForTests(hotel);
-            LOGGER.info("Test state saved successfully.");
-            return true;
-        } catch (IOException e) {
-            view.displayError("Failed to save test state.");
-            LOGGER.error("Failed to save test state", e);
-            return false;
-        }
+        return saveState();
     }
 
     public boolean loadStateForTests() {
-        try {
-            this.hotel = currentStorage.loadStateForTests();
-            this.hotelService = new HotelService(hotel);
-            LOGGER.info("Test state loaded successfully.");
-            return true;
-        } catch (IOException e) {
-            view.displayError("Failed to load test state.");
-            LOGGER.error("Failed to load test state", e);
-            return false;
-        }
+        return loadState();
     }
 }

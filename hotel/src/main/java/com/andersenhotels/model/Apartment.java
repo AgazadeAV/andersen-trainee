@@ -1,7 +1,5 @@
 package com.andersenhotels.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,9 +25,7 @@ public class Apartment {
         this.status = ApartmentStatus.AVAILABLE;
     }
 
-    @JsonCreator
-    public Apartment(@JsonProperty("id") int id, @JsonProperty("price") double price) {
-        this.id = id;
+    public Apartment(double price) {
         this.price = price;
         this.status = ApartmentStatus.AVAILABLE;
     }

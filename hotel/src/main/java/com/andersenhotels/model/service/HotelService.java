@@ -3,17 +3,17 @@ package com.andersenhotels.model.service;
 import com.andersenhotels.model.*;
 import com.andersenhotels.model.config.ConfigManager;
 import com.andersenhotels.presenter.exceptions.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import jakarta.persistence.PersistenceException;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Getter
 public class HotelService {
@@ -51,34 +51,43 @@ public class HotelService {
 
         Apartment apartment = createApartment(price);
 
-        saveApartmentToDatabase(apartment);
+        executeTransaction(entityManager -> entityManager.persist(apartment));
+        addToList(hotel.getApartments(), apartment, "Apartment already exists in the list.");
 
-        hotel.addApartment(apartment);
         LOGGER.info("Apartment registered: ID = {}, Price = {}", apartment.getId(), apartment.getPrice());
     }
 
     public void reserveApartment(int id, String guestName) {
         LOGGER.info("Attempting to reserve apartment with ID {} for guest '{}'", id, guestName);
 
-        ValueValidator.validateApartmentId(id, apartmentExists(id));
         ValueValidator.validateGuestName(guestName);
-
-        Apartment apartment = getApartmentById(id);
-
+        Apartment apartment = findById(hotel.getApartments(),
+                apartmentForSearch -> apartmentForSearch.getId() == id,
+                new ApartmentNotFoundException("Apartment not found for the given ID."));
         ValueValidator.validateApartmentStatus(apartment, ApartmentStatus.AVAILABLE);
 
-        createAndAddReservation(apartment, guestName);
+        Guest guest = new Guest();
+        guest.setName(guestName);
+
+        Reservation reservation = new Reservation();
+        reservation.setApartment(apartment);
+        reservation.setGuest(guest);
+
+        apartment.setStatus(ApartmentStatus.RESERVED);
+        addToList(hotel.getReservations(), reservation, "Reservation already exists for this apartment.");
+
+        LOGGER.info("Apartment reserved: ID = {}, Guest = {}", apartment.getId(), guestName);
     }
 
     public void releaseApartment(int id) {
         LOGGER.info("Attempting to release apartment with ID {}", id);
 
-        ValueValidator.validateApartmentId(id, apartmentExists(id));
-
-        Reservation reservation = getReservationByApartmentId(id);
-
+        Reservation reservation = findById(hotel.getReservations(),
+                r -> r.getApartment().getId() == id,
+                new ApartmentNotReservedException("Apartment is not reserved."));
         reservation.getApartment().setStatus(ApartmentStatus.AVAILABLE);
-        hotel.getReservations().remove(reservation);
+
+        removeFromList(hotel.getReservations(), reservation, "Reservation does not exist.");
 
         LOGGER.info("Apartment released: ID = {}", id);
     }
@@ -103,7 +112,8 @@ public class HotelService {
             throw new UnsupportedOperationException("Changing apartment status is disabled by configuration.");
         }
 
-        Apartment apartment = getApartmentById(id);
+        Apartment apartment = findById(hotel.getApartments(), a -> a.getId() == id,
+                new ApartmentNotFoundException("Apartment not found for the given ID."));
         apartment.setStatus(newStatus);
 
         LOGGER.info("Apartment status changed: ID = {}, New Status = {}", id, newStatus);
@@ -116,52 +126,42 @@ public class HotelService {
         return apartment;
     }
 
-    private void saveApartmentToDatabase(Apartment apartment) {
+    private <T> T findById(List<T> list, Predicate<T> predicate, RuntimeException exception) {
+        return list.stream()
+                .filter(predicate)
+                .findFirst()
+                .orElseThrow(() -> exception);
+    }
+
+    private <T> void addToList(List<T> list, T item, String errorMessage) {
+        if (list.contains(item)) {
+            throw new IllegalStateException(errorMessage);
+        }
+        list.add(item);
+    }
+
+    private <T> void removeFromList(List<T> list, T item, String errorMessage) {
+        if (!list.remove(item)) {
+            throw new IllegalStateException(errorMessage);
+        }
+    }
+
+    private void executeTransaction(EntityManagerAction action) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
-            entityManager.persist(apartment);
+            action.execute(entityManager);
             entityManager.getTransaction().commit();
-            LOGGER.info("Apartment persisted with ID = {}", apartment.getId());
         } catch (PersistenceException e) {
             entityManager.getTransaction().rollback();
-            LOGGER.error("Failed to persist apartment. Rolling back transaction.", e);
+            LOGGER.error("Transaction failed, rolling back.", e);
         } finally {
             entityManager.close();
         }
     }
 
-    private void createAndAddReservation(Apartment apartment, String guestName) {
-        Guest guest = new Guest(guestName);
-        Reservation reservation = new Reservation();
-        reservation.setApartment(apartment);
-        reservation.setGuest(guest);
-
-        apartment.setStatus(ApartmentStatus.RESERVED);
-        hotel.addReservation(reservation);
-
-        LOGGER.info("Apartment reserved: ID = {}, Guest = {}", apartment.getId(), guestName);
-    }
-
-    private Apartment getApartmentById(int id) {
-        return hotel.getApartments().stream()
-                .filter(apartment -> apartment.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new ApartmentNotFoundException("Apartment not found for the given ID."));
-    }
-
-    private Reservation getReservationByApartmentId(int id) {
-        return hotel.getReservations().stream()
-                .filter(reservation -> reservation.getApartment().getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new ApartmentNotReservedException("Apartment is not reserved."));
-    }
-
-    private boolean apartmentExists(int id) {
-        return hotel.getApartmentMap().containsKey(id);
-    }
-
-    private boolean reservationExists(int id) {
-        return hotel.getReservationMap().containsKey(id);
+    @FunctionalInterface
+    private interface EntityManagerAction {
+        void execute(EntityManager entityManager);
     }
 }

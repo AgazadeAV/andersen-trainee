@@ -17,21 +17,18 @@ public class Hotel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "hotel_id")
-    private List<Apartment> apartments;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "hotel")
+    private List<Apartment> apartments = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "hotel_id")
-    private List<Reservation> reservations;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "hotel")
+    private List<Reservation> reservations = new ArrayList<>();
 
     public Hotel() {
-        this.apartments = new ArrayList<>();
-        this.reservations = new ArrayList<>();
+        // Default constructor for JPA
     }
 
-    public Hotel(List<Apartment> apartments, List<Reservation> reservations) {
-        this.apartments = apartments != null ? apartments : new ArrayList<>();
-        this.reservations = reservations != null ? reservations : new ArrayList<>();
+    @Override
+    public String toString() {
+        return String.format("Hotel ID: %d", id);
     }
 }

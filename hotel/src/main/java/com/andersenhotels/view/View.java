@@ -6,8 +6,6 @@ public interface View {
 
     void initialize();
 
-    void complete();
-
     boolean registerApartment();
 
     boolean reserveApartment();
@@ -19,4 +17,6 @@ public interface View {
     void displayMessage(String message);
 
     void displayError(String errorMessage);
+
+    void complete();
 }

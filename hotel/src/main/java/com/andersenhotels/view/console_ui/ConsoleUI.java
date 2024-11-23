@@ -1,5 +1,6 @@
 package com.andersenhotels.view.console_ui;
 
+import com.andersenhotels.model.config.ConfigManager;
 import com.andersenhotels.presenter.Presenter;
 import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
@@ -17,7 +18,6 @@ public class ConsoleUI implements View {
     private Presenter presenter;
     private InputValidator inputValidator;
     private boolean isRunning;
-    private boolean isTesting;
 
     public ConsoleUI() {
         this.menuHandler = new MenuHandler(this);
@@ -26,44 +26,10 @@ public class ConsoleUI implements View {
         this.isRunning = true;
     }
 
-    public static void main(String[] args) {
-        View view = new ConsoleUI();
-        view.initialize();
-    }
-
     @Override
     public void initialize() {
         greetings();
-        if (loadState()) {
-            displayMessage("Application state loaded successfully.");
-        } else {
-            displayError("Error loading application state. Starting with a new instance.");
-        }
         selectItemFromMenu();
-    }
-
-    private void greetings() {
-        displayMessage("Welcome to the Hotel Management Console Application!");
-    }
-
-    private boolean loadState() {
-        return isTesting ? presenter.loadStateForTests() : presenter.loadState();
-    }
-
-    private void selectItemFromMenu() {
-        while (isRunning) {
-            displayMessage(menuHandler.getMenu());
-
-            int menuChoice = inputValidator.getIntInput("Please select an option from the menu:");
-            try {
-                menuHandler.execute(menuChoice);
-            } catch (WrongMenuChoiceException e) {
-                displayError(e.getMessage());
-            } catch (NumberFormatException e) {
-                displayError("Invalid input. Please enter a valid integer from the menu: from 1 to " +
-                        menuHandler.getMenuSize() + ".");
-            }
-        }
     }
 
     @Override
@@ -87,28 +53,18 @@ public class ConsoleUI implements View {
 
     @Override
     public List<String> listApartments() {
-        int totalPages = presenter.getTotalPages();
-        if (totalPages <= 0) {
-            throw new ApartmentNotFoundException("No apartments registered. Nothing to show.");
+        try {
+            int totalPages = presenter.getTotalPages();
+            if (totalPages <= 0) {
+                throw new ApartmentNotFoundException("No apartments registered. Nothing to show.");
+            }
+            int page = inputValidator.getIntInput("Enter page number from 1 to " + totalPages + " (integer value)\n" +
+                    "Page size is " + ConfigManager.getPageSizeForPagination() + ":");
+            return presenter.listApartments(page);
+        } catch (ApartmentNotFoundException e) {
+            displayError(e.getMessage());
+            return List.of();
         }
-        int page = inputValidator.getIntInput("Enter page number from 1 to " + totalPages + " (integer value)\n" +
-                "Page size is 5:");
-        return presenter.listApartments(page);
-    }
-
-    @Override
-    public void complete() {
-        if (saveState()) {
-            displayMessage("Application state saved successfully.");
-        } else {
-            displayError("Error saving application state.");
-        }
-        this.isRunning = false;
-        displayMessage("Good bye!");
-    }
-
-    private boolean saveState() {
-        return isTesting ? presenter.saveStateForTests() : presenter.saveState();
     }
 
     @Override
@@ -119,5 +75,39 @@ public class ConsoleUI implements View {
     @Override
     public void displayError(String errorMessage) {
         System.err.println(errorMessage);
+    }
+
+    @Override
+    public void complete() {
+        displayMessage("Good bye!");
+        this.isRunning = false;
+    }
+
+    private void greetings() {
+        displayMessage("Welcome to the Hotel Management Console Application!");
+        displayHotelInfo();
+    }
+
+    private void displayHotelInfo() {
+        if (presenter.getHotel() != null) {
+            displayMessage("Current hotel ID: " + presenter.getHotel().getId());
+        } else {
+            displayMessage("No hotel found. A new hotel will be created.");
+        }
+    }
+
+    private void selectItemFromMenu() {
+        while (isRunning) {
+            displayMessage(menuHandler.getMenu());
+            int menuChoice = inputValidator.getIntInput("Please select an option from the menu:");
+            try {
+                menuHandler.execute(menuChoice);
+            } catch (WrongMenuChoiceException e) {
+                displayError(e.getMessage());
+            } catch (NumberFormatException e) {
+                displayError("Invalid input. Please enter a valid integer from the menu: from 1 to " +
+                        menuHandler.getMenuSize() + ".");
+            }
+        }
     }
 }

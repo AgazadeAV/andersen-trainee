@@ -45,6 +45,11 @@ public class ConfigManager {
                 "Database URL is not configured in liquibase.properties");
     }
 
+    public static String getDatabaseUrlWithoutDb() {
+        return getRequiredProperty(LIQUIBASE_PROPERTIES, "urlWithoutDb",
+                "URL is not configured in liquibase.properties");
+    }
+
     public static String getDatabaseUsername() {
         return getRequiredProperty(LIQUIBASE_PROPERTIES, "username",
                 "Database username is not configured in liquibase.properties");

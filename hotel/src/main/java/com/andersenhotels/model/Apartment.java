@@ -21,17 +21,33 @@ public class Apartment {
     @Column(nullable = false)
     private ApartmentStatus status;
 
+    @OneToOne(mappedBy = "apartment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Reservation reservation;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hotel_id", nullable = false)
+    private Hotel hotel;
+
     public Apartment() {
-        this.status = ApartmentStatus.AVAILABLE;
+        // Default constructor for JPA
     }
 
-    public Apartment(double price) {
+    public Apartment(double price, Hotel hotel) {
+        if (hotel == null) {
+            throw new IllegalArgumentException("Hotel cannot be null.");
+        }
+
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative.");
+        }
+
         this.price = price;
+        this.hotel = hotel;
         this.status = ApartmentStatus.AVAILABLE;
     }
 
     @Override
     public String toString() {
-        return "Apartment ID: " + id + ", Price: " + price + ", Status: " + status + ".";
+        return String.format("Apartment ID: %d, Price: %.2f, Status: %s, Hotel ID: %d.", id, price, status, hotel.getId());
     }
 }

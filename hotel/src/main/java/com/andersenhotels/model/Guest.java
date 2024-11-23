@@ -18,14 +18,18 @@ public class Guest {
     private String name;
 
     public Guest() {
+        // Default constructor for JPA
     }
 
     public Guest(String name) {
-        this.name = name;
+        if (name == null || name.trim().isEmpty() || Character.isDigit(name.charAt(0))) {
+            throw new IllegalArgumentException("Guest name cannot be null, empty, only whitespace or start with a number.");
+        }
+        this.name = name.trim();
     }
 
     @Override
     public String toString() {
-        return "Guest ID: " + id + ", Name: " + name;
+        return String.format("Guest ID: %d, Name: %s", id, name);
     }
 }

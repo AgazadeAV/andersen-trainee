@@ -5,6 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <!-- Create table 'apartments' -->
     <changeSet id="1" author="Azer_Agazade">
         <createTable tableName="apartments">
             <column name="id" type="INT" autoIncrement="true">
@@ -17,11 +18,12 @@
                 <constraints nullable="false"/>
             </column>
             <column name="hotel_id" type="INT">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
+    <!-- Create table 'reservations' -->
     <changeSet id="2" author="Azer_Agazade">
         <createTable tableName="reservations">
             <column name="id" type="INT" autoIncrement="true">
@@ -33,11 +35,41 @@
             <column name="guest_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="hotel_id" type="INT">
-                <constraints nullable="true"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create table 'guests' -->
+    <changeSet id="3" author="Azer_Agazade">
+        <createTable tableName="guests">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
 
+    <!-- Create table 'hotels' -->
+    <changeSet id="4" author="Azer_Agazade">
+        <createTable tableName="hotels">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Add foreign key constraints for 'apartments' -->
+    <changeSet id="5" author="Azer_Agazade">
+        <addForeignKeyConstraint baseColumnNames="hotel_id"
+                                 baseTableName="apartments"
+                                 referencedColumnNames="id"
+                                 referencedTableName="hotels"
+                                 constraintName="fk_apartment_hotel"/>
+    </changeSet>
+
+    <!-- Add foreign key constraints for 'reservations' -->
+    <changeSet id="6" author="Azer_Agazade">
         <addForeignKeyConstraint baseColumnNames="apartment_id"
                                  baseTableName="reservations"
                                  referencedColumnNames="id"
@@ -51,36 +83,4 @@
                                  constraintName="fk_reservation_guest"/>
     </changeSet>
 
-    <changeSet id="3" author="Azer_Agazade">
-        <createTable tableName="guests">
-            <column name="id" type="INT" autoIncrement="true">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="name" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="4" author="Azer_Agazade">
-        <createTable tableName="hotels">
-            <column name="id" type="INT" autoIncrement="true">
-                <constraints primaryKey="true"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="5" author="Azer_Agazade">
-        <addForeignKeyConstraint baseColumnNames="hotel_id"
-                                 baseTableName="apartments"
-                                 referencedColumnNames="id"
-                                 referencedTableName="hotels"
-                                 constraintName="fk_apartment_hotel"/>
-
-        <addForeignKeyConstraint baseColumnNames="hotel_id"
-                                 baseTableName="reservations"
-                                 referencedColumnNames="id"
-                                 referencedTableName="hotels"
-                                 constraintName="fk_reservation_hotel"/>
-    </changeSet>
 </databaseChangeLog>

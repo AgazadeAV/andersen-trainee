@@ -2,11 +2,10 @@ package com.andersenhotels.presenter;
 
 import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.Hotel;
-import com.andersenhotels.model.service.HotelService;
-import com.andersenhotels.model.storage.DatabaseStorage;
-import com.andersenhotels.model.storage.LiquibaseRunner;
-import com.andersenhotels.presenter.exceptions.*;
+import com.andersenhotels.model.config.ConfigManager;
+import com.andersenhotels.model.service.logic.HotelServiceWrapper;
 import com.andersenhotels.view.View;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,117 +17,86 @@ public class Presenter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Presenter.class);
 
     private final View view;
-    private final DatabaseStorage databaseStorage;
+    private final HotelServiceWrapper hotelServiceWrapper;
+
+    @Getter
     private Hotel hotel;
-    private HotelService hotelService;
 
     public Presenter(View view) {
         this.view = view;
-        this.databaseStorage = new DatabaseStorage();
-
-        try {
-            LiquibaseRunner.runLiquibaseMigrations();
-            LOGGER.info("Database migrations applied successfully.");
-        } catch (RuntimeException e) {
-            LOGGER.error("Failed to apply database migrations: {}", e.getMessage());
-            view.displayError("Error applying database migrations: " + e.getMessage());
-        }
-
-        this.hotel = databaseStorage.loadState();
-        this.hotelService = new HotelService(hotel);
-
-        LOGGER.info("Presenter initialized with database storage.");
+        this.hotelServiceWrapper = new HotelServiceWrapper();
+        initializeHotel();
     }
 
     public boolean registerApartment(double price) {
         try {
-            hotelService.registerApartment(price);
-            saveState();
+            hotelServiceWrapper.registerApartment(price, hotel);
             LOGGER.info("Apartment registered with price: {}", price);
             return true;
-        } catch (InvalidPriceException e) {
-            view.displayError(e.getMessage());
-            LOGGER.warn("Failed to register apartment with price {}: {}", price, e.getMessage());
+        } catch (Exception e) {
+            handleException("Failed to register apartment", e);
             return false;
         }
     }
 
     public boolean reserveApartment(int id, String guestName) {
         try {
-            hotelService.reserveApartment(id, guestName);
-            saveState();
+            hotelServiceWrapper.reserveApartment(hotel, id, guestName);
             LOGGER.info("Apartment reserved: ID = {}, Guest = {}", id, guestName);
             return true;
-        } catch (ApartmentNotFoundException | ApartmentAlreadyReservedException | InvalidNameException e) {
-            view.displayError(e.getMessage());
-            LOGGER.warn("Failed to reserve apartment ID {} for guest '{}': {}", id, guestName, e.getMessage());
+        } catch (Exception e) {
+            handleException("Failed to reserve apartment", e);
             return false;
         }
     }
 
-    public boolean releaseApartment(int id) {
+    public boolean releaseApartment(int reservationId) {
         try {
-            hotelService.releaseApartment(id);
-            saveState();
-            LOGGER.info("Apartment released: ID = {}", id);
+            hotelServiceWrapper.releaseApartment(hotel, reservationId);
+            LOGGER.info("Apartment released: Reservation ID = {}", reservationId);
             return true;
-        } catch (ApartmentNotFoundException | ApartmentNotReservedException e) {
-            view.displayError(e.getMessage());
-            LOGGER.warn("Failed to release apartment ID {}: {}", id, e.getMessage());
+        } catch (Exception e) {
+            handleException("Failed to release apartment", e);
             return false;
         }
     }
 
     public List<String> listApartments(int page) {
         try {
-            List<String> apartments = hotelService.listApartments(page).stream()
-                    .map(Apartment::toString)
-                    .toList();
+            int totalPages = getTotalPages();
+            if (page <= 0 || page > totalPages) {
+                throw new IllegalArgumentException("Invalid page number.");
+            }
+
+            int pageSize = ConfigManager.getPageSizeForPagination();
+            List<Apartment> apartments = hotelServiceWrapper.listApartments(page, pageSize);
+
             LOGGER.info("Listed apartments for page {}: {} items found.", page, apartments.size());
-            return apartments;
-        } catch (ApartmentNotFoundException e) {
-            view.displayError(e.getMessage());
-            LOGGER.warn("Failed to list apartments for page {}: {}", page, e.getMessage());
+            return apartments.stream().map(Apartment::toString).toList();
+        } catch (Exception e) {
+            handleException("Failed to list apartments", e);
             return new ArrayList<>();
         }
     }
 
     public int getTotalPages() {
-        int totalPages = hotelService.getTotalPages();
-        LOGGER.debug("Total pages calculated: {}", totalPages);
-        return totalPages;
+        int apartmentsCount = hotelServiceWrapper.getApartmentsCount();
+        int pageSize = ConfigManager.getPageSizeForPagination();
+        return (int) Math.ceil((double) apartmentsCount / pageSize);
     }
 
-    public boolean saveState() {
+    private void initializeHotel() {
         try {
-            databaseStorage.saveState(hotel);
-            LOGGER.info("Hotel state saved to the database successfully.");
-            return true;
+            this.hotel = hotelServiceWrapper.initializeHotel();
+            LOGGER.info("Hotel successfully initialized. ID: {}", hotel.getId());
         } catch (Exception e) {
-            view.displayError("Failed to save hotel state to the database.");
-            LOGGER.error("Failed to save hotel state to the database", e);
-            return false;
+            handleException("Failed to initialize hotel", e);
+            this.hotel = new Hotel();
         }
     }
 
-    public boolean loadState() {
-        try {
-            this.hotel = databaseStorage.loadState();
-            this.hotelService = new HotelService(hotel);
-            LOGGER.info("Hotel state loaded from the database successfully.");
-            return true;
-        } catch (Exception e) {
-            view.displayError("Failed to load hotel state from the database.");
-            LOGGER.error("Failed to load hotel state from the database", e);
-            return false;
-        }
-    }
-
-    public boolean saveStateForTests() {
-        return saveState();
-    }
-
-    public boolean loadStateForTests() {
-        return loadState();
+    private void handleException(String message, Exception e) {
+        view.displayError(message + ": " + e.getMessage());
+        LOGGER.error("{}: {}", message, e.getMessage(), e);
     }
 }

@@ -41,7 +41,8 @@ public class LiquibaseRunner {
                     new ClassLoaderResourceAccessor(),
                     database)) {
 
-                LOGGER.info("Executing Liquibase migrations using changeLog file: {}", ConfigManager.getLiquibaseChangeLogFile());
+                LOGGER.info("Executing Liquibase migrations using changeLog file: {}",
+                        ConfigManager.getLiquibaseChangeLogFile());
                 liquibase.update(new Contexts());
                 LOGGER.info("Liquibase migrations executed successfully.");
 

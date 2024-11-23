@@ -2,6 +2,10 @@ package com.andersenhotels.model.service;
 
 import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.Hotel;
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
+import com.andersenhotels.presenter.exceptions.HotelNotFoundException;
+import com.andersenhotels.presenter.exceptions.InvalidPriceException;
+import jakarta.persistence.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,29 +17,25 @@ public class ApartmentService extends AbstractCrudService<Apartment, Integer> {
         super(Apartment.class);
     }
 
-    public void registerApartment(double price, Hotel hotel) {
+    public void registerApartment(double price, Hotel hotel) throws
+            InvalidPriceException,
+            HotelNotFoundException,
+            IllegalArgumentException,
+            PersistenceException {
         LOGGER.info("Attempting to register apartment with price: {} and hotel: {}", price, hotel);
-        try {
-            Apartment apartment = new Apartment(price, hotel);
-            Apartment savedApartment = create(apartment);
-            LOGGER.info("Apartment successfully registered: {}", savedApartment);
-        } catch (Exception e) {
-            LOGGER.error("Failed to register apartment with price {} and hotel {}: {}", price, hotel, e.getMessage(), e);
-            throw e;
-        }
+        Apartment apartment = new Apartment(price, hotel);
+        Apartment savedApartment = create(apartment);
+        LOGGER.info("Apartment successfully registered: {}", savedApartment);
     }
 
-    public void deleteApartment(Apartment apartment) {
+    public void deleteApartment(Apartment apartment) throws
+            IllegalArgumentException,
+            PersistenceException {
         LOGGER.info("Attempting to delete apartment: {}", apartment);
-        try {
-            if (apartment == null || !existsById(apartment.getId())) {
-                throw new IllegalArgumentException("Apartment does not exist or is invalid: " + apartment);
-            }
-            delete(apartment.getId());
-            LOGGER.info("Apartment successfully deleted: {}", apartment);
-        } catch (Exception e) {
-            LOGGER.error("Failed to delete apartment {}: {}", apartment, e.getMessage(), e);
-            throw e;
+        if (apartment == null || !existsById(apartment.getId())) {
+            throw new ApartmentNotFoundException("Apartment does not exist or is invalid: " + apartment);
         }
+        delete(apartment.getId());
+        LOGGER.info("Apartment successfully deleted: {}", apartment);
     }
 }

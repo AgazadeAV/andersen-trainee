@@ -1,9 +1,7 @@
 package com.andersenhotels.model.service;
 
 import com.andersenhotels.model.config.ConfigManager;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,14 +32,19 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
             em.getTransaction().commit();
             LOGGER.info("Entity created: {}", entity);
             return entity;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            LOGGER.error("Failed to create entity", e);
-            throw e;
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Invalid argument provided for entity creation: {}", entity, e);
+            throw new IllegalArgumentException("Invalid argument for entity creation", e);
+        } catch (RollbackException e) {
+            LOGGER.error("Transaction rollback occurred during entity creation: {}", entity, e);
+            throw new RollbackException("Transaction rollback during entity creation", e);
+        } catch (PersistenceException e) {
+            LOGGER.error("Persistence error during entity creation: {}", entity, e);
+            throw new PersistenceException("Persistence error during entity creation", e);
         } finally {
-            em.close();
+            if (em.isOpen()) {
+                em.close();
+            }
         }
     }
 
@@ -52,11 +55,16 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
             T entity = em.find(entityClass, id);
             LOGGER.info("Entity read by ID {}: {}", id, entity);
             return Optional.ofNullable(entity);
-        } catch (Exception e) {
-            LOGGER.error("Failed to read entity by ID {}", id, e);
-            throw e;
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Invalid argument provided for entity read by ID: {}", id, e);
+            throw new IllegalArgumentException("Invalid argument for entity read by ID: " + id, e);
+        } catch (PersistenceException e) {
+            LOGGER.error("Persistence error during entity read by ID: {}", id, e);
+            throw new PersistenceException("Persistence error during entity read by ID: " + id, e);
         } finally {
-            em.close();
+            if (em.isOpen()) {
+                em.close();
+            }
         }
     }
 
@@ -68,14 +76,19 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
             T mergedEntity = em.merge(entity);
             em.getTransaction().commit();
             LOGGER.info("Entity updated: {}", mergedEntity);
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            LOGGER.error("Failed to update entity", e);
-            throw e;
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Invalid argument provided for entity update: {}", entity, e);
+            throw new IllegalArgumentException("Invalid argument for entity update", e);
+        } catch (RollbackException e) {
+            LOGGER.error("Transaction rollback occurred during entity update: {}", entity, e);
+            throw new RollbackException("Transaction rollback during entity update", e);
+        } catch (PersistenceException e) {
+            LOGGER.error("Persistence error during entity update: {}", entity, e);
+            throw new PersistenceException("Persistence error during entity update", e);
         } finally {
-            em.close();
+            if (em.isOpen()) {
+                em.close();
+            }
         }
     }
 
@@ -92,14 +105,19 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
                 LOGGER.warn("No entity found to delete by ID: {}", id);
             }
             em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            LOGGER.error("Failed to delete entity by ID {}", id, e);
-            throw e;
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("Entity not found during deletion for ID: {}", id, e);
+            throw new EntityNotFoundException("Entity not found for deletion by ID: " + id);
+        } catch (RollbackException e) {
+            LOGGER.error("Transaction rollback during deletion for ID: {}", id, e);
+            throw new RollbackException("Transaction rollback during deletion for ID: " + id, e);
+        } catch (PersistenceException e) {
+            LOGGER.error("Persistence error during deletion for ID: {}", id, e);
+            throw new PersistenceException("Persistence error during deletion for ID: " + id, e);
         } finally {
-            em.close();
+            if (em.isOpen()) {
+                em.close();
+            }
         }
     }
 
@@ -109,11 +127,13 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
         try {
             return em.createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e", entityClass)
                     .getResultList();
-        } catch (Exception e) {
-            LOGGER.error("Failed to find all entities", e);
-            throw e;
+        } catch (PersistenceException e) {
+            LOGGER.error("Persistence error during finding all entities", e);
+            throw new PersistenceException("Persistence error during finding all entities", e);
         } finally {
-            em.close();
+            if (em.isOpen()) {
+                em.close();
+            }
         }
     }
 
@@ -122,22 +142,21 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
         EntityManager em = getEntityManager();
         try {
             Long count = em.createQuery(
-                            "SELECT COUNT(e) FROM " + entityClass.getSimpleName() + " e WHERE e.id = :id", Long.class)
+                            "SELECT COUNT(e) FROM " + entityClass.getSimpleName() +
+                                    " e WHERE e.id = :id", Long.class)
                     .setParameter("id", id)
                     .getSingleResult();
             return count > 0;
-        } catch (Exception e) {
-            LOGGER.error("Failed to check if entity exists by ID {}", id, e);
-            throw e;
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Invalid argument provided for existsById check: {}", id, e);
+            throw new IllegalArgumentException("Invalid argument for existsById check: " + id, e);
+        } catch (PersistenceException e) {
+            LOGGER.error("Persistence error during existsById check for ID: {}", id, e);
+            throw new PersistenceException("Persistence error during existsById check for ID: " + id, e);
         } finally {
-            em.close();
-        }
-    }
-
-    public static void closeEntityManagerFactory() {
-        if (ENTITY_MANAGER_FACTORY.isOpen()) {
-            ENTITY_MANAGER_FACTORY.close();
-            LOGGER.info("EntityManagerFactory closed successfully.");
+            if (em.isOpen()) {
+                em.close();
+            }
         }
     }
 }

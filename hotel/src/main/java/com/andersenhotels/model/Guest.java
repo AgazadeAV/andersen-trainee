@@ -1,5 +1,6 @@
 package com.andersenhotels.model;
 
+import com.andersenhotels.presenter.exceptions.InvalidNameException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,8 +24,10 @@ public class Guest {
 
     public Guest(String name) {
         if (name == null || name.trim().isEmpty() || Character.isDigit(name.charAt(0))) {
-            throw new IllegalArgumentException("Guest name cannot be null, empty, only whitespace or start with a number.");
+            throw new InvalidNameException("Guest name cannot be null, empty, " +
+                    "only whitespace or start with a number.");
         }
+
         this.name = name.trim();
     }
 

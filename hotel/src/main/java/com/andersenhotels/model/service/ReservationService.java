@@ -4,6 +4,11 @@ import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.ApartmentStatus;
 import com.andersenhotels.model.Guest;
 import com.andersenhotels.model.Reservation;
+import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException;
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
+import com.andersenhotels.presenter.exceptions.GuestNotFoundException;
+import com.andersenhotels.presenter.exceptions.ReservationNotFoundException;
+import jakarta.persistence.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,49 +20,40 @@ public class ReservationService extends AbstractCrudService<Reservation, Integer
         super(Reservation.class);
     }
 
-    public Reservation createReservation(Apartment apartment, Guest guest) {
+    public Reservation createReservation(Apartment apartment, Guest guest) throws
+            ApartmentNotFoundException,
+            GuestNotFoundException,
+            ApartmentAlreadyReservedException,
+            IllegalArgumentException,
+            PersistenceException {
         LOGGER.info("Attempting to create reservation for apartment ID {} and guest ID {}.",
                 apartment.getId(), guest.getId());
-        try {
-            Reservation reservation = new Reservation(apartment, guest);
-            Reservation savedReservation = create(reservation);
-            updateApartmentStatus(apartment, ApartmentStatus.RESERVED);
-            LOGGER.info("Reservation successfully created: {}", savedReservation);
-            return savedReservation;
-        } catch (Exception e) {
-            LOGGER.error("Failed to create reservation for apartment ID {} and guest ID {}: {}",
-                    apartment.getId(), guest.getId(), e.getMessage(), e);
-            throw e;
-        }
+        Reservation reservation = new Reservation(apartment, guest);
+        Reservation savedReservation = create(reservation);
+        updateApartmentStatus(apartment, ApartmentStatus.RESERVED);
+        LOGGER.info("Reservation successfully created: {}", savedReservation);
+        return savedReservation;
     }
 
-    public void cancelReservation(Reservation reservation) {
-        LOGGER.info("Attempting to cancel reservation ID: {}", reservation != null ? reservation.getId() : "null");
-        try {
+    public void cancelReservation(Reservation reservation) throws
+            IllegalArgumentException,
+            PersistenceException {
+        LOGGER.info("Attempting to cancel reservation ID: {}", reservation.getId());
             if (reservation == null || !existsById(reservation.getId())) {
-                throw new IllegalArgumentException("Reservation does not exist or is invalid: " + reservation);
+                throw new ReservationNotFoundException("Reservation does not exist or is invalid: " + reservation);
             }
 
             Apartment apartment = reservation.getApartment();
             updateApartmentStatus(apartment, ApartmentStatus.AVAILABLE);
             delete(reservation.getId());
-            LOGGER.info("Reservation successfully canceled with ID: {}", reservation.getId());
-        } catch (Exception e) {
-            LOGGER.error("Failed to cancel reservation ID: {}: {}",
-                    reservation != null ? reservation.getId() : "null", e.getMessage(), e);
-            throw e;
-        }
     }
 
-    private void updateApartmentStatus(Apartment apartment, ApartmentStatus status) {
+    private void updateApartmentStatus(Apartment apartment, ApartmentStatus status) throws
+            IllegalArgumentException,
+            PersistenceException {
         LOGGER.info("Updating apartment ID {} status to {}", apartment.getId(), status);
-        try {
-            apartment.setStatus(status);
-            new ApartmentService().update(apartment);
-            LOGGER.info("Apartment ID {} status successfully updated to {}", apartment.getId(), status);
-        } catch (Exception e) {
-            LOGGER.error("Failed to update apartment ID {} status to {}: {}", apartment.getId(), status, e.getMessage(), e);
-            throw e;
-        }
+        apartment.setStatus(status);
+        new ApartmentService().update(apartment);
+        LOGGER.info("Apartment ID {} status successfully updated to {}", apartment.getId(), status);
     }
 }

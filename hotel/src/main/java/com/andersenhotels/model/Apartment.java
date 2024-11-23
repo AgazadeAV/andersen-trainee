@@ -1,5 +1,7 @@
 package com.andersenhotels.model;
 
+import com.andersenhotels.presenter.exceptions.HotelNotFoundException;
+import com.andersenhotels.presenter.exceptions.InvalidPriceException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,11 +36,11 @@ public class Apartment {
 
     public Apartment(double price, Hotel hotel) {
         if (hotel == null) {
-            throw new IllegalArgumentException("Hotel cannot be null.");
+            throw new HotelNotFoundException("Hotel cannot be null.");
         }
 
         if (price < 0) {
-            throw new IllegalArgumentException("Price cannot be negative.");
+            throw new InvalidPriceException("Price cannot be negative.");
         }
 
         this.price = price;
@@ -48,6 +50,7 @@ public class Apartment {
 
     @Override
     public String toString() {
-        return String.format("Apartment ID: %d, Price: %.2f, Status: %s, Hotel ID: %d.", id, price, status, hotel.getId());
+        return String.format("Apartment ID: %d, Price: %.2f, Status: %s, Hotel ID: %d.",
+                id, price, status, hotel.getId());
     }
 }

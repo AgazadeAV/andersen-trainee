@@ -58,8 +58,8 @@ public class ConsoleUI implements View {
             if (totalPages <= 0) {
                 throw new ApartmentNotFoundException("No apartments registered. Nothing to show.");
             }
-            int page = inputValidator.getIntInput("Enter page number from 1 to " + totalPages + " (integer value)\n" +
-                    "Page size is " + ConfigManager.getPageSizeForPagination() + ":");
+            int page = inputValidator.getIntInput("Enter page number from 1 to " + totalPages +
+                    " (integer value)\n" + "Page size is " + ConfigManager.getPageSizeForPagination() + ":");
             return presenter.listApartments(page);
         } catch (ApartmentNotFoundException e) {
             displayError(e.getMessage());

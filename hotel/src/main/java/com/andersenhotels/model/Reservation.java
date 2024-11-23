@@ -1,5 +1,8 @@
 package com.andersenhotels.model;
 
+import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException;
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
+import com.andersenhotels.presenter.exceptions.GuestNotFoundException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,14 +35,17 @@ public class Reservation {
 
     public Reservation(Apartment apartment, Guest guest) {
         if (apartment == null) {
-            throw new IllegalArgumentException("Apartment cannot be null.");
+            throw new ApartmentNotFoundException("Apartment cannot be null.");
         }
+
         if (guest == null) {
-            throw new IllegalArgumentException("Guest cannot be null.");
+            throw new GuestNotFoundException("Guest cannot be null.");
         }
-        if (apartment.getStatus() != ApartmentStatus.AVAILABLE) {
-            throw new IllegalArgumentException("Apartment must have status AVAILABLE to create a reservation.");
+
+        if (apartment.getStatus() == ApartmentStatus.RESERVED) {
+            throw new ApartmentAlreadyReservedException("Apartment must have status AVAILABLE to create a reservation.");
         }
+
         this.apartment = apartment;
         this.guest = guest;
         this.hotel = apartment.getHotel();

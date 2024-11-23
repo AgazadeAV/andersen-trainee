@@ -4,7 +4,9 @@ import com.andersenhotels.model.Apartment;
 import com.andersenhotels.model.Hotel;
 import com.andersenhotels.model.config.ConfigManager;
 import com.andersenhotels.model.service.logic.HotelServiceWrapper;
+import com.andersenhotels.presenter.exceptions.*;
 import com.andersenhotels.view.View;
+import jakarta.persistence.PersistenceException;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,10 @@ public class Presenter {
             hotelServiceWrapper.registerApartment(price, hotel);
             LOGGER.info("Apartment registered with price: {}", price);
             return true;
-        } catch (Exception e) {
+        } catch (InvalidPriceException |
+                 HotelNotFoundException |
+                 IllegalArgumentException |
+                 PersistenceException e) {
             handleException("Failed to register apartment", e);
             return false;
         }
@@ -44,7 +49,12 @@ public class Presenter {
             hotelServiceWrapper.reserveApartment(hotel, id, guestName);
             LOGGER.info("Apartment reserved: ID = {}, Guest = {}", id, guestName);
             return true;
-        } catch (Exception e) {
+        } catch (ApartmentNotFoundException |
+                 InvalidNameException |
+                 GuestNotFoundException |
+                 ApartmentAlreadyReservedException |
+                 IllegalArgumentException |
+                 PersistenceException e) {
             handleException("Failed to reserve apartment", e);
             return false;
         }
@@ -55,7 +65,9 @@ public class Presenter {
             hotelServiceWrapper.releaseApartment(hotel, reservationId);
             LOGGER.info("Apartment released: Reservation ID = {}", reservationId);
             return true;
-        } catch (Exception e) {
+        } catch (ReservationNotFoundException |
+                 IllegalArgumentException |
+                 PersistenceException e) {
             handleException("Failed to release apartment", e);
             return false;
         }
@@ -63,33 +75,31 @@ public class Presenter {
 
     public List<String> listApartments(int page) {
         try {
-            int totalPages = getTotalPages();
-            if (page <= 0 || page > totalPages) {
-                throw new IllegalArgumentException("Invalid page number.");
-            }
-
             int pageSize = ConfigManager.getPageSizeForPagination();
             List<Apartment> apartments = hotelServiceWrapper.listApartments(page, pageSize);
 
             LOGGER.info("Listed apartments for page {}: {} items found.", page, apartments.size());
             return apartments.stream().map(Apartment::toString).toList();
-        } catch (Exception e) {
+        } catch (PersistenceException | WrongPageNumberException e) {
             handleException("Failed to list apartments", e);
             return new ArrayList<>();
         }
     }
 
     public int getTotalPages() {
-        int apartmentsCount = hotelServiceWrapper.getApartmentsCount();
-        int pageSize = ConfigManager.getPageSizeForPagination();
-        return (int) Math.ceil((double) apartmentsCount / pageSize);
+        try {
+            return hotelServiceWrapper.getTotalPages();
+        } catch (PersistenceException e) {
+            handleException("Failed to get total pages", e);
+            return 0;
+        }
     }
 
     private void initializeHotel() {
         try {
             this.hotel = hotelServiceWrapper.initializeHotel();
             LOGGER.info("Hotel successfully initialized. ID: {}", hotel.getId());
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | PersistenceException e) {
             handleException("Failed to initialize hotel", e);
             this.hotel = new Hotel();
         }

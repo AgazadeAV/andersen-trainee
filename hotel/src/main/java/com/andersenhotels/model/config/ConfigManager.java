@@ -1,9 +1,9 @@
 package com.andersenhotels.model.config;
 
+import com.andersenhotels.presenter.exceptions.MissingConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -19,62 +19,54 @@ public class ConfigManager {
     private static final Properties PROPERTIES = loadProperties(CONFIG_FILE);
     private static final Properties LIQUIBASE_PROPERTIES = loadProperties(LIQUIBASE_FILE);
 
+    static {
+        validateConfiguration();
+    }
+
     private ConfigManager() {
         // Private constructor to prevent instantiation
     }
 
-    public static String getStateFilePath() {
-        return getProperty(PROPERTIES, "stateFilePath")
-                .map(ConfigManager::resolveFilePath)
-                .orElseThrow(() -> new IllegalStateException("stateFilePath is not configured in config.properties"));
-    }
-
-    public static String getTestStateFilePath() {
-        return getProperty(PROPERTIES, "testStateFilePath")
-                .map(ConfigManager::resolveFilePath)
-                .orElseThrow(() -> new IllegalStateException("testStateFilePath is not configured in config.properties"));
-    }
-
     public static String getPersistenceUnitName() {
-        return getProperty(PROPERTIES, "persistenceUnitName")
-                .orElseThrow(() -> new IllegalStateException("persistenceUnitName is not configured in config.properties"));
+        return getProperty(PROPERTIES, "persistenceUnitName",
+                "persistenceUnitName is not configured in config.properties");
+    }
+
+    public static int getPageSizeForPagination() {
+        String pageSize = getProperty(PROPERTIES, "pageSizeForPagination",
+                "pageSizeForPagination is not configured in config.properties");
+        try {
+            return Integer.parseInt(pageSize);
+        } catch (NumberFormatException e) {
+            LOGGER.error("Invalid number format for 'pageSizeForPagination': {}", pageSize, e);
+            throw new MissingConfigurationException("Invalid number format for 'pageSizeForPagination': " +
+                    pageSize, e);
+        }
     }
 
     public static String getDatabaseUrl() {
-        return getRequiredProperty(LIQUIBASE_PROPERTIES, "url",
+        return getProperty(LIQUIBASE_PROPERTIES, "url",
                 "Database URL is not configured in liquibase.properties");
     }
 
     public static String getDatabaseUrlWithoutDb() {
-        return getRequiredProperty(LIQUIBASE_PROPERTIES, "urlWithoutDb",
+        return getProperty(LIQUIBASE_PROPERTIES, "urlWithoutDb",
                 "URL is not configured in liquibase.properties");
     }
 
     public static String getDatabaseUsername() {
-        return getRequiredProperty(LIQUIBASE_PROPERTIES, "username",
+        return getProperty(LIQUIBASE_PROPERTIES, "username",
                 "Database username is not configured in liquibase.properties");
     }
 
     public static String getDatabasePassword() {
-        return getRequiredProperty(LIQUIBASE_PROPERTIES, "password",
+        return getProperty(LIQUIBASE_PROPERTIES, "password",
                 "Database password is not configured in liquibase.properties");
     }
 
     public static String getLiquibaseChangeLogFile() {
-        return getRequiredProperty(LIQUIBASE_PROPERTIES, "changeLogFile",
+        return getProperty(LIQUIBASE_PROPERTIES, "changeLogFile",
                 "Liquibase changeLogFile is not configured in liquibase.properties");
-    }
-
-    public static boolean isAllowApartmentStatusChange() {
-        return getProperty(PROPERTIES, "allowApartmentStatusChange")
-                .map(Boolean::parseBoolean)
-                .orElse(false);
-    }
-
-    public static int getPageSizeForPagination() {
-        return getProperty(PROPERTIES, "pageSizeForPagination")
-                .map(Integer::parseInt)
-                .orElse(10);
     }
 
     private static Properties loadProperties(String fileName) {
@@ -84,43 +76,36 @@ public class ConfigManager {
                 props.load(input);
                 LOGGER.info("{} loaded successfully.", fileName);
             } else {
-                LOGGER.warn("{} not found.", fileName);
+                LOGGER.error("Configuration file '{}' not found.", fileName);
+                throw new MissingConfigurationException("Configuration file '" + fileName + "' is missing.");
             }
         } catch (IOException e) {
-            LOGGER.error("Error loading {}: {}", fileName, e.getMessage(), e);
+            LOGGER.error("Error loading configuration file '{}': {}", fileName, e.getMessage(), e);
+            throw new MissingConfigurationException("Error loading configuration file '" + fileName + "'", e);
         }
         return props;
     }
 
-    private static Optional<String> getProperty(Properties props, String key) {
-        return Optional.ofNullable(props.getProperty(key));
+    private static String getProperty(Properties props, String key, String errorMessage) {
+        return Optional.ofNullable(props.getProperty(key))
+                .orElseThrow(() -> {
+                    LOGGER.error("Property '{}' is missing. Error: {}", key, errorMessage);
+                    return new MissingConfigurationException(errorMessage);
+                });
     }
 
-    private static String getRequiredProperty(Properties props, String key, String errorMessage) {
-        return getProperty(props, key)
-                .orElseThrow(() -> new IllegalStateException(errorMessage));
-    }
-
-    private static String resolveFilePath(String configuredPath) {
-        File file;
-        if (isWebVersion()) {
-            String baseDir = System.getProperty("catalina.base", System.getProperty("user.dir"));
-            File webappsDir = new File(baseDir, "state");
-            file = new File(webappsDir, configuredPath);
-        } else {
-            file = new File(configuredPath);
-            if (!file.isAbsolute()) {
-                String baseDir = System.getProperty("user.dir");
-                file = new File(baseDir, configuredPath);
-            }
+    private static void validateConfiguration() {
+        try {
+            getPersistenceUnitName();
+            getPageSizeForPagination();
+            getDatabaseUrl();
+            getDatabaseUsername();
+            getDatabasePassword();
+            getLiquibaseChangeLogFile();
+            LOGGER.info("Configuration validation completed successfully.");
+        } catch (MissingConfigurationException e) {
+            LOGGER.error("Configuration validation failed: {}", e.getMessage(), e);
+            throw e;
         }
-        LOGGER.debug("Resolved file path: {}", file.getAbsolutePath());
-        return file.getAbsolutePath();
-    }
-
-    private static boolean isWebVersion() {
-        return getProperty(PROPERTIES, "web.version")
-                .map(Boolean::parseBoolean)
-                .orElse(false);
     }
 }

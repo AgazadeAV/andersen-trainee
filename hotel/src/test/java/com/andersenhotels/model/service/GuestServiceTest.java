@@ -14,6 +14,7 @@ import static org.mockito.Mockito.*;
 
 class GuestServiceTest {
 
+    @Mock
     private GuestService guestService;
 
     @Mock

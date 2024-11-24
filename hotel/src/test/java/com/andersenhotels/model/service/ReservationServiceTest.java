@@ -5,20 +5,29 @@ import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException
 import com.andersenhotels.presenter.exceptions.ReservationNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ReservationServiceTest {
 
+    @Mock
     private ReservationService reservationService;
+
+    @Mock
     private ApartmentService apartmentService;
+
+    @Mock
     private Guest guest;
+
+    @Mock
     private Apartment apartment;
 
     @BeforeEach
     void setUp() {
-        apartmentService = mock(ApartmentService.class);
+        MockitoAnnotations.openMocks(this);
         reservationService = spy(new ReservationService() {
             @Override
             void updateApartmentStatus(Apartment apartment, ApartmentStatus status) {
@@ -26,8 +35,6 @@ class ReservationServiceTest {
                 apartmentService.update(apartment);
             }
         });
-        guest = mock(Guest.class);
-        apartment = mock(Apartment.class);
     }
 
     @Test

@@ -17,6 +17,7 @@ import static org.mockito.Mockito.*;
 
 class ApartmentServiceTest {
 
+    @Mock
     private ApartmentService apartmentService;
 
     @Mock

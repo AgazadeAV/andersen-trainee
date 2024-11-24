@@ -2,6 +2,7 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
+    <!-- Main Persistence Unit -->
     <persistence-unit name="andersen-hotels" transaction-type="RESOURCE_LOCAL">
         <class>com.andersenhotels.model.Apartment</class>
         <class>com.andersenhotels.model.Reservation</class>
@@ -19,6 +20,31 @@
             <property name="jakarta.persistence.provider" value="org.hibernate.jpa.HibernatePersistenceProvider"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.use_sql_comments" value="false"/>
+            <property name="hibernate.jdbc.time_zone" value="UTC"/>
+        </properties>
+    </persistence-unit>
+
+    <!-- Test Persistence Unit -->
+    <persistence-unit name="testdb" transaction-type="RESOURCE_LOCAL">
+        <class>com.andersenhotels.model.Apartment</class>
+        <class>com.andersenhotels.model.Reservation</class>
+        <class>com.andersenhotels.model.Guest</class>
+        <class>com.andersenhotels.model.Hotel</class>
+
+        <properties>
+            <!-- JDBC Configuration for Test Database -->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/testdb"/>
+            <property name="jakarta.persistence.jdbc.user" value="root"/>
+            <property name="jakarta.persistence.jdbc.password" value="05031995"/>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+
+            <!-- Hibernate Configuration for Test Database -->
+            <property name="jakarta.persistence.provider" value="org.hibernate.jpa.HibernatePersistenceProvider"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="false"/>
             <property name="hibernate.use_sql_comments" value="false"/>

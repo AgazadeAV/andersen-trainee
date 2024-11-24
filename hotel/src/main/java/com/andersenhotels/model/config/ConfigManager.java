@@ -1,6 +1,7 @@
 package com.andersenhotels.model.config;
 
 import com.andersenhotels.presenter.exceptions.MissingConfigurationException;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,9 @@ public class ConfigManager {
     private static final Properties PROPERTIES = loadProperties(CONFIG_FILE);
     private static final Properties LIQUIBASE_PROPERTIES = loadProperties(LIQUIBASE_FILE);
 
+    @Setter
+    private static boolean isTesting;
+
     static {
         validateConfiguration();
     }
@@ -28,8 +32,13 @@ public class ConfigManager {
     }
 
     public static String getPersistenceUnitName() {
-        return getProperty(PROPERTIES, "persistenceUnitName",
-                "persistenceUnitName is not configured in config.properties");
+        if (isTesting) {
+            return getProperty(PROPERTIES, "testPersistenceUnitName",
+                    "testPersistenceUnitName is not configured in config.properties");
+        } else {
+            return getProperty(PROPERTIES, "persistenceUnitName",
+                    "persistenceUnitName is not configured in config.properties");
+        }
     }
 
     public static int getPageSizeForPagination() {
@@ -45,8 +54,13 @@ public class ConfigManager {
     }
 
     public static String getDatabaseUrl() {
-        return getProperty(LIQUIBASE_PROPERTIES, "url",
-                "Database URL is not configured in liquibase.properties");
+        if (isTesting) {
+            return getProperty(LIQUIBASE_PROPERTIES, "testUrl",
+                    "Database URL is not configured in liquibase.properties");
+        } else {
+            return getProperty(LIQUIBASE_PROPERTIES, "url",
+                    "Test database URL is not configured in liquibase.properties");
+        }
     }
 
     public static String getDatabaseUrlWithoutDb() {
@@ -107,13 +121,5 @@ public class ConfigManager {
             LOGGER.error("Configuration validation failed: {}", e.getMessage(), e);
             throw e;
         }
-    }
-
-    public static void setMockProperties(Properties config, Properties liquibase) {
-        PROPERTIES.clear();
-        PROPERTIES.putAll(config);
-
-        LIQUIBASE_PROPERTIES.clear();
-        LIQUIBASE_PROPERTIES.putAll(liquibase);
     }
 }

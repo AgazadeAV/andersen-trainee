@@ -1,45 +1,47 @@
 package com.andersenhotels.model.storage;
 
 import com.andersenhotels.model.config.ConfigManager;
-import liquibase.Contexts;
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.core.MySQLDatabase;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class LiquibaseRunnerTest {
 
     private MockedStatic<DriverManager> driverManagerMock;
-    private MockedStatic<ConfigManager> configManagerMock;
 
     @BeforeEach
     void setUp() {
         driverManagerMock = Mockito.mockStatic(DriverManager.class);
-        configManagerMock = Mockito.mockStatic(ConfigManager.class);
 
-        configManagerMock.when(ConfigManager::getDatabaseUrlWithoutDb).thenReturn("jdbc:mysql://localhost:3306/");
-        configManagerMock.when(ConfigManager::getDatabaseUsername).thenReturn("user");
-        configManagerMock.when(ConfigManager::getDatabasePassword).thenReturn("password");
-        configManagerMock.when(ConfigManager::getPersistenceUnitName).thenReturn("testdb");
+        ConfigManager.setTesting(true);
     }
 
     @AfterEach
     void tearDown() {
         driverManagerMock.close();
-        configManagerMock.close();
+    }
+
+    @Test
+    void runLiquibaseMigrations_Failure_Liquibase() throws SQLException {
+        try (MockedStatic<LiquibaseRunner> liquibaseRunnerMock = mockStatic(LiquibaseRunner.class)) {
+            liquibaseRunnerMock.when(LiquibaseRunner::runLiquibaseMigrations)
+                    .thenThrow(new RuntimeException("Liquibase migration failed"));
+
+            RuntimeException exception = assertThrows(RuntimeException.class, LiquibaseRunner::runLiquibaseMigrations);
+
+            assertTrue(exception.getMessage().contains("Liquibase migration failed"));
+        }
     }
 
     @Test
@@ -47,8 +49,12 @@ class LiquibaseRunnerTest {
         Connection mockConnection = mock(Connection.class);
         Statement mockStatement = mock(Statement.class);
 
-        driverManagerMock.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString()))
-                .thenReturn(mockConnection);
+        driverManagerMock.when(() -> DriverManager.getConnection(
+                ConfigManager.getDatabaseUrlWithoutDb(),
+                ConfigManager.getDatabaseUsername(),
+                ConfigManager.getDatabasePassword()
+        )).thenReturn(mockConnection);
+
         when(mockConnection.createStatement()).thenReturn(mockStatement);
 
         LiquibaseRunner.ensureDatabaseExists();
@@ -58,8 +64,11 @@ class LiquibaseRunnerTest {
 
     @Test
     void ensureDatabaseExists_Failure() throws Exception {
-        driverManagerMock.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString()))
-                .thenThrow(SQLException.class);
+        driverManagerMock.when(() -> DriverManager.getConnection(
+                ConfigManager.getDatabaseUrlWithoutDb(),
+                ConfigManager.getDatabaseUsername(),
+                ConfigManager.getDatabasePassword()
+        )).thenThrow(SQLException.class);
 
         RuntimeException exception = assertThrows(RuntimeException.class, LiquibaseRunner::ensureDatabaseExists);
         assert (exception.getMessage().contains("Failed to ensure database exists"));

@@ -54,7 +54,7 @@ public class Reservation {
     @Override
     public String toString() {
         return String.format(
-                "Reservation ID: %d, Apartment ID: %d, Guest: %s, Hotel ID: %d",
-                id, apartment.getId(), guest.getName(), hotel.getId());
+                "Reservation ID: %d, Apartment ID: %d, Guest: %s",
+                id, apartment.getId(), guest.getName());
     }
 }

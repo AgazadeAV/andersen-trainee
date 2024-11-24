@@ -69,7 +69,7 @@ public class ConfigManager {
                 "Liquibase changeLogFile is not configured in liquibase.properties");
     }
 
-    private static Properties loadProperties(String fileName) {
+    static Properties loadProperties(String fileName) {
         Properties props = new Properties();
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(fileName)) {
             if (input != null) {
@@ -86,7 +86,7 @@ public class ConfigManager {
         return props;
     }
 
-    private static String getProperty(Properties props, String key, String errorMessage) {
+    static String getProperty(Properties props, String key, String errorMessage) {
         return Optional.ofNullable(props.getProperty(key))
                 .orElseThrow(() -> {
                     LOGGER.error("Property '{}' is missing. Error: {}", key, errorMessage);
@@ -94,7 +94,7 @@ public class ConfigManager {
                 });
     }
 
-    private static void validateConfiguration() {
+    static void validateConfiguration() {
         try {
             getPersistenceUnitName();
             getPageSizeForPagination();
@@ -107,5 +107,13 @@ public class ConfigManager {
             LOGGER.error("Configuration validation failed: {}", e.getMessage(), e);
             throw e;
         }
+    }
+
+    public static void setMockProperties(Properties config, Properties liquibase) {
+        PROPERTIES.clear();
+        PROPERTIES.putAll(config);
+
+        LIQUIBASE_PROPERTIES.clear();
+        LIQUIBASE_PROPERTIES.putAll(liquibase);
     }
 }

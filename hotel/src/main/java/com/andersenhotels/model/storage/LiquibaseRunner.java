@@ -57,7 +57,7 @@ public class LiquibaseRunner {
         }
     }
 
-    private static void ensureDatabaseExists() {
+    static void ensureDatabaseExists() {
         String databaseName = ConfigManager.getPersistenceUnitName();
         String databaseUrlWithoutDb = ConfigManager.getDatabaseUrlWithoutDb();
 

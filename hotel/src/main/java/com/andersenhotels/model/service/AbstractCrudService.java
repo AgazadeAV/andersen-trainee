@@ -11,8 +11,7 @@ import java.util.Optional;
 public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCrudService.class);
-    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory(ConfigManager.getPersistenceUnitName());
-
+    private static EntityManagerFactory entityManagerFactory;
     protected final Class<T> entityClass;
 
     protected AbstractCrudService(Class<T> entityClass) {
@@ -20,7 +19,14 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
     }
 
     protected EntityManager getEntityManager() {
-        return ENTITY_MANAGER_FACTORY.createEntityManager();
+        if (entityManagerFactory == null) {
+            synchronized (AbstractCrudService.class) {
+                if (entityManagerFactory == null) {
+                    entityManagerFactory = Persistence.createEntityManagerFactory(ConfigManager.getPersistenceUnitName());
+                }
+            }
+        }
+        return entityManagerFactory.createEntityManager();
     }
 
     @Override
@@ -33,12 +39,15 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
             LOGGER.info("Entity created: {}", entity);
             return entity;
         } catch (IllegalArgumentException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Invalid argument provided for entity creation: {}", entity, e);
             throw new IllegalArgumentException("Invalid argument for entity creation", e);
         } catch (RollbackException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Transaction rollback occurred during entity creation: {}", entity, e);
             throw new RollbackException("Transaction rollback during entity creation", e);
         } catch (PersistenceException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Persistence error during entity creation: {}", entity, e);
             throw new PersistenceException("Persistence error during entity creation", e);
         } finally {
@@ -77,12 +86,15 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
             em.getTransaction().commit();
             LOGGER.info("Entity updated: {}", mergedEntity);
         } catch (IllegalArgumentException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Invalid argument provided for entity update: {}", entity, e);
             throw new IllegalArgumentException("Invalid argument for entity update", e);
         } catch (RollbackException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Transaction rollback occurred during entity update: {}", entity, e);
             throw new RollbackException("Transaction rollback during entity update", e);
         } catch (PersistenceException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Persistence error during entity update: {}", entity, e);
             throw new PersistenceException("Persistence error during entity update", e);
         } finally {
@@ -106,12 +118,15 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
             }
             em.getTransaction().commit();
         } catch (EntityNotFoundException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Entity not found during deletion for ID: {}", id, e);
             throw new EntityNotFoundException("Entity not found for deletion by ID: " + id);
         } catch (RollbackException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Transaction rollback during deletion for ID: {}", id, e);
             throw new RollbackException("Transaction rollback during deletion for ID: " + id, e);
         } catch (PersistenceException e) {
+            em.getTransaction().rollback();
             LOGGER.error("Persistence error during deletion for ID: {}", id, e);
             throw new PersistenceException("Persistence error during deletion for ID: " + id, e);
         } finally {
@@ -141,9 +156,9 @@ public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
     public boolean existsById(ID id) {
         EntityManager em = getEntityManager();
         try {
-            Long count = em.createQuery(
+            Integer count = em.createQuery(
                             "SELECT COUNT(e) FROM " + entityClass.getSimpleName() +
-                                    " e WHERE e.id = :id", Long.class)
+                                    " e WHERE e.id = :id", Integer.class)
                     .setParameter("id", id)
                     .getSingleResult();
             return count > 0;

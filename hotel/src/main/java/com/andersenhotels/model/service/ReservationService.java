@@ -48,7 +48,7 @@ public class ReservationService extends AbstractCrudService<Reservation, Integer
             delete(reservation.getId());
     }
 
-    private void updateApartmentStatus(Apartment apartment, ApartmentStatus status) throws
+    void updateApartmentStatus(Apartment apartment, ApartmentStatus status) throws
             IllegalArgumentException,
             PersistenceException {
         LOGGER.info("Updating apartment ID {} status to {}", apartment.getId(), status);

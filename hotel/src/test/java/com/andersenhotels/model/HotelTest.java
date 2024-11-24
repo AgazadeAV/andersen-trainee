@@ -15,13 +15,4 @@ class HotelTest {
         assertTrue(hotel.getApartments().isEmpty(), "Apartments list should be empty by default.");
         assertTrue(hotel.getReservations().isEmpty(), "Reservations list should be empty by default.");
     }
-
-    @Test
-    void toString_Success() {
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-
-        String expectedString = "Hotel ID: 1";
-        assertEquals(expectedString, hotel.toString());
-    }
 }

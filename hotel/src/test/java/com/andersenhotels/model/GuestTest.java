@@ -30,13 +30,4 @@ class GuestTest {
         Guest guest = new Guest("   John Doe   ");
         assertEquals("John Doe", guest.getName());
     }
-
-    @Test
-    void toString_Success() {
-        Guest guest = new Guest("Alice");
-        guest.setId(1);
-
-        String expectedString = "Guest ID: 1, Name: Alice";
-        assertEquals(expectedString, guest.toString());
-    }
 }

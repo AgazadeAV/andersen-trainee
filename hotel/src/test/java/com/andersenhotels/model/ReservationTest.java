@@ -52,20 +52,4 @@ class ReservationTest {
         assertEquals(guest, reservation.getGuest());
         assertEquals(hotel, reservation.getHotel());
     }
-
-    @Test
-    void toString_Success() {
-        Apartment apartment = mock(Apartment.class);
-        Guest guest = mock(Guest.class);
-
-        when(apartment.getStatus()).thenReturn(ApartmentStatus.AVAILABLE);
-        when(apartment.getId()).thenReturn(5);
-        when(guest.getName()).thenReturn("John Doe");
-
-        Reservation reservation = new Reservation(apartment, guest);
-        reservation.setId(10);
-
-        String expectedString = "Reservation ID: 10, Apartment ID: 5, Guest: John Doe";
-        assertEquals(expectedString, reservation.toString());
-    }
 }

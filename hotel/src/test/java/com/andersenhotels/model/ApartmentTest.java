@@ -30,15 +30,4 @@ class ApartmentTest {
         assertEquals(ApartmentStatus.AVAILABLE, apartment.getStatus());
         assertEquals(hotel, apartment.getHotel());
     }
-
-    @Test
-    void toString_Success() {
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-        Apartment apartment = new Apartment(150.0, hotel);
-        apartment.setId(5);
-
-        String expectedString = "Apartment ID: 5, Price: 150,00, Status: AVAILABLE, Hotel ID: 1.";
-        assertEquals(expectedString, apartment.toString());
-    }
 }

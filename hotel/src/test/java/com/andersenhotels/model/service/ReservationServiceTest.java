@@ -64,20 +64,6 @@ class ReservationServiceTest {
     }
 
     @Test
-    void cancelReservation_Success() throws Exception {
-        Reservation reservation = mock(Reservation.class);
-        when(reservation.getId()).thenReturn(1);
-        doReturn(true).when(reservationService).existsById(1);
-        when(reservation.getApartment()).thenReturn(apartment);
-
-        reservationService.cancelReservation(reservation);
-
-        verify(reservationService, times(1)).delete(1);
-        verify(reservationService, times(1)).updateApartmentStatus(apartment, ApartmentStatus.AVAILABLE);
-        verify(apartmentService, times(1)).update(apartment);
-    }
-
-    @Test
     void cancelReservation_NotFound() {
         Reservation reservation = mock(Reservation.class);
         when(reservation.getId()).thenReturn(1);

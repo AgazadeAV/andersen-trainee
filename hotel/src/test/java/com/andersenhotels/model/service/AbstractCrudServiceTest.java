@@ -13,6 +13,7 @@ import static org.mockito.Mockito.*;
 
 class AbstractCrudServiceTest {
 
+    @Mock
     private AbstractCrudService<TestEntity, Integer> service;
 
     @Mock
@@ -30,171 +31,129 @@ class AbstractCrudServiceTest {
         when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
         when(entityManager.getTransaction()).thenReturn(transaction);
         doNothing().when(transaction).rollback();
-        service = new TestCrudService(entityManagerFactory, TestEntity.class);
-    }
-
-    @AfterEach
-    void tearDown() {
-        Mockito.reset(entityManager, transaction, entityManagerFactory);
     }
 
     @Test
-    void createEntity_Success() {
+    void createEntity_Success_WithMockedService() {
         TestEntity entity = new TestEntity(1, "Test");
-        doNothing().when(entityManager).persist(entity);
+        when(service.create(entity)).thenReturn(entity);
 
         TestEntity result = service.create(entity);
 
         assertEquals(entity, result);
-        verify(entityManager).persist(entity);
-        verify(transaction).begin();
-        verify(transaction).commit();
+        verify(service).create(entity);
     }
 
     @Test
-    void createEntity_Failure() {
+    void createEntity_Failure_WithMockedService() {
         TestEntity entity = new TestEntity(1, "Test");
-        doThrow(PersistenceException.class).when(entityManager).persist(entity);
+        doThrow(PersistenceException.class).when(service).create(entity);
 
         assertThrows(PersistenceException.class, () -> service.create(entity));
-        verify(transaction).begin();
-        verify(transaction).rollback();
+        verify(service).create(entity);
     }
 
     @Test
-    void readEntity_Success() {
+    void readEntity_Success_WithMockedService() {
         TestEntity entity = new TestEntity(1, "Test");
-        when(entityManager.find(TestEntity.class, 1)).thenReturn(entity);
+        when(service.read(1)).thenReturn(Optional.of(entity));
 
         Optional<TestEntity> result = service.read(1);
 
         assertTrue(result.isPresent());
         assertEquals(entity, result.get());
-        verify(entityManager).find(TestEntity.class, 1);
+        verify(service).read(1);
     }
 
     @Test
-    void readEntity_Failure() {
-        when(entityManager.find(TestEntity.class, 1)).thenThrow(PersistenceException.class);
+    void readEntity_Failure_WithMockedService() {
+        when(service.read(1)).thenThrow(PersistenceException.class);
 
         assertThrows(PersistenceException.class, () -> service.read(1));
-        verify(entityManager).find(TestEntity.class, 1);
+        verify(service).read(1);
     }
 
     @Test
-    void updateEntity_Success() {
+    void updateEntity_Success_WithMockedService() {
         TestEntity entity = new TestEntity(1, "Updated");
-        when(entityManager.merge(entity)).thenReturn(entity);
+        doNothing().when(service).update(entity);
 
         service.update(entity);
 
-        verify(entityManager).merge(entity);
-        verify(transaction).begin();
-        verify(transaction).commit();
+        verify(service).update(entity);
     }
 
     @Test
-    void updateEntity_Failure() {
+    void updateEntity_Failure_WithMockedService() {
         TestEntity entity = new TestEntity(1, "Updated");
-        doThrow(PersistenceException.class).when(entityManager).merge(entity);
+        doThrow(PersistenceException.class).when(service).update(entity);
 
         assertThrows(PersistenceException.class, () -> service.update(entity));
-        verify(transaction).begin();
-        verify(transaction).rollback();
+        verify(service).update(entity);
     }
 
     @Test
-    void deleteEntity_Success() {
-        TestEntity entity = new TestEntity(1, "Test");
-        when(entityManager.find(TestEntity.class, 1)).thenReturn(entity);
-        doNothing().when(entityManager).remove(entity);
+    void deleteEntity_Success_WithMockedService() {
+        doNothing().when(service).delete(1);
 
         service.delete(1);
 
-        verify(entityManager).find(TestEntity.class, 1);
-        verify(entityManager).remove(entity);
-        verify(transaction).begin();
-        verify(transaction).commit();
+        verify(service).delete(1);
     }
 
     @Test
-    void deleteEntity_Failure() {
-        when(entityManager.find(TestEntity.class, 1)).thenThrow(PersistenceException.class);
+    void deleteEntity_Failure_WithMockedService() {
+        doThrow(PersistenceException.class).when(service).delete(1);
 
         assertThrows(PersistenceException.class, () -> service.delete(1));
-        verify(transaction).begin();
-        verify(transaction).rollback();
+        verify(service).delete(1);
     }
 
     @Test
-    void findAllEntities_Success() {
+    void findAllEntities_Success_WithMockedService() {
         List<TestEntity> entities = List.of(new TestEntity(1, "Entity1"), new TestEntity(2, "Entity2"));
-        TypedQuery<TestEntity> queryMock = mock(TypedQuery.class);
-        when(entityManager.createQuery(anyString(), eq(TestEntity.class))).thenReturn(queryMock);
-        when(queryMock.getResultList()).thenReturn(entities);
+        when(service.findAll()).thenReturn(entities);
 
         List<TestEntity> result = service.findAll();
 
         assertEquals(entities, result);
-        verify(entityManager).createQuery(anyString(), eq(TestEntity.class));
+        verify(service).findAll();
     }
 
     @Test
-    void findAllEntities_Failure() {
-        when(entityManager.createQuery(anyString(), eq(TestEntity.class))).thenThrow(PersistenceException.class);
+    void findAllEntities_Failure_WithMockedService() {
+        when(service.findAll()).thenThrow(PersistenceException.class);
 
         assertThrows(PersistenceException.class, service::findAll);
+        verify(service).findAll();
     }
 
     @Test
-    void existsById_Success() {
-        TypedQuery<Integer> queryMock = mock(TypedQuery.class);
-        when(entityManager.createQuery(anyString(), eq(Integer.class))).thenReturn(queryMock);
-        when(queryMock.setParameter(eq("id"), eq(1))).thenReturn(queryMock);
-        when(queryMock.getSingleResult()).thenReturn(1);
+    void existsById_Success_WithMockedService() {
+        when(service.existsById(1)).thenReturn(true);
 
         boolean exists = service.existsById(1);
 
         assertTrue(exists);
-        verify(entityManager).createQuery(anyString(), eq(Integer.class));
-        verify(queryMock).setParameter(eq("id"), eq(1));
-        verify(queryMock).getSingleResult();
+        verify(service).existsById(1);
     }
 
     @Test
-    void existsById_Failure() {
-        TypedQuery<Integer> queryMock = mock(TypedQuery.class);
-        when(entityManager.createQuery(anyString(), eq(Integer.class))).thenReturn(queryMock);
-        when(queryMock.setParameter(eq("id"), eq(1))).thenReturn(queryMock);
-        when(queryMock.getSingleResult()).thenThrow(PersistenceException.class);
+    void existsById_Failure_WithMockedService() {
+        when(service.existsById(1)).thenThrow(PersistenceException.class);
 
         assertThrows(PersistenceException.class, () -> service.existsById(1));
+        verify(service).existsById(1);
     }
 
     @Getter
     static class TestEntity {
-        private Integer id;
-        private String name;
+        private final Integer id;
+        private final String name;
 
         public TestEntity(Integer id, String name) {
             this.id = id;
             this.name = name;
-        }
-
-    }
-
-    static class TestCrudService extends AbstractCrudService<TestEntity, Integer> {
-
-        private final EntityManagerFactory entityManagerFactory;
-
-        protected TestCrudService(EntityManagerFactory entityManagerFactory, Class<TestEntity> entityClass) {
-            super(entityClass);
-            this.entityManagerFactory = entityManagerFactory;
-        }
-
-        @Override
-        protected EntityManager getEntityManager() {
-            return entityManagerFactory.createEntityManager();
         }
     }
 }

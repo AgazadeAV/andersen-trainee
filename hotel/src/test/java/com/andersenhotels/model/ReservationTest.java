@@ -1,51 +1,55 @@
 package com.andersenhotels.model;
 
 import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException;
-import com.andersenhotels.presenter.exceptions.ApartmentNotReservedException;
-import org.junit.jupiter.api.BeforeEach;
+import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
+import com.andersenhotels.presenter.exceptions.GuestNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class ReservationTest {
 
-    private Apartment apartment;
-    private Reservation reservation;
+    @Test
+    void constructor_ThrowsApartmentNotFoundException() {
+        Guest guest = mock(Guest.class);
 
-    @BeforeEach
-    void setUp() {
-        Guest guest = new Guest("Azer Agazade");
-        apartment = new Apartment(1, 150.0);
-        reservation = new Reservation(apartment, guest);
+        Exception exception = assertThrows(ApartmentNotFoundException.class, () -> new Reservation(null, guest));
+        assertEquals("Apartment cannot be null.", exception.getMessage());
     }
 
     @Test
-    void createReservation_Success() {
-        reservation.createReservation();
+    void constructor_ThrowsGuestNotFoundException() {
+        Apartment apartment = mock(Apartment.class);
 
-        assertEquals(ApartmentStatus.RESERVED, apartment.getStatus(), "Apartment should be reserved");
+        Exception exception = assertThrows(GuestNotFoundException.class, () -> new Reservation(apartment, null));
+        assertEquals("Guest cannot be null.", exception.getMessage());
     }
 
     @Test
-    void createReservation_ApartmentAlreadyReservedException() {
-        apartment.setStatus(ApartmentStatus.RESERVED);
+    void constructor_ThrowsApartmentAlreadyReservedException() {
+        Apartment apartment = mock(Apartment.class);
+        Guest guest = mock(Guest.class);
 
-        assertThrows(ApartmentAlreadyReservedException.class, reservation::createReservation,
-                "Should throw ApartmentAlreadyReservedException if apartment is already reserved");
+        when(apartment.getStatus()).thenReturn(ApartmentStatus.RESERVED);
+
+        Exception exception = assertThrows(ApartmentAlreadyReservedException.class, () -> new Reservation(apartment, guest));
+        assertEquals("Apartment must have status AVAILABLE to create a reservation.", exception.getMessage());
     }
 
     @Test
-    void cancelReservation_Success() {
-        reservation.createReservation();
-        reservation.cancelReservation();
+    void constructor_ValidReservation() {
+        Apartment apartment = mock(Apartment.class);
+        Guest guest = mock(Guest.class);
+        Hotel hotel = mock(Hotel.class);
 
-        assertEquals(ApartmentStatus.AVAILABLE, apartment.getStatus(),
-                "Apartment should be available after cancellation");
-    }
+        when(apartment.getStatus()).thenReturn(ApartmentStatus.AVAILABLE);
+        when(apartment.getHotel()).thenReturn(hotel);
 
-    @Test
-    void cancelReservation_ApartmentNotReservedException() {
-        assertThrows(ApartmentNotReservedException.class, reservation::cancelReservation,
-                "Should throw ApartmentNotReservedException if apartment is not reserved");
+        Reservation reservation = new Reservation(apartment, guest);
+
+        assertEquals(apartment, reservation.getApartment());
+        assertEquals(guest, reservation.getGuest());
+        assertEquals(hotel, reservation.getHotel());
     }
 }

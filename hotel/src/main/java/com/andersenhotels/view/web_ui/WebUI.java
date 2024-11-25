@@ -21,57 +21,65 @@ public class WebUI implements View {
 
     @Override
     public void initialize() {
-        presenter.loadState();
-    }
-
-    @Override
-    public void complete() {
-        presenter.saveState();
+        displayMessage("WebUI initialized.");
     }
 
     @Override
     public boolean registerApartment() {
-        double price = requestHandler.getDoubleAttribute("price");
-        boolean success = presenter.registerApartment(price);
-        if (success) {
-            complete();
+        try {
+            double price = requestHandler.getDoubleAttribute("price");
+            boolean success = presenter.registerApartment(price);
+            if (success) {
+                displayMessage("Apartment registered successfully.");
+            }
+            return success;
+        } catch (Exception e) {
+            displayError("Failed to register apartment: " + e.getMessage());
+            return false;
         }
-        return success;
     }
 
     @Override
     public boolean reserveApartment() {
-        int apartmentId = requestHandler.getIntAttribute("apartmentId");
-        String guestName = requestHandler.getStringAttribute("guestName");
-        boolean success = presenter.reserveApartment(apartmentId, guestName);
-        if (success) {
-            complete();
+        try {
+            int apartmentId = requestHandler.getIntAttribute("apartmentId");
+            String guestName = requestHandler.getStringAttribute("guestName");
+            boolean success = presenter.reserveApartment(apartmentId, guestName);
+            if (success) {
+                displayMessage("Apartment reserved successfully.");
+            }
+            return success;
+        } catch (Exception e) {
+            displayError("Failed to reserve apartment: " + e.getMessage());
+            return false;
         }
-        return success;
     }
 
     @Override
     public boolean releaseApartment() {
-        int apartmentId = requestHandler.getIntAttribute("apartmentId");
-        boolean success = presenter.releaseApartment(apartmentId);
-        if (success) {
-            complete();
+        try {
+            int apartmentId = requestHandler.getIntAttribute("apartmentId");
+            boolean success = presenter.releaseApartment(apartmentId);
+            if (success) {
+                displayMessage("Apartment released successfully.");
+            }
+            return success;
+        } catch (Exception e) {
+            displayError("Failed to release apartment: " + e.getMessage());
+            return false;
         }
-        return success;
     }
 
     @Override
     public List<String> listApartments() {
-        int page = requestHandler.getIntAttribute("page");
-        return presenter.listApartments(page);
-    }
-
-    public void printListApartments() {
         try {
-            List<String> listApartments = listApartments();
-            listApartments.forEach(this::displayMessage);
+            int page = requestHandler.getIntAttribute("page");
+            List<String> apartments = presenter.listApartments(page);
+            displayMessage("Listed apartments successfully.");
+            return apartments;
         } catch (ApartmentNotFoundException e) {
-            displayError(e.getMessage());
+            displayError("Failed to list apartments: " + e.getMessage());
+            return List.of();
         }
     }
 
@@ -83,5 +91,15 @@ public class WebUI implements View {
     @Override
     public void displayError(String errorMessage) {
         requestHandler.setAttribute("error", errorMessage);
+    }
+
+    @Override
+    public void complete() {
+        displayMessage("Operation completed successfully.");
+    }
+
+    public void printListApartments() {
+        List<String> apartments = listApartments();
+        apartments.forEach(this::displayMessage);
     }
 }

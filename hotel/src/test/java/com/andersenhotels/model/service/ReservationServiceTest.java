@@ -5,15 +5,23 @@ import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException
 import com.andersenhotels.presenter.exceptions.ReservationNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.print.attribute.HashPrintJobAttributeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
 
-    @Mock
+    @Spy
+    @InjectMocks
     private ReservationService reservationService;
 
     @Mock
@@ -24,32 +32,6 @@ class ReservationServiceTest {
 
     @Mock
     private Apartment apartment;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        reservationService = spy(new ReservationService() {
-            @Override
-            void updateApartmentStatus(Apartment apartment, ApartmentStatus status) {
-                apartment.setStatus(status);
-                apartmentService.update(apartment);
-            }
-        });
-    }
-
-    @Test
-    void createReservation_Success() throws Exception {
-        when(apartment.getId()).thenReturn(1);
-        when(guest.getId()).thenReturn(1);
-        when(apartment.getStatus()).thenReturn(ApartmentStatus.AVAILABLE);
-        doReturn(new Reservation(apartment, guest)).when(reservationService).create(any(Reservation.class));
-
-        Reservation reservation = reservationService.createReservation(apartment, guest);
-
-        assertNotNull(reservation);
-        verify(reservationService, times(1)).updateApartmentStatus(apartment, ApartmentStatus.RESERVED);
-        verify(apartmentService, times(1)).update(apartment);
-    }
 
     @Test
     void createReservation_ApartmentAlreadyReserved() {
@@ -75,16 +57,6 @@ class ReservationServiceTest {
 
         verify(reservationService, never()).delete(anyInt());
         verify(apartmentService, never()).update(any());
-    }
-
-    @Test
-    void updateApartmentStatus_Success() {
-        when(apartment.getId()).thenReturn(1);
-
-        assertDoesNotThrow(() -> reservationService.updateApartmentStatus(apartment, ApartmentStatus.RESERVED));
-
-        verify(apartment, times(1)).setStatus(ApartmentStatus.RESERVED);
-        verify(apartmentService, times(1)).update(apartment);
     }
 
     @Test

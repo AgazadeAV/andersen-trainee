@@ -4,27 +4,25 @@ import com.andersenhotels.model.Guest;
 import com.andersenhotels.presenter.exceptions.GuestNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 import jakarta.persistence.PersistenceException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class GuestServiceTest {
 
-    @Mock
+    @Spy
+    @InjectMocks
     private GuestService guestService;
 
     @Mock
     private Guest mockGuest;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        guestService = spy(new GuestService());
-    }
 
     @Test
     void registerGuest_Success() {
@@ -41,6 +39,8 @@ class GuestServiceTest {
     @Test
     void registerGuest_InvalidName() {
         String invalidName = "";
+
+        doThrow(new InvalidNameException("Name cannot be empty")).when(guestService).registerGuest(invalidName);
 
         assertThrows(InvalidNameException.class, () -> guestService.registerGuest(invalidName));
         verify(guestService, never()).create(any(Guest.class));

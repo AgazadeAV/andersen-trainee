@@ -6,18 +6,21 @@ import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
 import com.andersenhotels.presenter.exceptions.HotelNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidPriceException;
 import jakarta.persistence.PersistenceException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ApartmentServiceTest {
 
-    @Mock
+    @Spy
+    @InjectMocks
     private ApartmentService apartmentService;
 
     @Mock
@@ -25,12 +28,6 @@ class ApartmentServiceTest {
 
     @Mock
     private Apartment mockApartment;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        apartmentService = spy(new ApartmentService());
-    }
 
     @Test
     void registerApartment_Success() {

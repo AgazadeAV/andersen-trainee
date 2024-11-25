@@ -2,8 +2,11 @@ package com.andersenhotels.model.service;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.junit.jupiter.api.*;
-import org.mockito.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AbstractCrudServiceTest {
 
     @Mock
@@ -24,14 +28,6 @@ class AbstractCrudServiceTest {
 
     @Mock
     private EntityTransaction transaction;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
-        when(entityManager.getTransaction()).thenReturn(transaction);
-        doNothing().when(transaction).rollback();
-    }
 
     @Test
     void createEntity_Success_WithMockedService() {

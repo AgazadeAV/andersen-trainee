@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConfigManagerTest {
 
     @BeforeAll
-    static void setupTestingMode() {
+    static void setupTestingMode()   {
         ConfigManager.setTesting(true);
     }
 

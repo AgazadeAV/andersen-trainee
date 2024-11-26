@@ -1,14 +1,15 @@
 package com.andersenhotels;
 
-import com.andersenhotels.model.storage.LiquibaseRunner;
-import com.andersenhotels.view.View;
-import com.andersenhotels.view.console_ui.ConsoleUI;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+@SpringBootApplication
+@EntityScan(basePackages = "com.andersenhotels.model.entities")
+@EnableJpaRepositories(basePackages = "com.andersenhotels.model.storage.jpa")
 public class AndersenHotelsApplication {
     public static void main(String[] args) {
-        LiquibaseRunner.runLiquibaseMigrations();
-
-        View view = new ConsoleUI();
-        view.initialize();
+        SpringApplication.run(AndersenHotelsApplication.class, args);
     }
 }

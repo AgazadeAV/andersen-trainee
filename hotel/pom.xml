@@ -32,9 +32,24 @@
         <mockito-junit-jupiter.version>5.14.2</mockito-junit-jupiter.version>
         <spring-boot-starter-web.version>3.4.0</spring-boot-starter-web.version>
         <spring-boot-starter-data-jpa.version>3.4.0</spring-boot-starter-data-jpa.version>
+        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+        <spring-boot-starter-validation.version>3.4.0</spring-boot-starter-validation.version>
+
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${spring-boot-starter-validation.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

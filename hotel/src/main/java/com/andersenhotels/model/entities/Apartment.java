@@ -1,4 +1,4 @@
-package com.andersenhotels.model;
+package com.andersenhotels.model.entities;
 
 import com.andersenhotels.presenter.exceptions.HotelNotFoundException;
 import com.andersenhotels.presenter.exceptions.InvalidPriceException;
@@ -14,7 +14,7 @@ public class Apartment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(nullable = false)
     private double price;

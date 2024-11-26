@@ -1,4 +1,4 @@
-package com.andersenhotels.model;
+package com.andersenhotels.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class Hotel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "hotel")
     private List<Apartment> apartments = new ArrayList<>();

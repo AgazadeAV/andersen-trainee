@@ -1,4 +1,4 @@
-package com.andersenhotels.model;
+package com.andersenhotels.model.entities;
 
 import com.andersenhotels.presenter.exceptions.InvalidNameException;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ public class Guest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(nullable = false)
     private String name;

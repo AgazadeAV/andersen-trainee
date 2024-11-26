@@ -1,4 +1,4 @@
-package com.andersenhotels.model;
+package com.andersenhotels.model.entities;
 
 import com.andersenhotels.presenter.exceptions.ApartmentAlreadyReservedException;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
@@ -15,7 +15,7 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "apartment_id", nullable = false)

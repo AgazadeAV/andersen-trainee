@@ -1,6 +1,5 @@
 package com.andersenhotels.view.console_ui;
 
-import com.andersenhotels.view.View;
 import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 import com.andersenhotels.view.console_ui.buttons.*;
 import lombok.Getter;

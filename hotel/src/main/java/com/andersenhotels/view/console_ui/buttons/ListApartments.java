@@ -1,7 +1,7 @@
 package com.andersenhotels.view.console_ui.buttons;
 
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
-import com.andersenhotels.view.View;
+import com.andersenhotels.view.console_ui.View;
 
 public class ListApartments extends Button {
 

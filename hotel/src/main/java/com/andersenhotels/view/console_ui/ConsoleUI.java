@@ -1,28 +1,26 @@
 package com.andersenhotels.view.console_ui;
 
-import com.andersenhotels.model.config.ConfigManager;
 import com.andersenhotels.presenter.Presenter;
-import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 import com.andersenhotels.presenter.exceptions.ApartmentNotFoundException;
-import com.andersenhotels.view.View;
+import com.andersenhotels.presenter.exceptions.WrongMenuChoiceException;
 import lombok.Getter;
-import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Scanner;
 
-@Setter
-@Getter
+@Component
 public class ConsoleUI implements View {
 
-    private MenuHandler menuHandler;
-    private Presenter presenter;
-    private InputValidator inputValidator;
+    private final MenuHandler menuHandler;
+    private final Presenter presenter;
+    @Getter
+    private final Scanner scanner = new Scanner(System.in);
     private boolean isRunning;
 
-    public ConsoleUI() {
+    public ConsoleUI(Presenter presenter) {
+        this.presenter = presenter;
         this.menuHandler = new MenuHandler(this);
-        this.presenter = new Presenter(this);
-        this.inputValidator = new InputValidator(this);
         this.isRunning = true;
     }
 
@@ -34,20 +32,20 @@ public class ConsoleUI implements View {
 
     @Override
     public boolean registerApartment() {
-        double price = inputValidator.getDoubleInput("Enter price for the apartment (double or integer value):");
+        double price = ConsoleInputHandler.readDoubleInput("Enter price for the apartment (double or integer value):", this);
         return presenter.registerApartment(price);
     }
 
     @Override
     public boolean reserveApartment() {
-        int reserveId = inputValidator.getIntInput("Enter apartment ID to reserve (integer value):");
-        String guestName = inputValidator.getStringInput("Enter guest name: ");
+        long reserveId = ConsoleInputHandler.readLongInput("Enter apartment ID to reserve (long value):", this);
+        String guestName = ConsoleInputHandler.readStringInput("Enter guest name:", this);
         return presenter.reserveApartment(reserveId, guestName);
     }
 
     @Override
     public boolean releaseApartment() {
-        int releaseId = inputValidator.getIntInput("Enter apartment ID to release (integer value):");
+        long releaseId = ConsoleInputHandler.readLongInput("Enter reservation ID to release (long value):", this);
         return presenter.releaseApartment(releaseId);
     }
 
@@ -58,8 +56,7 @@ public class ConsoleUI implements View {
             if (totalPages <= 0) {
                 throw new ApartmentNotFoundException("No apartments registered. Nothing to show.");
             }
-            int page = inputValidator.getIntInput("Enter page number from 1 to " + totalPages +
-                    " (integer value)\n" + "Page size is " + ConfigManager.getPageSizeForPagination() + ":");
+            int page = ConsoleInputHandler.readIntInput("Enter page number from 1 to " + totalPages + " (integer value):", this);
             return presenter.listApartments(page);
         } catch (ApartmentNotFoundException e) {
             displayError(e.getMessage());
@@ -99,14 +96,11 @@ public class ConsoleUI implements View {
     private void selectItemFromMenu() {
         while (isRunning) {
             displayMessage(menuHandler.getMenu());
-            int menuChoice = inputValidator.getIntInput("Please select an option from the menu:");
+            int menuChoice = ConsoleInputHandler.readIntInput("Please select an option from the menu:", this);
             try {
                 menuHandler.execute(menuChoice);
             } catch (WrongMenuChoiceException e) {
                 displayError(e.getMessage());
-            } catch (NumberFormatException e) {
-                displayError("Invalid input. Please enter a valid integer from the menu: from 1 to " +
-                        menuHandler.getMenuSize() + ".");
             }
         }
     }

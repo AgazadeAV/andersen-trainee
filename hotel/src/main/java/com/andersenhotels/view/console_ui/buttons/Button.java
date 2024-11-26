@@ -1,6 +1,6 @@
 package com.andersenhotels.view.console_ui.buttons;
 
-import com.andersenhotels.view.View;
+import com.andersenhotels.view.console_ui.View;
 import lombok.Getter;
 
 public abstract class Button {

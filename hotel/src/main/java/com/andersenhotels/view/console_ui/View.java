@@ -1,4 +1,4 @@
-package com.andersenhotels.view;
+package com.andersenhotels.view.console_ui;
 
 import java.util.List;
 

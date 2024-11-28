@@ -9,12 +9,14 @@ import com.andersenhotels.model.service.ApartmentService;
 import com.andersenhotels.model.service.GuestService;
 import com.andersenhotels.model.service.HotelService;
 import com.andersenhotels.model.service.ReservationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class HotelServiceWrapper {
 
     private final ApartmentService apartmentService;
@@ -24,16 +26,6 @@ public class HotelServiceWrapper {
 
     @Value("${pagination.page-size}")
     private int pageSize;
-
-    public HotelServiceWrapper(ApartmentService apartmentService,
-                               GuestService guestService,
-                               ReservationService reservationService,
-                               HotelService hotelService) {
-        this.apartmentService = apartmentService;
-        this.guestService = guestService;
-        this.reservationService = reservationService;
-        this.hotelService = hotelService;
-    }
 
     public Hotel initializeHotel() {
         return hotelService.getAllHotels().stream()

@@ -28,11 +28,11 @@ public class GuestService {
         return guestRepository.save(guest);
     }
 
-    public void deleteGuest(long id) {
+    public boolean deleteGuest(long id) {
         if (guestRepository.existsById(id)) {
             guestRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("Guest not found with ID: " + id);
+            return true;
         }
+        return false;
     }
 }

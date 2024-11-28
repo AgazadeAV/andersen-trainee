@@ -1,7 +1,7 @@
 package com.andersenhotels.view.web_ui.rest;
 
 import com.andersenhotels.model.entities.Reservation;
-import com.andersenhotels.model.storage.jpa.ReservationRepository;
+import com.andersenhotels.model.service.ReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,35 +11,39 @@ import java.util.List;
 @RequestMapping("/reservation")
 public class ReservationController {
 
-    private final ReservationRepository reservationRepository;
+    private final ReservationService reservationService;
 
-    public ReservationController(ReservationRepository reservationRepository) {
-        this.reservationRepository = reservationRepository;
+    public ReservationController(ReservationService reservationService) {
+        this.reservationService = reservationService;
     }
 
     @GetMapping
     public List<Reservation> getAllReservations() {
-        return reservationRepository.findAll();
+        return reservationService.getAllReservations();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Reservation> getReservationById(@PathVariable long id) {
-        return reservationRepository.findById(id)
+        return reservationService.getReservationById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Reservation createReservation(@RequestBody Reservation reservation) {
-        return reservationRepository.save(reservation);
+    public ResponseEntity<Reservation> createReservation(@RequestParam long apartmentId, @RequestParam long guestId) {
+        try {
+            Reservation createdReservation = reservationService.createReservation(apartmentId, guestId);
+            return ResponseEntity.ok(createdReservation);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable long id) {
-        if (reservationRepository.existsById(id)) {
-            reservationRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> cancelReservation(@PathVariable long id) {
+        boolean deleted = reservationService.cancelReservation(id);
+        return deleted
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }

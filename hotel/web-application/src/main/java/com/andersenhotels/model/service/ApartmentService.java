@@ -30,16 +30,21 @@ public class ApartmentService {
         return apartmentRepository.save(apartment);
     }
 
-    public Apartment updateApartment(Apartment apartment) {
-        return apartmentRepository.save(apartment);
+    public Optional<Apartment> updateApartment(long id, Apartment updatedApartment) {
+        return apartmentRepository.findById(id)
+                .map(apartment -> {
+                    apartment.setPrice(updatedApartment.getPrice());
+                    apartment.setStatus(updatedApartment.getStatus());
+                    return apartmentRepository.save(apartment);
+                });
     }
 
-    public void deleteApartment(long id) {
+    public boolean deleteApartment(long id) {
         if (apartmentRepository.existsById(id)) {
             apartmentRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("Apartment not found with ID: " + id);
+            return true;
         }
+        return false;
     }
 
     public List<Apartment> getAvailableApartments() {

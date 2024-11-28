@@ -1,7 +1,7 @@
 package com.andersenhotels.view.web_ui.rest;
 
 import com.andersenhotels.model.entities.Hotel;
-import com.andersenhotels.model.storage.jpa.HotelRepository;
+import com.andersenhotels.model.service.HotelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,35 +11,35 @@ import java.util.List;
 @RequestMapping("/hotel")
 public class HotelController {
 
-    private final HotelRepository hotelRepository;
+    private final HotelService hotelService;
 
-    public HotelController(HotelRepository hotelRepository) {
-        this.hotelRepository = hotelRepository;
+    public HotelController(HotelService hotelService) {
+        this.hotelService = hotelService;
     }
 
     @GetMapping
     public List<Hotel> getAllHotels() {
-        return hotelRepository.findAll();
+        return hotelService.getAllHotels();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Hotel> getHotelById(@PathVariable long id) {
-        return hotelRepository.findById(id)
+        return hotelService.getHotelById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Hotel createHotel(@RequestBody Hotel hotel) {
-        return hotelRepository.save(hotel);
+    public ResponseEntity<Hotel> createHotel(@RequestBody Hotel hotel) {
+        Hotel createdHotel = hotelService.createHotel(hotel);
+        return ResponseEntity.ok(createdHotel);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteHotel(@PathVariable long id) {
-        if (hotelRepository.existsById(id)) {
-            hotelRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        boolean deleted = hotelService.deleteHotel(id);
+        return deleted
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }

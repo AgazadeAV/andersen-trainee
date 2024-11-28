@@ -47,14 +47,18 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    public void cancelReservation(long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("Reservation not found with ID: " + reservationId));
+    public boolean cancelReservation(long reservationId) {
+        Optional<Reservation> reservationOpt = reservationRepository.findById(reservationId);
+        if (reservationOpt.isEmpty()) {
+            return false;
+        }
 
+        Reservation reservation = reservationOpt.get();
         Apartment apartment = reservation.getApartment();
         apartment.setStatus(ApartmentStatus.AVAILABLE);
         apartmentRepository.save(apartment);
 
         reservationRepository.deleteById(reservationId);
+        return true;
     }
 }

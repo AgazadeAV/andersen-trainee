@@ -28,11 +28,11 @@ public class HotelService {
         return hotelRepository.save(hotel);
     }
 
-    public void deleteHotel(long id) {
+    public boolean deleteHotel(long id) {
         if (hotelRepository.existsById(id)) {
             hotelRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("Hotel not found with ID: " + id);
+            return true;
         }
+        return false;
     }
 }

@@ -30,35 +30,52 @@ public class ReservationService {
     }
 
     public Reservation createReservation(long apartmentId, long guestId) {
-        Apartment apartment = apartmentRepository.findById(apartmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Apartment not found with ID: " + apartmentId));
+        try {
+            Apartment apartment = apartmentRepository.findById(apartmentId)
+                    .orElseThrow(() -> new IllegalArgumentException("Apartment not found with ID: " + apartmentId));
 
-        if (apartment.getStatus() == ApartmentStatus.RESERVED) {
-            throw new IllegalStateException("Apartment is already reserved.");
+            if (apartment.getStatus() == ApartmentStatus.RESERVED) {
+                throw new IllegalStateException("Apartment is already reserved.");
+            }
+
+            Guest guest = guestRepository.findById(guestId)
+                    .orElseThrow(() -> new IllegalArgumentException("Guest not found with ID: " + guestId));
+
+            Reservation reservation = new Reservation(apartment, guest);
+            apartment.setStatus(ApartmentStatus.RESERVED);
+            apartmentRepository.save(apartment);
+
+            return reservationRepository.save(reservation);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while creating the reservation.", e);
         }
-
-        Guest guest = guestRepository.findById(guestId)
-                .orElseThrow(() -> new IllegalArgumentException("Guest not found with ID: " + guestId));
-
-        apartment.setStatus(ApartmentStatus.RESERVED);
-        apartmentRepository.save(apartment);
-
-        Reservation reservation = new Reservation(apartment, guest);
-        return reservationRepository.save(reservation);
     }
 
+
     public boolean cancelReservation(long reservationId) {
-        Optional<Reservation> reservationOpt = reservationRepository.findById(reservationId);
-        if (reservationOpt.isEmpty()) {
+        try {
+            Reservation reservation = reservationRepository.findById(reservationId)
+                    .orElseThrow(() -> new IllegalArgumentException("Reservation not found with ID: " + reservationId));
+
+            Apartment apartment = reservation.getApartment();
+
+            if (apartment.getStatus() != ApartmentStatus.RESERVED) {
+                throw new IllegalStateException("Apartment is not reserved.");
+            }
+
+            apartment.setStatus(ApartmentStatus.AVAILABLE);
+            apartmentRepository.save(apartment);
+
+            reservationRepository.deleteById(reservationId);
+            return true;
+        } catch (IllegalArgumentException e) {
             return false;
+        } catch (IllegalStateException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while canceling the reservation.", e);
         }
-
-        Reservation reservation = reservationOpt.get();
-        Apartment apartment = reservation.getApartment();
-        apartment.setStatus(ApartmentStatus.AVAILABLE);
-        apartmentRepository.save(apartment);
-
-        reservationRepository.deleteById(reservationId);
-        return true;
     }
 }

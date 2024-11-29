@@ -29,12 +29,8 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<Reservation> createReservation(@RequestParam long apartmentId, @RequestParam long guestId) {
-        try {
-            Reservation createdReservation = reservationService.createReservation(apartmentId, guestId);
-            return ResponseEntity.ok(createdReservation);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+        Reservation createdReservation = reservationService.createReservation(apartmentId, guestId);
+        return ResponseEntity.ok(createdReservation);
     }
 
     @DeleteMapping("/{id}")

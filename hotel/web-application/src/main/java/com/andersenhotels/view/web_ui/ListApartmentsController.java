@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/apartments")
+@RequestMapping("/apartmentsList")
 public class ListApartmentsController {
 
     private final Presenter presenter;

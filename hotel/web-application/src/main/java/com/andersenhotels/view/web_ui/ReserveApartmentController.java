@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/apartments/reserve")
+@RequestMapping("/reserveApartment")
 public class ReserveApartmentController {
 
     private final Presenter presenter;

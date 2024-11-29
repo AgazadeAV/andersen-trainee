@@ -2,19 +2,17 @@ package com.andersenhotels.model.service;
 
 import com.andersenhotels.model.entities.Guest;
 import com.andersenhotels.model.storage.jpa.GuestRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class GuestService {
 
     private final GuestRepository guestRepository;
-
-    public GuestService(GuestRepository guestRepository) {
-        this.guestRepository = guestRepository;
-    }
 
     public List<Guest> getAllGuests() {
         return guestRepository.findAll();

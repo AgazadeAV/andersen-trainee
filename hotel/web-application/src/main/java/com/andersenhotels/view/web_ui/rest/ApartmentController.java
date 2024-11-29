@@ -2,20 +2,18 @@ package com.andersenhotels.view.web_ui.rest;
 
 import com.andersenhotels.model.entities.Apartment;
 import com.andersenhotels.model.service.ApartmentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/apartment")
 public class ApartmentController {
 
     private final ApartmentService apartmentService;
-
-    public ApartmentController(ApartmentService apartmentService) {
-        this.apartmentService = apartmentService;
-    }
 
     @GetMapping
     public List<Apartment> getAllApartments() {

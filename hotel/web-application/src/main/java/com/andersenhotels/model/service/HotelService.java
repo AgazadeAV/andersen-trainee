@@ -2,19 +2,17 @@ package com.andersenhotels.model.service;
 
 import com.andersenhotels.model.entities.Hotel;
 import com.andersenhotels.model.storage.jpa.HotelRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class HotelService {
 
     private final HotelRepository hotelRepository;
-
-    public HotelService(HotelRepository hotelRepository) {
-        this.hotelRepository = hotelRepository;
-    }
 
     public List<Hotel> getAllHotels() {
         return hotelRepository.findAll();

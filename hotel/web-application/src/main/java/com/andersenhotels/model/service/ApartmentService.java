@@ -3,19 +3,17 @@ package com.andersenhotels.model.service;
 import com.andersenhotels.model.entities.Apartment;
 import com.andersenhotels.model.entities.ApartmentStatus;
 import com.andersenhotels.model.storage.jpa.ApartmentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ApartmentService {
 
     private final ApartmentRepository apartmentRepository;
-
-    public ApartmentService(ApartmentRepository apartmentRepository) {
-        this.apartmentRepository = apartmentRepository;
-    }
 
     public List<Apartment> getAllApartments() {
         return apartmentRepository.findAll();

@@ -3,19 +3,17 @@ package com.andersenhotels.view.web_ui;
 import com.andersenhotels.presenter.Presenter;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/apartments/reserve")
 public class ReserveApartmentController {
 
     private final Presenter presenter;
-
-    public ReserveApartmentController(Presenter presenter) {
-        this.presenter = presenter;
-    }
 
     @GetMapping
     public String showReserveApartmentPage() {

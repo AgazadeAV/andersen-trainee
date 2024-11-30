@@ -51,7 +51,7 @@ public class ApartmentWebController {
         return "apartments";
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/release")
     public String releaseApartment(@PathVariable("id") @Min(1) long apartmentId, Model model) {
         boolean success = presenter.releaseApartment(apartmentId);
         if (success) {
